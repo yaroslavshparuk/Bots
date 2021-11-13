@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Bot.Tests.Money
+namespace Bot.Tests.MoneyBot
 {
     public class FinanceOperationTests
     {

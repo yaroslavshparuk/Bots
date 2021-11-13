@@ -1,2 +1,2 @@
-# BudgetBot
-My bot in Telegram to track exes and incomes
+# My Telegram bots
+Money bot - to track exes and incomes 
