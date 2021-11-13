@@ -1,17 +1,10 @@
-﻿using Telegram.Bot;
-using Google.Apis.Sheets.v4;
-using Google.Apis.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bot.Repositories.Interfaces;
-using Bot.Repositories.Impl;
-using Bot.Services.Interfaces;
-using Bot.Services.Impl;
 using StackExchange.Redis;
-using Bot.Repository.Interfaces;
-using Bot.Repository.Impl;
 using System.Threading.Tasks;
 using System.Configuration;
+using Bot.Money.Repositories;
+using Bot.Money.Implementation;
 
 namespace Bot
 {
@@ -23,13 +16,10 @@ namespace Bot
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<IUserDataRepository>(x => new RedisUserDataRepository(
-                                                                    ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["RedisConnectionString"]).GetDatabase()
-                                                              ));
-                    services.AddSingleton<ITelegramBotClient>(x => new TelegramBotClient(ConfigurationManager.AppSettings["BudgetBotToken"]));
-                    services.AddHostedService<ConsoleHostedService>();
-                    services.AddTransient<IBot, BudgetBot>();
+                        ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["RedisConnectionString"]).GetDatabase()
+                    ));
                     services.AddTransient<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
-                    services.AddTransient(x => new SheetsService(new BaseClientService.Initializer() { ApplicationName = "Monthly Budget" }));
+                    services.AddHostedService<ConsoleHostedService>();
                 })
                 .RunConsoleAsync();
         }

@@ -12,8 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Bot.Repository\Bot.Repository.csproj" />
-	  <ProjectReference Include="..\Bot.Services\Bot.Services.csproj" />
+	  <ProjectReference Include="..\Bot.Money\Bot.Money.csproj" />
 	</ItemGroup>
 
 </Project>
