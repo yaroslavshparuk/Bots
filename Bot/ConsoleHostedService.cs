@@ -3,9 +3,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
-using Bot.Money.Repositories;
-using System.Configuration;
-using Bot.Money.Implementation;
+using System.Collections.Generic;
+using Bot.Abstractions.Interfaces;
 
 namespace Bot
 {
@@ -13,12 +12,12 @@ namespace Bot
     {
         private readonly ILogger _logger;
         private readonly IHostApplicationLifetime _appLifetime;
-        private readonly IBudgetRepository _budgetRepository;
-        public ConsoleHostedService(ILogger<ConsoleHostedService> logger, IHostApplicationLifetime appLifetime, IBudgetRepository budgetRepository)
+        private readonly IEnumerable<IBot> _bots;
+        public ConsoleHostedService(ILogger<ConsoleHostedService> logger, IHostApplicationLifetime appLifetime, IEnumerable<IBot> bots)
         {
             _logger = logger;
             _appLifetime = appLifetime;
-            _budgetRepository = budgetRepository;
+            _bots = bots;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -29,11 +28,12 @@ namespace Bot
                 {
                     try
                     {
-                        var moneyBot = new MoneyBot(ConfigurationManager.AppSettings["MoneyBotToken"], _budgetRepository);
-                        moneyBot.Start();
+                        foreach (var bot in _bots)
+                        {
+                            bot.Start();
+                        }
 
                         Console.ReadKey();
-                        moneyBot.Stop();
                     }
                     catch (Exception ex)
                     {

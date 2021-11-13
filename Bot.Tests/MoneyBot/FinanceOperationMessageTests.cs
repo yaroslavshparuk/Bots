@@ -4,7 +4,7 @@ using System.Linq;
 using Telegram.Bot.Types;
 using Xunit;
 
-namespace Bot.Tests.Money
+namespace Bot.Tests.MoneyBot
 {
     public class FinanceOperationMessageTests
     {

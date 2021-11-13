@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Configuration;
 using Bot.Money.Repositories;
 using Bot.Money.Implementation;
+using Bot.Money.Commands;
+using Bot.Money.Interfaces;
+using Bot.Abstractions.Interfaces;
 
 namespace Bot
 {
@@ -15,9 +18,13 @@ namespace Bot
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddTransient<IBot, MoneyBot>();
+                    services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
+                    services.AddTransient<IMoneyCommand, HelpCommand>();
+                    services.AddTransient<IMoneyCommand, ResetCommand>();
+                    services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
                     services.AddTransient<IUserDataRepository>(x => new RedisUserDataRepository(
-                        ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["RedisConnectionString"]).GetDatabase()
-                    ));
+                             ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["redis"].ConnectionString).GetDatabase()));
                     services.AddTransient<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
                     services.AddHostedService<ConsoleHostedService>();
                 })

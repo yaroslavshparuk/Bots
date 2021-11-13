@@ -1,4 +1,4 @@
-﻿using Bot.Abstractions.Interfaces;
+﻿using Bot.Money.Interfaces;
 using Bot.Money.Repositories;
 using System;
 using System.Threading.Tasks;
@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 
 namespace Bot.Money.Commands
 {
-    public class ResetCommand : ICommand
+    public class ResetCommand : IMoneyCommand
     {
         private const string NAME = "/reset";
         private readonly IBudgetRepository _budgetRepository;

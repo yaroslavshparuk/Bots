@@ -7,11 +7,20 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.55.0.2371" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Bot.Abstractions\Bot.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
