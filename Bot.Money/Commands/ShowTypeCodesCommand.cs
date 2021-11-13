@@ -23,12 +23,12 @@ namespace Bot.Money.Commands
             if (message.Text == EXPENSE)
             {
                 var types = $"Expense types codes: {_printTypeCodes(Enum.GetNames(typeof(ExpenseCategory)))}";
-                await botClient.SendTextMessageAsync(message.Chat, types, ParseMode.Default, null, false, false, 0);
+                await botClient.SendTextMessageAsync(message.Chat, types, ParseMode.Default, false, false, 0);
             }
             else if (message.Text == INCOME)
             {
                 var types = $"Income types codes: {_printTypeCodes(Enum.GetNames(typeof(IncomeCategory)))}";
-                await botClient.SendTextMessageAsync(message.Chat, types, ParseMode.Default, null, false, false, 0);
+                await botClient.SendTextMessageAsync(message.Chat, types, ParseMode.Default, false, false, 0);
             }
         }
 

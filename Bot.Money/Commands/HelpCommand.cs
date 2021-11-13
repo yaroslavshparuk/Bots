@@ -31,7 +31,7 @@ namespace Bot.Money.Commands
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            await botClient.SendTextMessageAsync(message.Chat, HELP_RESPONSE, ParseMode.Default, null, false, false, 0);
+            await botClient.SendTextMessageAsync(message.Chat, HELP_RESPONSE, ParseMode.Default, false, false, 0);
         }
     }
 }

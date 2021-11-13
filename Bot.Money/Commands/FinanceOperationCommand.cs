@@ -26,7 +26,7 @@ namespace Bot.Money.Commands
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
             var result = _budgetRepository.CreateAndGetResult(new FinanceOperationMessage(message));
-            await botClient.SendTextMessageAsync(message.Chat, result, ParseMode.Default, null, false, false, 0);
+            await botClient.SendTextMessageAsync(message.Chat, result, ParseMode.Default, false, false, 0);
         }
     }
 }

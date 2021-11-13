@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 using System.Configuration;
@@ -8,10 +7,11 @@ using Bot.Money.Implementation;
 using Bot.Money.Commands;
 using Bot.Money.Interfaces;
 using Bot.Abstractions.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bot
 {
-    class Program
+    class StartUp
     {
         private static async Task Main(string[] args)
         {
