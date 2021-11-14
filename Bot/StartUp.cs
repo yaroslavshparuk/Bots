@@ -12,6 +12,9 @@ using System.Reflection;
 using System.IO;
 using log4net.Config;
 using Bot.Core.Abstractions;
+using Bot.Youtube.Implementation;
+using Bot.Youtube.Interfaces;
+using Bot.Youtube.Commands;
 
 namespace Bot
 {
@@ -24,10 +27,14 @@ namespace Bot
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<IBot, MoneyBot>();
+                    services.AddTransient<IBot, YoutubeBot>();
+
                     services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
                     services.AddTransient<IMoneyCommand, HelpCommand>();
                     services.AddTransient<IMoneyCommand, ResetCommand>();
                     services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
+                    services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
+
                     services.AddTransient<IUserDataRepository>(x => new RedisUserDataRepository(
                              ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["redis"].ConnectionString).GetDatabase()));
                     services.AddTransient<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();

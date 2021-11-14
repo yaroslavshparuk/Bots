@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Bot.Money\Bot.Money.csproj" />
+	  <ProjectReference Include="..\Bot.Youtube\Bot.Youtube.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

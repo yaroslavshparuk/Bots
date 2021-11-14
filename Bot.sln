@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Money", "Bot.Money\Bot.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Core", "Bot.Core\Bot.Core.csproj", "{CE11BAE3-977F-4593-8146-08AECB9D22FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Youtube", "Bot.Youtube\Bot.Youtube.csproj", "{55A76D5E-FE38-445A-9425-2C9A32F78853}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55A76D5E-FE38-445A-9425-2C9A32F78853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55A76D5E-FE38-445A-9425-2C9A32F78853}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55A76D5E-FE38-445A-9425-2C9A32F78853}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55A76D5E-FE38-445A-9425-2C9A32F78853}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
