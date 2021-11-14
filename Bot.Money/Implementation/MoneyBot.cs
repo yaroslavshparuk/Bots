@@ -1,35 +1,35 @@
-﻿using Bot.Abstractions.Interfaces;
+﻿using Bot.Core.Extension;
+using Bot.Core.Abstractions;
 using Bot.Money.Interfaces;
 using Google;
 using log4net;
-using log4net.Config;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Bot.Core.Exceptions;
 
 namespace Bot.Money.Implementation
 {
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyCommand> _commands;
-        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ITelegramBotClient _botClient;
+
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
-            _commands = commands;
+            _commands = commands; 
         }
+
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public void Start()
         {
-            XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetCallingAssembly()), new FileInfo("log4net.config"));
-            var config = new ConfigurationBuilder().AddJsonFile($"appsettings.json", true, true).Build();
-
-            _botClient = new TelegramBotClient(config["bot_token"]);
-            _botClient.OnMessage += Bot_OnMessage;
+            _botClient = new TelegramBotClient(ConfigurationManager.AppSettings["bot_token"]);
+            _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
             _logger.Info("Money bot was started");
@@ -41,38 +41,25 @@ namespace Bot.Money.Implementation
             _logger.Info("Money bot was stoped");
         }
 
-        private async void Bot_OnMessage(object sender, MessageEventArgs e)
+        private async void OnMessage(object sender, MessageEventArgs e)
         {
             try
             {
-                var anyCommandWasExecuted = false;
-                foreach (var command in _commands)
-                {
-                    if (command.CanExecute(e.Message))
-                    {
-                        await command.Execute(e.Message, _botClient);
-                        anyCommandWasExecuted = true;
-                        _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id}UserName: @{e.Message.Chat.Username}");
-                        break;
-                    }
-                }
-
-                if (!anyCommandWasExecuted)
-                {
-                    throw new ArgumentException("Input is invalid");
-                }
+                await _commands.GetCommandToExecute(e.Message).Execute(e.Message, _botClient);
+                _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
-            catch (ArgumentException ex)
+            catch (NotFoundCommandException ex)
             {
-                _logger.Error($"Can't process user's message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
+                _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
                 await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message, ParseMode.Default, false, false, 0);
             }
-            catch (KeyNotFoundException ex)
+            catch (NotFoundUserException ex)
             {
-                _logger.Warn($"Unknown user: Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message, ParseMode.Default, false, false, 0);
+                _logger.Warn(ex.Message + $"\nMessage: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
+                await _botClient.SendTextMessageAsync(e.Message.Chat, "I don't know you, if you want to use me - contact to @shparuk please",
+                                                      ParseMode.Default, false, false, 0);
             }
-            catch(GoogleApiException ex)
+            catch (GoogleApiException ex)
             {
                 _logger.Error(ex.Message);
                 await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided wrong spread sheet URL", ParseMode.Default, false, false, 0);

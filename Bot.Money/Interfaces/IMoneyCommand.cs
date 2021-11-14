@@ -1,4 +1,4 @@
-﻿using Bot.Abstractions.Interfaces;
+﻿using Bot.Core.Abstractions;
 
 namespace Bot.Money.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿namespace Bot.Abstractions.Interfaces
+﻿namespace Bot.Core.Abstractions
 {
     public interface IBot
     {

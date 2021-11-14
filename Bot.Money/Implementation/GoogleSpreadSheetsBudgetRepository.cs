@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Bot.Core.Exceptions;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;
@@ -45,10 +46,7 @@ namespace Bot.Money.Implementation
             var valueRange = new ValueRange() { Values = new List<IList<object>> { objectList } };
             var clientSecret = _userDataRepository.GetClientSecret(operation.ClientSecretId);
 
-            if (string.IsNullOrEmpty(clientSecret))
-            {
-                throw new KeyNotFoundException("I don't know you, if you want to use me - contact to @shparuk please");
-            }
+            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {

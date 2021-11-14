@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "Bot\Bot.csproj", "{3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Tests", "Bot.Tests\Bot.Tests.csproj", "{EE76EDDC-7A69-40CD-AFA4-B4B5C7380396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Money", "Bot.Money\Bot.Money.csproj", "{00D9933F-C528-43B2-849E-EEEBB46E7B4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Money", "Bot.Money\Bot.Money.csproj", "{00D9933F-C528-43B2-849E-EEEBB46E7B4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Abstractions", "Bot.Abstractions\Bot.Abstractions.csproj", "{081ACE06-0E1C-4008-9C30-B93867A57EE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Core", "Bot.Core\Bot.Core.csproj", "{CE11BAE3-977F-4593-8146-08AECB9D22FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{00D9933F-C528-43B2-849E-EEEBB46E7B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00D9933F-C528-43B2-849E-EEEBB46E7B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00D9933F-C528-43B2-849E-EEEBB46E7B4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{081ACE06-0E1C-4008-9C30-B93867A57EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{081ACE06-0E1C-4008-9C30-B93867A57EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{081ACE06-0E1C-4008-9C30-B93867A57EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{081ACE06-0E1C-4008-9C30-B93867A57EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE11BAE3-977F-4593-8146-08AECB9D22FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

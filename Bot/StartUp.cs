@@ -6,8 +6,12 @@ using Bot.Money.Repositories;
 using Bot.Money.Implementation;
 using Bot.Money.Commands;
 using Bot.Money.Interfaces;
-using Bot.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using log4net;
+using System.Reflection;
+using System.IO;
+using log4net.Config;
+using Bot.Core.Abstractions;
 
 namespace Bot
 {
@@ -15,6 +19,7 @@ namespace Bot
     {
         private static async Task Main(string[] args)
         {
+            XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetEntryAssembly()), new FileInfo("log4net.config"));
             await Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using Bot.Abstractions.Interfaces;
+using Bot.Core.Abstractions;
 
 namespace Bot
 {
