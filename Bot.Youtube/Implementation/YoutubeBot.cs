@@ -46,10 +46,15 @@ namespace Bot.Youtube.Implementation
                 await _commands.GetCommandToExecute(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
-            catch (NotFoundCommandException ex)
+            catch (NotFoundCommandException)
             {
                 _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
                 await _botClient.SendTextMessageAsync(e.Message.Chat, "Seemds you send me incorrect URL", ParseMode.Default, false, false, 0);
+            }
+            catch (MaxUploadSizeExceededException ex)
+            {
+                _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
+                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message, ParseMode.Default, false, false, 0);
             }
             catch (Exception ex)
             {
