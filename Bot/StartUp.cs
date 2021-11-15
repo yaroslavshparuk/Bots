@@ -15,32 +15,43 @@ using Bot.Core.Abstractions;
 using Bot.Youtube.Implementation;
 using Bot.Youtube.Interfaces;
 using Bot.Youtube.Commands;
+using Coravel;
+using Bot.Money.Jobs;
 
 namespace Bot
 {
     class StartUp
     {
+        private static ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(
+                                              ConfigurationManager.ConnectionStrings["redis"].ConnectionString);
+
         private static async Task Main(string[] args)
         {
             XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetEntryAssembly()), new FileInfo("log4net.config"));
-            await Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddTransient<IBot, MoneyBot>();
-                    services.AddTransient<IBot, YoutubeBot>();
+            var host = Host.CreateDefaultBuilder(args)
+                 .ConfigureServices((hostContext, services) =>
+                 {
+                     services.AddSingleton<IBot, MoneyBot>();
+                     services.AddSingleton<IBot, YoutubeBot>();
 
-                    services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
-                    services.AddTransient<IMoneyCommand, HelpCommand>();
-                    services.AddTransient<IMoneyCommand, ResetCommand>();
-                    services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
-                    services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
+                     services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
+                     services.AddTransient<IMoneyCommand, HelpCommand>();
+                     services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
+                     services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
 
-                    services.AddTransient<IUserDataRepository>(x => new RedisUserDataRepository(
-                             ConnectionMultiplexer.Connect(ConfigurationManager.ConnectionStrings["redis"].ConnectionString).GetDatabase()));
-                    services.AddTransient<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
-                    services.AddHostedService<ConsoleHostedService>();
-                })
-                .RunConsoleAsync();
+                     services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
+                     services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
+                     services.AddHostedService<ConsoleHostedService>();
+
+                     services.AddScheduler();
+                     services.AddTransient<MoneyBot>();
+                 }).Build();
+
+            host.Services.UseScheduler(scheduler =>
+            {
+                scheduler.Schedule<ReminderJob>().Cron("0 13 1 * *"); // every month first day at 1:00pm
+            });
+            await host.RunAsync();
         }
     }
 }

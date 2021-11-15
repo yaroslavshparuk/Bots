@@ -17,7 +17,7 @@ namespace Bot.Money.Implementation
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyCommand> _commands;
-        private ITelegramBotClient _botClient;
+        private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["money_bot_token"]);
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
@@ -28,7 +28,6 @@ namespace Bot.Money.Implementation
 
         public void Start()
         {
-            _botClient = new TelegramBotClient(ConfigurationManager.AppSettings["bot_token"]);
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
