@@ -1,10 +1,8 @@
 ﻿using Bot.Money.Enums;
 using Bot.Money.Models;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
-namespace Bot.Tests.MoneyBot
+namespace Bot.Money.Tests
 {
     public class FinanceOperationTests
     {

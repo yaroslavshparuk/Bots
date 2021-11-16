@@ -1,14 +1,12 @@
 ﻿using Bot.Money.Models;
-using System;
-using System.Linq;
 using Telegram.Bot.Types;
 using Xunit;
 
-namespace Bot.Tests.MoneyBot
+namespace Bot.Money.Tests
 {
     public class FinanceOperationMessageTests
     {
-        private readonly Message[] _messagesToTest = new []
+         private readonly Message[] _messagesToTest = new []
              {
                 new Message { Text = "test" },
                 new Message { Text = "0 some exp 1" },

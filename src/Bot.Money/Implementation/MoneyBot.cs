@@ -3,8 +3,6 @@ using Bot.Core.Abstractions;
 using Bot.Money.Interfaces;
 using Google;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;
