@@ -8,7 +8,7 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 
-namespace Bot.Money.Implementation
+namespace Bot.Money.Impl
 {
     public class GoogleSpreadSheetsBudgetRepository : IBudgetRepository
     {

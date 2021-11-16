@@ -1,5 +1,4 @@
-﻿using Bot.Core.Extension;
-using Bot.Core.Abstractions;
+﻿using Bot.Core.Abstractions;
 using Bot.Money.Interfaces;
 using Google;
 using log4net;
@@ -10,16 +9,16 @@ using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Bot.Core.Exceptions;
 
-namespace Bot.Money.Implementation
+namespace Bot.Money.Impl
 {
     public class MoneyBot : IBot
     {
-        private readonly IEnumerable<IMoneyCommand> _commands;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["money_bot_token"]);
+        private Core.Commands _commands;
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
-            _commands = commands; 
+            _commands = new Core.Commands(commands); 
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -42,7 +41,7 @@ namespace Bot.Money.Implementation
         {
             try
             {
-                await _commands.GetCommandToExecute(e.Message).Execute(e.Message, _botClient);
+                await _commands.DetermineAndGetCommand(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

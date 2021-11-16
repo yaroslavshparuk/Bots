@@ -1,10 +1,7 @@
-﻿using Bot.Core.Extension;
-using Bot.Money.Repositories;
+﻿using Bot.Money.Repositories;
 using StackExchange.Redis;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Bot.Money.Implementation
+namespace Bot.Money.Impl
 {
     public class RedisUserDataRepository : IUserDataRepository
     {
@@ -20,7 +17,7 @@ namespace Bot.Money.Implementation
         {
             foreach (var k in _server.Keys(pattern: "*_sheet"))
             {
-                yield return long.Parse(k.ToString().GetUntilOrEmpty());
+                yield return long.Parse(_takeUserId(k.ToString()));
             }
         }
 
@@ -32,6 +29,13 @@ namespace Bot.Money.Implementation
         public string GetUserSheet(string id)
         {
             return _db.StringGet(new RedisKey(id));
+        }
+
+        private string _takeUserId(string text)
+        {
+            var charLocation = text.IndexOf('_', StringComparison.Ordinal);
+            if (charLocation > 0) return text.Substring(0, charLocation);
+            return string.Empty;
         }
     }
 }

@@ -1,32 +1,28 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
-using Bot.Core.Extension;
 using Bot.Youtube.Interfaces;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 
-namespace Bot.Youtube.Implementation
+namespace Bot.Youtube.Impl
 {
     public class YoutubeBot : IBot
     {
-        private readonly IEnumerable<IYoutubeCommand> _commands;
-        private ITelegramBotClient _botClient;
+        private readonly Core.Commands _commands;
+        private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["youtube_bot_token"]);
         public YoutubeBot(IEnumerable<IYoutubeCommand> commands)
         {
-            _commands = commands;
+            _commands = new Core.Commands(commands);
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public void Start()
         {
-            _botClient = new TelegramBotClient(ConfigurationManager.AppSettings["youtube_bot_token"]);
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
@@ -43,7 +39,7 @@ namespace Bot.Youtube.Implementation
         {
             try
             {
-                await _commands.GetCommandToExecute(e.Message).Execute(e.Message, _botClient);
+                await _commands.DetermineAndGetCommand(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)
