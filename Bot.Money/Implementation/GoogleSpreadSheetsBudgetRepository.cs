@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Net;
 using System.Text;
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
@@ -12,7 +12,7 @@ namespace Bot.Money.Implementation
 {
     public class GoogleSpreadSheetsBudgetRepository : IBudgetRepository
     {
-        private const string SHEET_NAME = "Transactions";
+        private const string TRANSACTIONS_SHEET = "Transactions";
         private readonly IUserDataRepository _userDataRepository;
 
         public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository)
@@ -25,7 +25,7 @@ namespace Bot.Money.Implementation
             FinanceOperation operation = null;
             IList<object> objectList = null;
             var result = string.Empty;
-            var range = new StringBuilder(SHEET_NAME);
+            var range = new StringBuilder(TRANSACTIONS_SHEET);
 
             if (message.IsExpense())
             {
@@ -60,6 +60,28 @@ namespace Bot.Money.Implementation
             }
 
             return result;
+        }
+
+        public async Task<Stream> DownloadArchive(long userId)
+        {
+            var userSheet = _userDataRepository.GetUserSheet($"{userId}_sheet");
+            var url = $"https://docs.google.com/spreadsheets/d/{userSheet}/export?format=pdf&id={userSheet}";
+            var handler = new HttpClientHandler { Credentials = new NetworkCredential(
+                "", "" // TODO provide credentials
+                ) };
+            var httpClient = new HttpClient(handler);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            {
+                request.Headers.Add("cookie", 
+                    "" // TODO attach cookie here
+                    );
+                using (var response = await httpClient.SendAsync(request))
+                {
+                    var stream = new MemoryStream();
+                    await response.Content.CopyToAsync(stream);
+                    return stream; ;
+                }
+            }
         }
     }
 }

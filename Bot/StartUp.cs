@@ -37,6 +37,7 @@ namespace Bot
                      services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
                      services.AddTransient<IMoneyCommand, HelpCommand>();
                      services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
+                     services.AddTransient<IMoneyCommand, ResetCommand>();
                      services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
 
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));

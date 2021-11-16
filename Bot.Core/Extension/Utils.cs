@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace Bot.Core.Extension
 {
-    public static class CommandsUtils
+    public static class Utils
     {
         public static ICommand GetCommandToExecute(this IEnumerable<ICommand> commands, Message message)
         {
