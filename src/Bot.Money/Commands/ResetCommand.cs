@@ -24,7 +24,6 @@ namespace Bot.Money.Commands
         {
             using (var stream = await _budgetRepository.DownloadArchive(message.Chat.Id))
             {
-                stream.Position = 0;
                 await botClient.SendDocumentAsync(message.Chat, new InputOnlineFile(stream, "test.pdf"));
             }
         }

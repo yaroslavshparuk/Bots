@@ -4,7 +4,6 @@ namespace Bot.Money.Models
 {
     public abstract class FinanceOperation
     {
-        protected long UserId;
         protected DateTime Date;
         protected double Amount;
         protected string Description;
@@ -17,14 +16,6 @@ namespace Bot.Money.Models
             Description = description;
         }
 
-        public string ClientSecretId
-        {
-            get { return UserId + "_secret"; }
-        }
-
-        public string UserSheetId
-        {
-            get { return UserId + "_sheet"; }
-        }
+        public long UserId { get; }
     }
 }

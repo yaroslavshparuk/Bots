@@ -1,5 +1,5 @@
 ﻿using Bot.Money.Models;
-using Telegram.Bot.Types.InputFiles;
+using System.IO.Compression;
 
 namespace Bot.Money.Repositories
 {

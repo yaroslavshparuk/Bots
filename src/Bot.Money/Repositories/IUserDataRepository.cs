@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Bot.Money.Repositories
+﻿namespace Bot.Money.Repositories
 {
     public interface IUserDataRepository
     {
-        string GetClientSecret(string id);
-        string GetUserSheet(string id);
+        string GetClientSecret(long id);
+        string GetUserSheet(long id);
         IEnumerable<long> GetAllUsers();
     }
 }

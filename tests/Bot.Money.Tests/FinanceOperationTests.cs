@@ -21,17 +21,10 @@ namespace Bot.Money.Tests
         }
 
         [Fact]
-        public void GetClientSecretIdTest()
+        public void GetUserIdTest()
         {
             var income = new Income(0, new DateTime(2021, 1, 1, 1, 1, 1, 1), 100, "Test ClientSecretId", IncomeCategory.Other);
-            Assert.Equal("0_secret", income.ClientSecretId);
-        }
-
-        [Fact]
-        public void GetUserSheetIdTest()
-        {
-            var income = new Income(0, new DateTime(2021, 1, 1, 1, 1, 1, 1), 100, "Test ClientSecretId", IncomeCategory.Other);
-            Assert.Equal("0_sheet", income.UserSheetId);
+            Assert.Equal(0, income.UserId);
         }
     }
 }

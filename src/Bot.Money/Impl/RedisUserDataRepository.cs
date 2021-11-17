@@ -21,14 +21,14 @@ namespace Bot.Money.Impl
             }
         }
 
-        public string GetClientSecret(string id)
+        public string GetClientSecret(long id)
         {
-            return _db.StringGet(new RedisKey(id));
+            return _db.StringGet(new RedisKey(id.ToString() + "_secret"));
         }
 
-        public string GetUserSheet(string id)
+        public string GetUserSheet(long id)
         {
-            return _db.StringGet(new RedisKey(id));
+            return _db.StringGet(new RedisKey(id.ToString() + "_sheet"));
         }
 
         private string _takeUserId(string text)

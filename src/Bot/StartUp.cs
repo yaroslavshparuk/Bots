@@ -43,7 +43,7 @@ namespace Bot
                      services.AddHostedService<ConsoleHostedService>();
 
                      services.AddScheduler();
-                     services.AddTransient<MoneyBot>();
+                     services.AddTransient<ReminderJob>();
                  }).Build();
 
             host.Services.UseScheduler(scheduler =>

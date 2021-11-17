@@ -1,6 +1,6 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using Bot.Core.Exceptions;
+using Bot.Money.Enums;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;
@@ -44,17 +44,16 @@ namespace Bot.Money.Impl
             }
 
             var valueRange = new ValueRange() { Values = new List<IList<object>> { objectList } };
-            var clientSecret = _userDataRepository.GetClientSecret(operation.ClientSecretId);
+            var clientSecret = _userDataRepository.GetClientSecret(operation.UserId);
 
             if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                ApplicationName = "Monthly Budget",
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var appendRequest = sheetsService.Spreadsheets.Values.Append(valueRange, _userDataRepository.GetUserSheet(operation.UserSheetId), range.ToString());
+                var appendRequest = sheetsService.Spreadsheets.Values.Append(valueRange, _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }
@@ -64,24 +63,37 @@ namespace Bot.Money.Impl
 
         public async Task<Stream> DownloadArchive(long userId)
         {
-            var userSheet = _userDataRepository.GetUserSheet($"{userId}_sheet");
-            var url = $"https://docs.google.com/spreadsheets/d/{userSheet}/export?format=pdf&id={userSheet}";
-            var handler = new HttpClientHandler { Credentials = new NetworkCredential(
-                "", "" // TODO provide credentials
-                ) };
-            var httpClient = new HttpClient(handler);
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            var clientSecret = _userDataRepository.GetClientSecret(userId);
+
+            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
+
+            var url = _buildUrl(_userDataRepository.GetUserSheet(userId), ExportFileType.PDF);
+            using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                request.Headers.Add("cookie", 
-                    "" // TODO attach cookie here
-                    );
-                using (var response = await httpClient.SendAsync(request))
-                {
-                    var stream = new MemoryStream();
-                    await response.Content.CopyToAsync(stream);
-                    return stream; ;
-                }
+                HttpClientInitializer = GoogleCredential.FromJson(clientSecret)
+                                                        .CreateScoped(SheetsService.Scope.Spreadsheets)
+            }))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+            using (var response = await sheetsService.HttpClient.SendAsync(request))
+            {
+                return new MemoryStream(await response.Content.ReadAsByteArrayAsync());
             }
+        }
+
+        private string _buildUrl(string userSheet, ExportFileType fileType)
+        {
+            var url = new StringBuilder($"https://docs.google.com/spreadsheets/d/{userSheet}/export?format=");
+            switch (fileType)
+            {
+                case ExportFileType.PDF:
+                    url.Append("pdf");
+                    break;
+                case ExportFileType.XLSX:
+                    url.Append("xlsx");
+                    break;
+            }
+            url.Append($"&id={userSheet}");
+            return url.ToString();
         }
     }
 }
