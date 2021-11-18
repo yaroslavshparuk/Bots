@@ -23,7 +23,7 @@ namespace Bot.Money.Commands
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
             using (var stream = await _budgetRepository.DownloadArchive(message.Chat.Id))
-                await botClient.SendDocumentAsync(message.Chat, new InputOnlineFile(stream, $"{DateTime.Now.AddMinutes(-1).ToString("MMM yyyy")}.zip"));
+                await botClient.SendDocumentAsync(message.Chat, new InputOnlineFile(stream, $"{DateTime.Now.AddMinutes(-1).ToString("MMMM yyyy")}.zip"));
         }
     }
 }

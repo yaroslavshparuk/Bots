@@ -23,11 +23,12 @@ namespace Bot.Money.Jobs
         {
             foreach (var id in _userDataRepository.GetAllUsers())
             {
-                await _botClient.SendTextMessageAsync(id, "Hi, I reset month at your Google sheet!\n Here is your budget from previous month",
+                await _botClient.SendTextMessageAsync(id, "Hi, I reset month at your Google sheet!\nHere is your budget from previous month",
                                                       ParseMode.Default, false, true);
 
                 using (var stream = await _budgetRepository.DownloadArchive(id))
-                    await _botClient.SendDocumentAsync(id, new InputOnlineFile(stream, $"{DateTime.Now.AddMinutes(-1).ToString("MMM yyyy")}.zip"));
+                    await _botClient.SendDocumentAsync(id, new InputOnlineFile(stream, $"{DateTime.Now.AddMinutes(-1).ToString("MMMM yyyy")}.zip"), null,
+                                                      ParseMode.Default, true);
 
                 await _budgetRepository.ResetMonth(id);
             }
