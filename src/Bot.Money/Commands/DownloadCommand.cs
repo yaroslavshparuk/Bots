@@ -6,12 +6,12 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace Bot.Money.Commands
 {
-    public class ResetCommand : IMoneyCommand
+    public class DownloadCommand : IMoneyCommand
     {
-        private const string NAME = "/reset";
+        private const string NAME = "/download";
         private readonly IBudgetRepository _budgetRepository;
 
-        public ResetCommand(IBudgetRepository budgetRepository)
+        public DownloadCommand(IBudgetRepository budgetRepository)
         {
             _budgetRepository = budgetRepository;
         }
@@ -22,11 +22,8 @@ namespace Bot.Money.Commands
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            using (var stream = await _budgetRepository.DownloadArchive(message))
-            {
-                await botClient.SendDocumentAsync(message.Chat, 
-                                                  new InputOnlineFile(stream, $"{DateTime.Now.ToString("MMM yyyy")}.zip"));
-            }
+            using (var stream = await _budgetRepository.DownloadArchive(message.Chat.Id))
+                await botClient.SendDocumentAsync(message.Chat, new InputOnlineFile(stream, $"{DateTime.Now.AddMinutes(-1).ToString("MMM yyyy")}.zip"));
         }
     }
 }

@@ -9,12 +9,13 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Telegram.Bot.Types;
+using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.UpdateRequest;
 
 namespace Bot.Money.Impl
 {
     public class GoogleSpreadSheetsBudgetRepository : IBudgetRepository
     {
+        private const string SUMMARY_SHEET = "Summary";
         private const string TRANSACTIONS_SHEET = "Transactions";
         private readonly IUserDataRepository _userDataRepository;
 
@@ -25,6 +26,9 @@ namespace Bot.Money.Impl
 
         public string CreateAndGetResult(FinanceOperationMessage message)
         {
+            var clientSecret = _userDataRepository.GetClientSecret(message.Chat.Id);
+            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
+
             FinanceOperation operation = null;
             IList<object> objectList = null;
             var result = string.Empty;
@@ -46,17 +50,12 @@ namespace Bot.Money.Impl
                 range.Append("!G:J");
             }
 
-            var valueRange = new ValueRange() { Values = new List<IList<object>> { objectList } };
-            var clientSecret = _userDataRepository.GetClientSecret(operation.UserId);
-
-            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
-
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var appendRequest = sheetsService.Spreadsheets.Values.Append(valueRange, _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
+                var appendRequest = sheetsService.Spreadsheets.Values.Append(_getValueRange(objectList), _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }
@@ -64,10 +63,10 @@ namespace Bot.Money.Impl
             return result;
         }
 
-        public async Task<Stream> DownloadArchive(Message message)
+        public async Task<Stream> DownloadArchive(long userId)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(message.Chat.Id);
-            var userSheet = _userDataRepository.GetUserSheet(message.Chat.Id);
+            var clientSecret = _userDataRepository.GetClientSecret(userId);
+            var userSheet = _userDataRepository.GetUserSheet(userId);
             if (string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(userSheet)) { throw new NotFoundUserException(); }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
@@ -90,13 +89,13 @@ namespace Bot.Money.Impl
 
                 using (var zipStream = new ZipOutputStream(outputStream))
                 {
-                    zipStream.PutNextEntry(new ZipEntry($"{message.Chat.Username}.pdf"));
+                    zipStream.PutNextEntry(new ZipEntry($"budget.pdf"));
 
                     using (var pdfStream = new MemoryStream(pdfBytes))
                         StreamUtils.Copy(pdfStream, zipStream, new byte[4096]);
                     zipStream.CloseEntry();
 
-                    zipStream.PutNextEntry(new ZipEntry($"{message.Chat.Username}.xlsx"));
+                    zipStream.PutNextEntry(new ZipEntry($"budget.xlsx"));
 
                     using (var xlsxStream = new MemoryStream(xlsxBytes))
                         StreamUtils.Copy(xlsxStream, zipStream, new byte[4096]);
@@ -107,6 +106,39 @@ namespace Bot.Money.Impl
 
                 outputStream.Position = 0;
                 return outputStream;
+            }
+        }
+
+        public async Task ResetMonth(long userId)
+        {
+            var clientSecret = _userDataRepository.GetClientSecret(userId);
+            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
+
+            using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+            }))
+            {
+                var resetMonthValueRange = _getValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });
+                var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
+                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!B2:E3");
+                resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
+                await resetMonthRequest.ExecuteAsync();
+
+                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get( _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!E11");
+                var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
+
+                var changeStartingBalanceValueRange = _getValueRange(new List<object>() { endBalance });
+                var changeStartingBalanceRequest = sheetsService.Spreadsheets.Values.Update(
+                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!L2");
+                changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
+                await changeStartingBalanceRequest.ExecuteAsync();
+
+                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!B:E");
+                await deleteExpensesRequest.ExecuteAsync();
+
+                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!G:J");
+                await deleteIncomesRequest.ExecuteAsync();
             }
         }
 
@@ -124,6 +156,11 @@ namespace Bot.Money.Impl
             }
             url.Append($"&id={userSheet}");
             return url.ToString();
+        }
+
+        private ValueRange _getValueRange(IList<object> objectList)
+        {
+            return new ValueRange() { Values = new List<IList<object>> { objectList } };
         }
     }
 }

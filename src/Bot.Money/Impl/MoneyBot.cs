@@ -6,7 +6,6 @@ using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using Telegram.Bot.Types.Enums;
 using Bot.Core.Exceptions;
 
 namespace Bot.Money.Impl
@@ -47,18 +46,17 @@ namespace Bot.Money.Impl
             catch (NotFoundCommandException ex)
             {
                 _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message, ParseMode.Default, false, false, 0);
+                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message);
             }
             catch (NotFoundUserException ex)
             {
                 _logger.Warn(ex.Message + $"\nMessage: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, "I don't know you, if you want to use me - contact to @shparuk please",
-                                                      ParseMode.Default, false, false, 0);
+                await _botClient.SendTextMessageAsync(e.Message.Chat, "I don't know you, if you want to use me - contact to @shparuk please");
             }
             catch (GoogleApiException ex)
             {
                 _logger.Error(ex.Message);
-                await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided wrong spread sheet URL", ParseMode.Default, false, false, 0);
+                await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided wrong spread sheet URL");
             }
             catch (Exception ex)
             {

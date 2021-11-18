@@ -35,7 +35,7 @@ namespace Bot
                      services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
                      services.AddTransient<IMoneyCommand, HelpCommand>();
                      services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
-                     services.AddTransient<IMoneyCommand, ResetCommand>();
+                     services.AddTransient<IMoneyCommand, DownloadCommand>();
                      services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
 
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
@@ -43,12 +43,12 @@ namespace Bot
                      services.AddHostedService<ConsoleHostedService>();
 
                      services.AddScheduler();
-                     services.AddTransient<ReminderJob>();
+                     services.AddTransient<ResetMonthAndSendArchiveJob>();
                  }).Build();
 
             host.Services.UseScheduler(scheduler =>
             {
-                scheduler.Schedule<ReminderJob>().Cron("0 13 1 * *"); // every month first day at 1:00pm
+                scheduler.Schedule<ResetMonthAndSendArchiveJob>().Cron("5 0 1 * *"); // At 00:05 on day-of-month 1
             });
             await host.RunAsync();
         }

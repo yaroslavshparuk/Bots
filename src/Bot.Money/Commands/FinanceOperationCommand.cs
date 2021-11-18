@@ -3,7 +3,6 @@ using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace Bot.Money.Commands
 {
@@ -19,13 +18,12 @@ namespace Bot.Money.Commands
         public bool CanExecute(Message message)
         {
             var financeOperationMessage = new FinanceOperationMessage(message);
-            return financeOperationMessage.IsExpense() || financeOperationMessage.IsIncome() ? true : false;
+            return financeOperationMessage.IsExpense() || financeOperationMessage.IsIncome();
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            var result = _budgetRepository.CreateAndGetResult(new FinanceOperationMessage(message));
-            await botClient.SendTextMessageAsync(message.Chat, result, ParseMode.Default, false, false, 0);
+            await botClient.SendTextMessageAsync(message.Chat, _budgetRepository.CreateAndGetResult(new FinanceOperationMessage(message)));
         }
     }
 }
