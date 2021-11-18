@@ -17,14 +17,15 @@ namespace Bot.Money.Commands
         }
         public bool CanExecute(Message message)
         {
-            return message.Text == NAME ? true : false;
+            return message.Text == NAME;
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            using (var stream = await _budgetRepository.DownloadArchive(message.Chat.Id))
+            using (var stream = await _budgetRepository.DownloadArchive(message))
             {
-                await botClient.SendDocumentAsync(message.Chat, new InputOnlineFile(stream, "test.pdf"));
+                await botClient.SendDocumentAsync(message.Chat, 
+                                                  new InputOnlineFile(stream, $"{DateTime.Now.ToString("MMM yyyy")}.zip"));
             }
         }
     }

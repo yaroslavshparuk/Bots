@@ -7,6 +7,9 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using Telegram.Bot.Types;
 
 namespace Bot.Money.Impl
 {
@@ -61,22 +64,49 @@ namespace Bot.Money.Impl
             return result;
         }
 
-        public async Task<Stream> DownloadArchive(long userId)
+        public async Task<Stream> DownloadArchive(Message message)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(userId);
+            var clientSecret = _userDataRepository.GetClientSecret(message.Chat.Id);
+            var userSheet = _userDataRepository.GetUserSheet(message.Chat.Id);
+            if (string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(userSheet)) { throw new NotFoundUserException(); }
 
-            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
-
-            var url = _buildUrl(_userDataRepository.GetUserSheet(userId), ExportFileType.PDF);
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret)
-                                                        .CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
-            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-            using (var response = await sheetsService.HttpClient.SendAsync(request))
             {
-                return new MemoryStream(await response.Content.ReadAsByteArrayAsync());
+                byte[] pdfBytes = null;
+                byte[] xlsxBytes = null;
+
+                using (var requestPdf = new HttpRequestMessage(HttpMethod.Get, _buildUrl(userSheet, ExportFileType.PDF)))
+                using (var responsePdf = await sheetsService.HttpClient.SendAsync(requestPdf))
+                    pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
+
+                using (var requestXlsx = new HttpRequestMessage(HttpMethod.Get, _buildUrl(userSheet, ExportFileType.XLSX)))
+                using (var responseXlsx = await sheetsService.HttpClient.SendAsync(requestXlsx))
+                    xlsxBytes = await responseXlsx.Content.ReadAsByteArrayAsync();
+
+                var outputStream = new MemoryStream();
+
+                using (var zipStream = new ZipOutputStream(outputStream))
+                {
+                    zipStream.PutNextEntry(new ZipEntry($"{message.Chat.Username}.pdf"));
+
+                    using (var pdfStream = new MemoryStream(pdfBytes))
+                        StreamUtils.Copy(pdfStream, zipStream, new byte[4096]);
+                    zipStream.CloseEntry();
+
+                    zipStream.PutNextEntry(new ZipEntry($"{message.Chat.Username}.xlsx"));
+
+                    using (var xlsxStream = new MemoryStream(xlsxBytes))
+                        StreamUtils.Copy(xlsxStream, zipStream, new byte[4096]);
+                    zipStream.CloseEntry();
+
+                    zipStream.IsStreamOwner = false;
+                }
+
+                outputStream.Position = 0;
+                return outputStream;
             }
         }
 

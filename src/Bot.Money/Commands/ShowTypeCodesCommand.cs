@@ -15,7 +15,7 @@ namespace Bot.Money.Commands
         private const string INCOME = "/inc";
         public bool CanExecute(Message message)
         {
-            return message.Text == EXPENSE || message.Text == INCOME ? true : false;
+            return message.Text == EXPENSE || message.Text == INCOME;
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
