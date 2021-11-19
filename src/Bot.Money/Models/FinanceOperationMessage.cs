@@ -17,6 +17,8 @@ namespace Bot.Money.Models
             _message = message;
         }
 
+        public long UserId { get { return _message.Chat.Id; } }
+
         public Expense ToExpense()
         {
             var match = Regex.Match(_message.Text, EXPENSE_PATTERN);
