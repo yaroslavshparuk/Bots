@@ -1,4 +1,4 @@
-﻿namespace Bot.Money.Enums
+﻿namespace Bot.Core.Enums
 {
     public enum ExportFileType
     {

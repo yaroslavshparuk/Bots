@@ -20,7 +20,7 @@ namespace Bot
 {
     class StartUp
     {
-        private static ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(
+        private readonly static ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(
                                               ConfigurationManager.ConnectionStrings["redis"].ConnectionString);
 
         private static async Task Main(string[] args)
@@ -43,7 +43,7 @@ namespace Bot
                      services.AddHostedService<ConsoleHostedService>();
 
                      services.AddScheduler();
-                     services.AddTransient<ResetMonthAndSendArchiveJob>();
+                     services.AddScoped<ResetMonthAndSendArchiveJob>();
                  }).Build();
 
             host.Services.UseScheduler(scheduler =>

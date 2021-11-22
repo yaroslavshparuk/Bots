@@ -12,12 +12,13 @@ namespace Bot.Money.Impl
 {
     public class MoneyBot : IBot
     {
+        private readonly IEnumerable<IMoneyCommand> _commands;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["money_bot_token"]);
-        private Core.Commands _commands;
+        private Core.CommandDeterminator _commandDeterminator;
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
-            _commands = new Core.Commands(commands); 
+            _commands = commands; 
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -27,6 +28,7 @@ namespace Bot.Money.Impl
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
+            _commandDeterminator = new(_commands);
             _logger.Info("Money bot was started");
         }
 
@@ -40,7 +42,7 @@ namespace Bot.Money.Impl
         {
             try
             {
-                await _commands.DetermineAndGetCommand(e.Message).Execute(e.Message, _botClient);
+                await _commandDeterminator.GetAppropriateCommand(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

@@ -12,11 +12,12 @@ namespace Bot.Youtube.Impl
 {
     public class YoutubeBot : IBot
     {
-        private readonly Core.Commands _commands;
+        private readonly IEnumerable<IYoutubeCommand> _commands;
+        private Core.CommandDeterminator _commandDeterminator;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["youtube_bot_token"]);
         public YoutubeBot(IEnumerable<IYoutubeCommand> commands)
         {
-            _commands = new Core.Commands(commands);
+            _commands = commands;
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -26,6 +27,7 @@ namespace Bot.Youtube.Impl
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
+            _commandDeterminator = new(_commands);
             _logger.Info("Youtube bot was started");
         }
 
@@ -39,7 +41,7 @@ namespace Bot.Youtube.Impl
         {
             try
             {
-                await _commands.DetermineAndGetCommand(e.Message).Execute(e.Message, _botClient);
+                await _commandDeterminator.GetAppropriateCommand(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)

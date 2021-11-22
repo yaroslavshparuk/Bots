@@ -25,7 +25,7 @@ namespace Bot.Money.Commands
 
         public bool CanExecute(Message message)
         {
-            return message.Text == NAME ? true : false;
+            return message.Text == NAME;
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)

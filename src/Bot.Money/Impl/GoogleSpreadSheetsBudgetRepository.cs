@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Configuration;
+using System.Text;
+using Bot.Core;
+using Bot.Core.Enums;
 using Bot.Core.Exceptions;
 using Bot.Money.Enums;
 using Bot.Money.Models;
@@ -55,7 +58,7 @@ namespace Bot.Money.Impl
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var appendRequest = sheetsService.Spreadsheets.Values.Append(_getValueRange(objectList), _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
+                var appendRequest = sheetsService.Spreadsheets.Values.Append(GetValueRange(objectList), _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }
@@ -76,12 +79,12 @@ namespace Bot.Money.Impl
             {
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
-
-                using (var requestPdf = new HttpRequestMessage(HttpMethod.Get, _buildUrl(userSheet, ExportFileType.PDF)))
+                var urlBuiler = new ExportUrlBuilder(ConfigurationManager.AppSettings["export_url"]);
+                using (var requestPdf = new HttpRequestMessage(HttpMethod.Get, urlBuiler.Build(userSheet, ExportFileType.PDF)))
                 using (var responsePdf = await sheetsService.HttpClient.SendAsync(requestPdf))
                     pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
 
-                using (var requestXlsx = new HttpRequestMessage(HttpMethod.Get, _buildUrl(userSheet, ExportFileType.XLSX)))
+                using (var requestXlsx = new HttpRequestMessage(HttpMethod.Get, urlBuiler.Build(userSheet, ExportFileType.XLSX)))
                 using (var responseXlsx = await sheetsService.HttpClient.SendAsync(requestXlsx))
                     xlsxBytes = await responseXlsx.Content.ReadAsByteArrayAsync();
 
@@ -119,7 +122,7 @@ namespace Bot.Money.Impl
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var resetMonthValueRange = _getValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });
+                var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });
                 var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
                                         resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!B2:E3");
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
@@ -128,7 +131,7 @@ namespace Bot.Money.Impl
                 var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get( _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!E11");
                 var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
 
-                var changeStartingBalanceValueRange = _getValueRange(new List<object>() { endBalance });
+                var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });
                 var changeStartingBalanceRequest = sheetsService.Spreadsheets.Values.Update(
                                                    changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!L2");
                 changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
@@ -142,23 +145,7 @@ namespace Bot.Money.Impl
             }
         }
 
-        private string _buildUrl(string userSheet, ExportFileType fileType)
-        {
-            var url = new StringBuilder($"https://docs.google.com/spreadsheets/d/{userSheet}/export?format=");
-            switch (fileType)
-            {
-                case ExportFileType.PDF:
-                    url.Append("pdf");
-                    break;
-                case ExportFileType.XLSX:
-                    url.Append("xlsx");
-                    break;
-            }
-            url.Append($"&id={userSheet}");
-            return url.ToString();
-        }
-
-        private ValueRange _getValueRange(IList<object> objectList)
+        private ValueRange GetValueRange(IList<object> objectList)
         {
             return new ValueRange() { Values = new List<IList<object>> { objectList } };
         }

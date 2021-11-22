@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Bot.Money.Enums;
+﻿using Bot.Money.Enums;
 
 namespace Bot.Money.Models
 {

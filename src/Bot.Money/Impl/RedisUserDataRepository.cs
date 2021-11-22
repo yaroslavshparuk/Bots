@@ -17,7 +17,7 @@ namespace Bot.Money.Impl
         {
             foreach (var k in _server.Keys(pattern: "*_sheet"))
             {
-                yield return long.Parse(_takeUserId(k.ToString()));
+                yield return long.Parse(TakeUserId(k.ToString()));
             }
         }
 
@@ -31,7 +31,7 @@ namespace Bot.Money.Impl
             return _db.StringGet(new RedisKey(id.ToString() + "_sheet"));
         }
 
-        private string _takeUserId(string text)
+        private string TakeUserId(string text)
         {
             var charLocation = text.IndexOf('_', StringComparison.Ordinal);
             if (charLocation > 0) return text.Substring(0, charLocation);
