@@ -137,10 +137,10 @@ namespace Bot.Money.Impl
                 changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await changeStartingBalanceRequest.ExecuteAsync();
 
-                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!B:E");
+                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!B5:E");
                 await deleteExpensesRequest.ExecuteAsync();
 
-                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!G:J");
+                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!G5:J");
                 await deleteIncomesRequest.ExecuteAsync();
             }
         }

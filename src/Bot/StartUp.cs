@@ -48,7 +48,7 @@ namespace Bot
 
             host.Services.UseScheduler(scheduler =>
             {
-                scheduler.Schedule<ResetMonthAndSendArchiveJob>().Cron("5 0 1 * *"); // At 00:05 on day-of-month 1
+                scheduler.Schedule<ResetMonthAndSendArchiveJob>().Cron("0 0 1 * *"); // At 00:00 on day-of-month 1
             });
             await host.RunAsync();
         }
