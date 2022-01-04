@@ -3,7 +3,6 @@ using System.Text;
 using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
-using Bot.Money.Enums;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;
@@ -30,7 +29,10 @@ namespace Bot.Money.Impl
         public string CreateAndGetResult(FinanceOperationMessage message)
         {
             var clientSecret = _userDataRepository.GetClientSecret(message.UserId);
-            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new NotFoundUserException();
+            }
 
             FinanceOperation operation = null;
             IList<object> objectList = null;
@@ -70,23 +72,41 @@ namespace Bot.Money.Impl
         {
             var clientSecret = _userDataRepository.GetClientSecret(userId);
             var userSheet = _userDataRepository.GetUserSheet(userId);
-            if (string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(userSheet)) { throw new NotFoundUserException(); }
+
+            if (string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(userSheet))
+            {
+                throw new NotFoundUserException();
+            }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets),
             }))
             {
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
-                var urlBuiler = new ExportUrlBuilder(ConfigurationManager.AppSettings["export_url"]);
-                using (var requestPdf = new HttpRequestMessage(HttpMethod.Get, urlBuiler.Build(userSheet, ExportFileType.PDF)))
-                using (var responsePdf = await sheetsService.HttpClient.SendAsync(requestPdf))
-                    pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
 
-                using (var requestXlsx = new HttpRequestMessage(HttpMethod.Get, urlBuiler.Build(userSheet, ExportFileType.XLSX)))
-                using (var responseXlsx = await sheetsService.HttpClient.SendAsync(requestXlsx))
+                var urlBuiler = new ExportUrlBuilder(ConfigurationManager.AppSettings["export_url"]);
+
+                using (var responsePdf = await sheetsService.HttpClient.GetAsync(urlBuiler.Build(userSheet, ExportFileType.PDF)))
+                {
+                    if (!responsePdf.IsSuccessStatusCode)
+                    {
+                        throw new DownloadException();
+                    }
+
+                    pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
+                }
+
+                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(urlBuiler.Build(userSheet, ExportFileType.XLSX)))
+                {
+                    if(!responseXlsx.IsSuccessStatusCode)
+                    {
+                        throw new DownloadException();
+                    }
+
                     xlsxBytes = await responseXlsx.Content.ReadAsByteArrayAsync();
+                }
 
                 var outputStream = new MemoryStream();
 
@@ -94,14 +114,16 @@ namespace Bot.Money.Impl
                 {
                     zipStream.PutNextEntry(new ZipEntry($"budget.pdf"));
 
+                    var buffer = new byte[4096];
+
                     using (var pdfStream = new MemoryStream(pdfBytes))
-                        StreamUtils.Copy(pdfStream, zipStream, new byte[4096]);
+                        StreamUtils.Copy(pdfStream, zipStream, buffer);
                     zipStream.CloseEntry();
 
                     zipStream.PutNextEntry(new ZipEntry($"budget.xlsx"));
 
                     using (var xlsxStream = new MemoryStream(xlsxBytes))
-                        StreamUtils.Copy(xlsxStream, zipStream, new byte[4096]);
+                        StreamUtils.Copy(xlsxStream, zipStream, buffer);
                     zipStream.CloseEntry();
 
                     zipStream.IsStreamOwner = false;
@@ -115,7 +137,10 @@ namespace Bot.Money.Impl
         public async Task ResetMonth(long userId)
         {
             var clientSecret = _userDataRepository.GetClientSecret(userId);
-            if (string.IsNullOrEmpty(clientSecret)) { throw new NotFoundUserException(); }
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new NotFoundUserException();
+            }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
@@ -128,7 +153,7 @@ namespace Bot.Money.Impl
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await resetMonthRequest.ExecuteAsync();
 
-                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get( _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!E11");
+                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!E11");
                 var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
 
                 var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });

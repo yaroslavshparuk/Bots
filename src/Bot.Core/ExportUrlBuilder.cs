@@ -15,6 +15,7 @@ namespace Bot.Core
         public string Build(string userSheet, ExportFileType fileType)
         {
             var urlBuilder = new StringBuilder(_url);
+            urlBuilder.Append($"{userSheet}/export?format=");
             switch (fileType)
             {
                 case ExportFileType.PDF:

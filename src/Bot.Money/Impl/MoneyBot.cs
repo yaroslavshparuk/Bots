@@ -53,12 +53,17 @@ namespace Bot.Money.Impl
             catch (NotFoundUserException ex)
             {
                 _logger.Warn(ex.Message + $"\nMessage: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, "I don't know you, if you want to use me - contact to @shparuk please");
+                await _botClient.SendTextMessageAsync(e.Message.Chat, "I don't know you, if you want to use me - contact @shparuk please");
             }
             catch (GoogleApiException ex)
             {
                 _logger.Error(ex.Message);
                 await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided wrong spread sheet URL");
+            }
+            catch (DownloadException ex)
+            {
+                _logger.Error(ex.Message);
+                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message);
             }
             catch (Exception ex)
             {
