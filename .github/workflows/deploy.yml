@@ -40,5 +40,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd ${{ env.source-code-path }}
+            cd ~/deploy/code
             ls -l
