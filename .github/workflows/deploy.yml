@@ -6,15 +6,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-    - name: start deploy
-      uses: appleboy/ssh-action@master
+    steps:      
+    - uses: actions/checkout@v2
+    - name: Deploy source-code
+      uses: appleboy/scp-action@master
+      env:
+          HOST: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USERNAME }}
+          PORT: 22
+          KEY: ${{ secrets.SSH_KEY }}
       with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: |
-            cd home/username
-            touch test.txt
-            ls -la
+          source: "*"
+          target: "/home/username/deploy/code"
