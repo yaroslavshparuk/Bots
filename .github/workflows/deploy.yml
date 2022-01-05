@@ -15,4 +15,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            cd home/username
+            touch test.txt
             ls -la
