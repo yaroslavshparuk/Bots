@@ -1,5 +1,10 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;

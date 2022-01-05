@@ -1,5 +1,7 @@
 ﻿using Bot.Money.Enums;
 using Bot.Money.Models;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Bot.Money.Tests

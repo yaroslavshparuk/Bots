@@ -1,7 +1,9 @@
 ﻿using Bot.Core.Exceptions;
 using Bot.Money.Enums;
 using Bot.Money.Interfaces;
+using System;
 using System.Text;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

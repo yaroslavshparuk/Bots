@@ -1,4 +1,6 @@
 ﻿using Bot.Money.Models;
+using System;
+using System.Linq;
 using Telegram.Bot.Types;
 using Xunit;
 

@@ -1,4 +1,7 @@
 ﻿using Bot.Money.Enums;
+using System;
+using System.Collections.Generic;
+
 namespace Bot.Money.Models
 {
     public class Expense : FinanceOperation
