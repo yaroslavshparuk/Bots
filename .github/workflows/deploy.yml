@@ -17,4 +17,4 @@ jobs:
           KEY: ${{ secrets.SSH_KEY }}
       with:
           source: "*"
-          target: "/home/username/deploy/code"
+          target: "/home/USERNAME/deploy/code"
