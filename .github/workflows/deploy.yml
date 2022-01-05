@@ -1,4 +1,4 @@
-name: Bots CI
+name: Bots-CI
 on:
   push:
     branches: [ master ]
