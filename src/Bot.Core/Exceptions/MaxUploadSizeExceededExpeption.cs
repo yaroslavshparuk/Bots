@@ -1,4 +1,6 @@
-﻿namespace Bot.Core.Exceptions
+﻿using System;
+
+namespace Bot.Core.Exceptions
 {
     public class MaxUploadSizeExceededException : Exception
     {
