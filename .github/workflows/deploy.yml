@@ -41,3 +41,4 @@ jobs:
           port: 22
           script: |
             cd ${{ env.source-code-path }}
+            ls -l
