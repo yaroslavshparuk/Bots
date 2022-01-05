@@ -32,5 +32,12 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Tests
       run: dotnet test --no-restore --verbosity normal
-    - name: Publish
-      run: dotnet publish -c Release -o '${{ env.source-code-path }}/src/Bot' 
+    - name: Publish and Run
+      uses: appleboy/ssh-action@master
+      with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd ${{ env.source-code-path }}
