@@ -18,6 +18,7 @@ jobs:
           USERNAME: ${{ secrets.SSH_USERNAME }}
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
+          source-code-path: "~/deploy/code"
       with:
           source: "*"
           target: "~/deploy/code"
@@ -29,5 +30,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Test
+    - name: Tests
       run: dotnet test --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish -c Release -o '${{ env.source-code-path }}/src/Bot' 
