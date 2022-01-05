@@ -15,6 +15,8 @@ using Bot.Youtube.Interfaces;
 using Bot.Youtube.Commands;
 using Coravel;
 using Bot.Money.Jobs;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace Bot
 {
