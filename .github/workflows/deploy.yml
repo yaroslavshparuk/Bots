@@ -36,6 +36,6 @@ jobs:
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
       with:
-          source: "./publish.gz"
+          source: "*"
           target: "~/deploy"
     
