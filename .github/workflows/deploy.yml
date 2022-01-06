@@ -32,7 +32,9 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Tests
       run: dotnet test --no-restore --verbosity normal
-    - name: Publish and Run
+    - name: Publish
+      run: dotnet publish -c release -o ../publish Bot.sln
+    - name: Run
       uses: appleboy/ssh-action@master
       with:
           host: ${{ secrets.SSH_HOST }}
@@ -41,4 +43,4 @@ jobs:
           port: 22
           script: |
             cd ~/deploy/code
-            touch test.txt
+            rm test.txt
