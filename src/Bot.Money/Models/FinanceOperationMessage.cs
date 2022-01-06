@@ -1,5 +1,4 @@
 ﻿using Bot.Money.Enums;
-using System;
 using System.Text.RegularExpressions;
 using Telegram.Bot.Types;
 

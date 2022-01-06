@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Bot.Money.Repositories
+﻿namespace Bot.Money.Repositories
 {
     public interface IUserDataRepository
     {

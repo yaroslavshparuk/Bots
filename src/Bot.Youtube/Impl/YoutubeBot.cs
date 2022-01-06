@@ -2,8 +2,6 @@
 using Bot.Core.Exceptions;
 using Bot.Youtube.Interfaces;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;

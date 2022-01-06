@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Bot.Money.Models
+﻿namespace Bot.Money.Models
 {
     public abstract class FinanceOperation
     {

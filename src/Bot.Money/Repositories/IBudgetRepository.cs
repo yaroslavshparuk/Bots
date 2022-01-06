@@ -1,6 +1,4 @@
 ﻿using Bot.Money.Models;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Bot.Money.Repositories
 {

@@ -1,7 +1,5 @@
 ﻿using Bot.Money.Interfaces;
 using Bot.Money.Repositories;
-using System;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;

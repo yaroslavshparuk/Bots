@@ -1,8 +1,5 @@
 ﻿using Bot.Core.Exceptions;
 using Bot.Youtube.Interfaces;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;

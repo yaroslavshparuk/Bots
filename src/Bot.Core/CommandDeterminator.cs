@@ -1,7 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
 using Telegram.Bot.Types;
-using System.Collections.Generic;
 
 namespace Bot.Core
 {
