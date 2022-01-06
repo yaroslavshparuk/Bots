@@ -25,9 +25,7 @@ jobs:
       run: |
         cd src/Bot
         dotnet publish --no-restore -c release -o ./publish
-        ls -l
         tar czf publish.gz publish
-        ls -l
     - name: Deliver
       uses: appleboy/scp-action@master
       env:
@@ -36,6 +34,6 @@ jobs:
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
       with:
-          source: "*"
+          source: "src/Bot/publish.gz"
           target: "~/deploy"
     
