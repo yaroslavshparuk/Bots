@@ -16,8 +16,8 @@ jobs:
       with:
        files: 'src/Bot/App.config'
       env:
-       appSettings.money_bot_token: ${{ secrets.TELEGRAM_MONEY_BOT_TOKEN }}
-       appSettings.youtube_bot_token: ${{ secrets.TELEGRAM_YOUTUBE_BOT_TOKEN }}
+       money_bot_token: ${{ secrets.TELEGRAM_MONEY_BOT_TOKEN }}
+       youtube_bot_token: ${{ secrets.TELEGRAM_YOUTUBE_BOT_TOKEN }}
     - name: Setup .NET SDK ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v1.7.2
       with:
