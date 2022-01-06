@@ -54,4 +54,5 @@ jobs:
             cd ~/src/Bot
             tar xf publish.gz
             cd publish
-            tmux a -t Bot | tmux new -d -s 'Bot' 'chmod 777 ./Bot; ./Bot'
+            tmux kill-ses -t Bot 2>/dev/null
+            tmux new -d -s 'Bot' './Bot'
