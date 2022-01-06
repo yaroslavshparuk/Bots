@@ -41,5 +41,5 @@ jobs:
           port: 22
           script: |
             cd ~/deploy/code
-            dotnet publish -c release -o ../publish Bot.sln
+            dotnet publish --no-restore -c release -o ../publish Bot.sln
             
