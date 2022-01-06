@@ -4,7 +4,7 @@ on:
     branches: [ master ]
     
 jobs:
-  build_and_test:
+  deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -36,6 +36,6 @@ jobs:
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
       with:
-          source: "publish.bz2"
+          source: "./publish.bz2"
           target: "~/deploy"
     
