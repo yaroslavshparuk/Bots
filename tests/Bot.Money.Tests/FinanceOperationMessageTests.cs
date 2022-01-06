@@ -94,7 +94,7 @@ namespace Bot.Money.Tests
             {
                 if (new FinanceOperationMessage(m).IsIncome())
                 {
-                    Assert.True(actual.Any(x => x == m.Text));
+                    Assert.Contains(actual, x => x == m.Text);
                     correctMeesagesCounter++;
                 }
             }
