@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Bot.Core.Exceptions
 {
     public class DownloadException : Exception
