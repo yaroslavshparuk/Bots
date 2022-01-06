@@ -35,5 +35,5 @@ jobs:
           KEY: ${{ secrets.SSH_KEY }}
       with:
           source: "src/Bot/publish.gz"
-          target: "../../"
+          target: "~/"
     
