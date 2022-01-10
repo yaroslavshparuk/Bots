@@ -1,0 +1,1 @@
+find . -iname "bin" -o -iname "obj" | sudo xargs rm -rvf
