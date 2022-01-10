@@ -27,9 +27,9 @@ namespace Bot.Money.Commands
             {
                 var response = string.Empty;
 
-                if (botClient.IsReceiving)
+                if (!botClient.IsReceiving)
                 {
-                    botClient.StopReceiving();
+                    botClient.StartReceiving();
                     response = "Bot was started";
                 }
                 else
