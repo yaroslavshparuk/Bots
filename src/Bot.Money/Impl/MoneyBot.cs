@@ -7,6 +7,7 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Bot.Core.Exceptions;
+using Bot.Core;
 
 namespace Bot.Money.Impl
 {
@@ -14,7 +15,7 @@ namespace Bot.Money.Impl
     {
         private readonly IEnumerable<IMoneyCommand> _commands;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["money_bot_token"]);
-        private Core.CommandDeterminator _commandDeterminator;
+        private CommandsCollection _commandsCollection;
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
@@ -25,10 +26,11 @@ namespace Bot.Money.Impl
 
         public void Start()
         {
+            _commandsCollection = new(_commands);
+
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
-            _commandDeterminator = new(_commands);
             _logger.Info("Money bot was started");
         }
 
@@ -42,7 +44,7 @@ namespace Bot.Money.Impl
         {
             try
             {
-                await _commandDeterminator.GetAppropriateCommand(e.Message).Execute(e.Message, _botClient);
+                await _commandsCollection.GetAppropriateCommandOnMessage(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

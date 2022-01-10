@@ -26,6 +26,11 @@ namespace Bot.Money.Impl
             return _db.StringGet(new RedisKey(id.ToString() + "_secret"));
         }
 
+        public bool IsOwner(long id)
+        {
+            return long.Parse(_db.StringGet(new RedisKey("owner_id"))) == id;
+        }
+
         public string GetUserSheet(long id)
         {
             return _db.StringGet(new RedisKey(id.ToString() + "_sheet"));

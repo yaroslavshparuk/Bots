@@ -5,5 +5,6 @@
         string GetClientSecret(long id);
         string GetUserSheet(long id);
         IEnumerable<long> GetAllUsers();
+        bool IsOwner(long id);
     }
 }

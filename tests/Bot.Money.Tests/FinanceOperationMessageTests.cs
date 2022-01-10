@@ -37,8 +37,6 @@ namespace Bot.Money.Tests
                 new Message { Text = "1.123 exp 14" },
                 new Message { Text = "1 exp 14" },
                 new Message { Text = "1. exp 1" },
-                new Message { Text = "+34054,91 zp 2" },
-                new Message { Text = "+34054.91 zp 2" }
              };
 
 
@@ -85,8 +83,6 @@ namespace Bot.Money.Tests
                 "+1.123 some inc 2",
                 "+1 720 1",
                 "+1. inc 1",
-                "+34054,91 zp 2",
-                "+34054.91 zp 2"
             };
 
             var correctMeesagesCounter = 0;

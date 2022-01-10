@@ -4,16 +4,16 @@ using Telegram.Bot.Types;
 
 namespace Bot.Core
 {
-    public class CommandDeterminator
+    public class CommandsCollection
     {
         private readonly IEnumerable<ICommand> _commands;
 
-        public CommandDeterminator(IEnumerable<ICommand> commands)
+        public CommandsCollection(IEnumerable<ICommand> commands)
         {
             _commands = commands;
         }
 
-        public ICommand GetAppropriateCommand(Message message)
+        public ICommand GetAppropriateCommandOnMessage(Message message)
         {
             foreach (var command in _commands)
             {
