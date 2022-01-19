@@ -1,4 +1,5 @@
-﻿using Bot.Money.Repositories;
+﻿using Bot.Core.Exceptions;
+using Bot.Money.Repositories;
 using StackExchange.Redis;
 
 namespace Bot.Money.Impl
@@ -23,7 +24,12 @@ namespace Bot.Money.Impl
 
         public string GetClientSecret(long id)
         {
-            return _db.StringGet(new RedisKey(id.ToString() + "_secret"));
+            var clientSecret = _db.StringGet(new RedisKey(id.ToString() + "_secret"));
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new NotFoundUserException();
+            }
+            return clientSecret;
         }
 
         public bool IsOwner(long id)

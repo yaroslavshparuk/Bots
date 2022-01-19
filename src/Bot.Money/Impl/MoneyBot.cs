@@ -8,18 +8,20 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Bot.Core.Exceptions;
 using Bot.Core;
+using System.Collections.Concurrent;
+using Bot.Money.Commands;
 
 namespace Bot.Money.Impl
 {
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyCommand> _commands;
-        private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["money_bot_token"]);
+        private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
         private CommandsCollection _commandsCollection;
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
-            _commands = commands; 
+            _commands = commands;
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -60,7 +62,7 @@ namespace Bot.Money.Impl
             catch (GoogleApiException ex)
             {
                 _logger.Error(ex.Message);
-                await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided wrong spread sheet URL");
+                await _botClient.SendTextMessageAsync(e.Message.Chat, "Seems you provided a wrong spread sheet");
             }
             catch (DownloadException ex)
             {

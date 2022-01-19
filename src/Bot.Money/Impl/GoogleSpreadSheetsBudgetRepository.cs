@@ -29,10 +29,6 @@ namespace Bot.Money.Impl
         public string CreateAndGetResult(FinanceOperationMessage message)
         {
             var clientSecret = _userDataRepository.GetClientSecret(message.UserId);
-            if (string.IsNullOrEmpty(clientSecret))
-            {
-                throw new NotFoundUserException();
-            }
 
             FinanceOperation operation = null;
             IList<object> objectList = null;

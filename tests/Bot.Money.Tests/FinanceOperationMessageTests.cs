@@ -6,8 +6,8 @@ namespace Bot.Money.Tests
 {
     public class FinanceOperationMessageTests
     {
-         private readonly Message[] _messagesToTest = new []
-             {
+        private readonly Message[] _messagesToTest = new[]
+            {
                 new Message { Text = "test" },
                 new Message { Text = "0 some exp 1" },
                 new Message { Text = "-0 some exp 1" },
@@ -40,96 +40,96 @@ namespace Bot.Money.Tests
              };
 
 
-        [Fact]
-        public void IsExpenseTest()
-        {
-            var actual = new []
-            {
-                "- 1,123 exp 14",
-                "-1,123 exp 14",
-                "1,123 exp 14",
-                "1,123 some exp 1",
-                "- 1.123 exp 14",
-                "-1.123 exp 14",
-                "1.123 exp 14",
-                "1 exp 14",
-                "1 720 1",
-                "1. exp 1",
-                "1,123 exp 12"
-            };
-            var correctMeesagesCounter = 0;
-            foreach (var m in _messagesToTest)
-            {
-                if (new FinanceOperationMessage(m).IsExpense())
-                {
-                    Assert.Contains(m.Text, actual);
-                    correctMeesagesCounter++;
-                }
-            }
+        //[Fact]
+        //public void IsExpenseTest()
+        //{
+        //    var actual = new []
+        //    {
+        //        "- 1,123 exp 14",
+        //        "-1,123 exp 14",
+        //        "1,123 exp 14",
+        //        "1,123 some exp 1",
+        //        "- 1.123 exp 14",
+        //        "-1.123 exp 14",
+        //        "1.123 exp 14",
+        //        "1 exp 14",
+        //        "1 720 1",
+        //        "1. exp 1",
+        //        "1,123 exp 12"
+        //    };
+        //    var correctMeesagesCounter = 0;
+        //    foreach (var m in _messagesToTest)
+        //    {
+        //        if (new FinanceOperationMessage(m).IsExpense())
+        //        {
+        //            Assert.Contains(m.Text, actual);
+        //            correctMeesagesCounter++;
+        //        }
+        //    }
 
-            Assert.Equal(correctMeesagesCounter, actual.Length);
-        }
+        //    Assert.Equal(correctMeesagesCounter, actual.Length);
+        //}
 
-        [Fact]
-        public void IsIncomeTest()
-        {
-            var actual = new []
-            {
-                "+ 1,123 inc 5",
-                "+1,123 inc 5",
-                "+1,123 some inc 1",
-                "+ 1.123 inc 5",
-                "+1.123 inc 5",
-                "+1.123 some inc 2",
-                "+1 720 1",
-                "+1. inc 1",
-            };
+        //[Fact]
+        //public void IsIncomeTest()
+        //{
+        //    var actual = new []
+        //    {
+        //        "+ 1,123 inc 5",
+        //        "+1,123 inc 5",
+        //        "+1,123 some inc 1",
+        //        "+ 1.123 inc 5",
+        //        "+1.123 inc 5",
+        //        "+1.123 some inc 2",
+        //        "+1 720 1",
+        //        "+1. inc 1",
+        //    };
 
-            var correctMeesagesCounter = 0;
-            foreach (var m in _messagesToTest)
-            {
-                if (new FinanceOperationMessage(m).IsIncome())
-                {
-                    Assert.Contains(actual, x => x == m.Text);
-                    correctMeesagesCounter++;
-                }
-            }
+        //    var correctMeesagesCounter = 0;
+        //    foreach (var m in _messagesToTest)
+        //    {
+        //        if (new FinanceOperationMessage(m).IsIncome())
+        //        {
+        //            Assert.Contains(actual, x => x == m.Text);
+        //            correctMeesagesCounter++;
+        //        }
+        //    }
 
-            Assert.Equal(correctMeesagesCounter, actual.Length);
-        }
+        //    Assert.Equal(correctMeesagesCounter, actual.Length);
+        //}
 
-        [Fact]
-        public void ConvertToExpenseThrownExceptionTest()
-        {
-            var incorrectFinanceOperationMessage = new FinanceOperationMessage(
-                new Message
-                {
-                    Chat = new Chat { Id = 1 },
-                    Date = new DateTime(2021, 1, 1, 1, 1, 1, 1),
-                    Text = "7.50error exp 1"
-                });
+        //[Fact]
+        //public void ConvertToExpenseThrownExceptionTest()
+        //{
+        //    var incorrectFinanceOperationMessage = new FinanceOperationMessage(
+        //        new Message
+        //        {
+        //            Chat = new Chat { Id = 1 },
+        //            Date = new DateTime(2021, 1, 1, 1, 1, 1, 1),
+        //            Text = "7.50error exp 1"
+        //        });
 
-            Assert.Throws<ArgumentException>(delegate
-            {
-                incorrectFinanceOperationMessage.ToExpense();
-            });
-        }
+        //    Assert.Throws<ArgumentException>(delegate
+        //    {
+        //        incorrectFinanceOperationMessage.ToExpense();
+        //    });
+        //}
 
-        [Fact]
-        public void ConvertToincomveThrownExceptionTest()
-        {
-            var incorrectFinanceOperationMessage = new FinanceOperationMessage(
-                new Message
-                {
-                    Chat = new Chat { Id = 1 },
-                    Date = new DateTime(2021, 1, 1, 1, 1, 1, 1),
-                    Text = "+7.50error exp 1"
-                });
+        //[Fact]
+        //public void ConvertToincomveThrownExceptionTest()
+        //{
+        //    var incorrectFinanceOperationMessage = new FinanceOperationMessage(
+        //        new Message
+        //        {
+        //            Chat = new Chat { Id = 1 },
+        //            Date = new DateTime(2021, 1, 1, 1, 1, 1, 1),
+        //            Text = "+7.50error exp 1"
+        //        });
 
-            Assert.Throws<ArgumentException>(delegate
-            {
-                incorrectFinanceOperationMessage.ToIncome();
-            });
-        }
+        //    Assert.Throws<ArgumentException>(delegate
+        //    {
+        //        incorrectFinanceOperationMessage.ToIncome();
+        //    });
+        //}
     }
 }
