@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Core", "src\Bot.Core\Bo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Youtube", "src\Bot.Youtube\Bot.Youtube.csproj", "{55A76D5E-FE38-445A-9425-2C9A32F78853}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Money.Tests", "tests\Bot.Money.Tests\Bot.Money.Tests.csproj", "{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Money.Tests", "tests\Bot.Money.Tests\Bot.Money.Tests.csproj", "{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Core.Tests", "tests\Bot.Core.Tests\Bot.Core.Tests.csproj", "{5B40B686-4200-4392-B623-A47713F2E927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B40B686-4200-4392-B623-A47713F2E927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B40B686-4200-4392-B623-A47713F2E927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B40B686-4200-4392-B623-A47713F2E927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B40B686-4200-4392-B623-A47713F2E927}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

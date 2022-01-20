@@ -14,7 +14,7 @@
 
         public FinanceOperation Convert()
         {
-            var amount = double.Parse(_messageParts.First());
+            var amount = double.Parse(_messageParts.First().Replace(',', '.'));
             var description = _messageParts.Last();
             var category = _messageParts.ElementAt(2);
 

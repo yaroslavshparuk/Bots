@@ -7,17 +7,16 @@ namespace Bot.Money.Commands
 {
     public class HelpCommand : IMoneyCommand
     {
-        private const string NAME = "/help";
-        private const string HELP_RESPONSE = "It's beta version. To get any info - write @shparuk";
+        private const string helpResponse = "It's beta version. To get any info - write @shparuk";
 
         public bool CanExecute(Message message)
         {
-            return message.Text == NAME;
+            return message.Text is "/help";
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            await botClient.SendTextMessageAsync(message.Chat, HELP_RESPONSE, ParseMode.Default, false, false, 0);
+            await botClient.SendTextMessageAsync(message.Chat, helpResponse, ParseMode.Default, false, false, 0);
         }
     }
 }
