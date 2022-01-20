@@ -1,5 +1,4 @@
-﻿using Bot.Money.Enums;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using Telegram.Bot.Types;
 
 namespace Bot.Money.Models
@@ -22,12 +21,6 @@ namespace Bot.Money.Models
         {
             _historyOfUserChats.TryGetValue(userId, out var history);
             return history.Count;
-        }
-
-        public FinanceOperationCategory TakeUserCategory(long userId)
-        {
-            _historyOfUserChats.TryGetValue(userId, out var history);
-            return (FinanceOperationCategory)Enum.Parse(typeof(FinanceOperationCategory), history.ElementAt(1));
         }
 
         public void Push(Message message)

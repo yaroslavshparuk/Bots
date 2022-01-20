@@ -3,7 +3,6 @@ using System.Text;
 using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
-using Bot.Money.Enums;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;

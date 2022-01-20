@@ -1,6 +1,4 @@
-﻿using Bot.Money.Enums;
-
-namespace Bot.Money.Models
+﻿namespace Bot.Money.Models
 {
     public class FinanceOperationMessage
     {

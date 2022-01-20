@@ -1,5 +1,4 @@
-﻿using Bot.Money.Enums;
-using Bot.Money.Models;
+﻿using Bot.Money.Models;
 
 namespace Bot.Money.Repositories
 {
