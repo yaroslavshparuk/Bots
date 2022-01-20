@@ -1,11 +1,16 @@
-﻿using Bot.Money.Models;
+﻿using Bot.Money.Enums;
+using Bot.Money.Models;
 
 namespace Bot.Money.Repositories
 {
     public interface IBudgetRepository
     {
-        string CreateAndGetResult(FinanceOperationMessage message);
+        void CreateRecord(FinanceOperationMessage message);
+
         Task<Stream> DownloadArchive(long userId);
+
         Task ResetMonth(long userId);
+
+        Task<IEnumerable<string>> GetFinanceOperationCategories(long userId, string category);
     }
 }

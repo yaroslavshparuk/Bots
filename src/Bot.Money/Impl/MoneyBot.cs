@@ -7,9 +7,7 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Bot.Core.Exceptions;
-using Bot.Core;
-using System.Collections.Concurrent;
-using Bot.Money.Commands;
+using Bot.Core.Extensions;
 
 namespace Bot.Money.Impl
 {
@@ -17,7 +15,6 @@ namespace Bot.Money.Impl
     {
         private readonly IEnumerable<IMoneyCommand> _commands;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
-        private CommandsCollection _commandsCollection;
 
         public MoneyBot(IEnumerable<IMoneyCommand> commands)
         {
@@ -28,8 +25,6 @@ namespace Bot.Money.Impl
 
         public void Start()
         {
-            _commandsCollection = new(_commands);
-
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
 
@@ -46,10 +41,15 @@ namespace Bot.Money.Impl
         {
             try
             {
-                await _commandsCollection.GetAppropriateCommandOnMessage(e.Message).Execute(e.Message, _botClient);
+                await _commands.GetAppropriateCommandOnMessage(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)
+            {
+                _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
+                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message);
+            }
+            catch(UserChoiceException ex)
             {
                 _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
                 await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message);

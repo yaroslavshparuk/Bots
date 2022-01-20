@@ -34,7 +34,6 @@ namespace Bot
 
                      services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
                      services.AddTransient<IMoneyCommand, HelpCommand>();
-                     services.AddTransient<IMoneyCommand, ShowTypeCodesCommand>();
                      services.AddTransient<IMoneyCommand, DownloadCommand>();
                      services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
 

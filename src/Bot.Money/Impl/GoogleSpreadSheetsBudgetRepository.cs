@@ -3,6 +3,7 @@ using System.Text;
 using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
+using Bot.Money.Enums;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;
@@ -26,29 +27,25 @@ namespace Bot.Money.Impl
             _userDataRepository = userDataRepository;
         }
 
-        public string CreateAndGetResult(FinanceOperationMessage message)
+        public void CreateRecord(FinanceOperationMessage message)
         {
             var clientSecret = _userDataRepository.GetClientSecret(message.UserId);
 
-            FinanceOperation operation = null;
-            IList<object> objectList = null;
-            var result = string.Empty;
+            var operation = message.Convert();
+            var objectList = operation.GetTranferObject();
             var range = new StringBuilder(TRANSACTIONS_SHEET);
 
             if (message.IsExpense())
             {
-                operation = message.ToExpense();
-                objectList = (operation as Expense).GetTranferObject();
-                result = "Expense was added";
                 range.Append("!B:E");
             }
-
             else if (message.IsIncome())
             {
-                operation = message.ToIncome();
-                objectList = (operation as Income).GetTranferObject();
-                result = "Income was added";
                 range.Append("!G:J");
+            }
+            else
+            {
+                throw new UserChoiceException("Incorrect finance operation category");
             }
 
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
@@ -60,8 +57,6 @@ namespace Bot.Money.Impl
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }
-
-            return result;
         }
 
         public async Task<Stream> DownloadArchive(long userId)
@@ -96,7 +91,7 @@ namespace Bot.Money.Impl
 
                 using (var responseXlsx = await sheetsService.HttpClient.GetAsync(urlBuiler.Build(userSheet, ExportFileType.XLSX)))
                 {
-                    if(!responseXlsx.IsSuccessStatusCode)
+                    if (!responseXlsx.IsSuccessStatusCode)
                     {
                         throw new DownloadException();
                     }
@@ -127,6 +122,32 @@ namespace Bot.Money.Impl
 
                 outputStream.Position = 0;
                 return outputStream;
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetFinanceOperationCategories(long userId, string category)
+        {
+            var clientSecret = _userDataRepository.GetClientSecret(userId);
+            using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+            }))
+            {
+                var range = new StringBuilder(SUMMARY_SHEET);
+                if (category == "Expense")
+                {
+                    range.Append("!B22:B");
+                }
+                else if (category == "Income")
+                {
+                    range.Append("!H22:H");
+                }
+                else
+                {
+                    throw new UserChoiceException("Incorrect finance operation category");
+                }
+                var categories = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), range.ToString());
+                return (await categories.ExecuteAsync()).Values.Select(x => x.FirstOrDefault().ToString());
             }
         }
 
