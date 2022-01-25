@@ -1,5 +1,4 @@
 ﻿using Bot.Core.Exceptions;
-using Bot.Youtube.Interfaces;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
@@ -7,7 +6,7 @@ using VideoLibrary;
 
 namespace Bot.Youtube.Commands
 {
-    public class YoutubeVideoUrlToAudioCommand : IYoutubeCommand
+    public class YoutubeVideoUrlToAudioCommand : IYoutubeBotCommand
     {
         private static Uri _uriResult;
         public bool CanExecute(Message message)

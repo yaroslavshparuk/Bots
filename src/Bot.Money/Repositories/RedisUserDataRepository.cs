@@ -2,7 +2,7 @@
 using Bot.Money.Repositories;
 using StackExchange.Redis;
 
-namespace Bot.Money.Impl
+namespace Bot.Money.Repositories
 {
     public class RedisUserDataRepository : IUserDataRepository
     {

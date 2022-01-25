@@ -2,19 +2,18 @@
 using StackExchange.Redis;
 using System.Configuration;
 using Bot.Money.Repositories;
-using Bot.Money.Impl;
 using Bot.Money.Commands;
-using Bot.Money.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using log4net;
 using System.Reflection;
 using log4net.Config;
 using Bot.Core.Abstractions;
-using Bot.Youtube.Impl;
-using Bot.Youtube.Interfaces;
 using Bot.Youtube.Commands;
 using Coravel;
 using Bot.Money.Jobs;
+using Bot.Money.Models;
+using Bot.Money;
+using Bot.Youtube;
 
 namespace Bot
 {
@@ -32,11 +31,11 @@ namespace Bot
                      services.AddSingleton<IBot, MoneyBot>();
                      services.AddSingleton<IBot, YoutubeBot>();
 
-                     services.AddTransient<IMoneyCommand, FinanceOperationCommand>();
-                     services.AddTransient<IMoneyCommand, HelpCommand>();
-                     services.AddTransient<IMoneyCommand, DownloadCommand>();
-                     services.AddTransient<IYoutubeCommand, YoutubeVideoUrlToAudioCommand>();
-
+                     services.AddTransient<IMoneyBotCommand, FinanceOperationCommand>();
+                     services.AddTransient<IMoneyBotCommand, HelpCommand>();
+                     services.AddTransient<IMoneyBotCommand, DownloadCommand>();
+                     services.AddTransient<IYoutubeBotCommand, YoutubeVideoUrlToAudioCommand>();
+                     services.AddScoped<IUserCommandHistory, FinanceOperationCommandHistory>();
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
                      services.AddHostedService<ConsoleHostedService>();

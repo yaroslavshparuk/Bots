@@ -1,7 +1,7 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
 using Bot.Core.Extensions;
-using Bot.Youtube.Interfaces;
+using Bot.Youtube.Commands;
 using log4net;
 using System.Configuration;
 using System.Reflection;
@@ -9,13 +9,13 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 
-namespace Bot.Youtube.Impl
+namespace Bot.Youtube
 {
     public class YoutubeBot : IBot
     {
-        private readonly IEnumerable<IYoutubeCommand> _commands;
+        private readonly IEnumerable<IYoutubeBotCommand> _commands;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["youtube_bot_token"]);
-        public YoutubeBot(IEnumerable<IYoutubeCommand> commands)
+        public YoutubeBot(IEnumerable<IYoutubeBotCommand> commands)
         {
             _commands = commands;
         }

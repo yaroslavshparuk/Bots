@@ -4,7 +4,7 @@ namespace Bot.Money.Repositories
 {
     public interface IBudgetRepository
     {
-        void CreateRecord(FinanceOperationMessage message);
+        void CreateRecord(FinanceOperationMessage financeOperationMessage);
 
         Task<Stream> DownloadArchive(long userId);
 

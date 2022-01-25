@@ -4,7 +4,6 @@ using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
-using Bot.Money.Repositories;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -13,7 +12,7 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using static Google.Apis.Sheets.v4.SpreadsheetsResource.ValuesResource.UpdateRequest;
 
-namespace Bot.Money.Impl
+namespace Bot.Money.Repositories
 {
     public class GoogleSpreadSheetsBudgetRepository : IBudgetRepository
     {
@@ -26,19 +25,22 @@ namespace Bot.Money.Impl
             _userDataRepository = userDataRepository;
         }
 
-        public void CreateRecord(FinanceOperationMessage message)
+        public void CreateRecord(FinanceOperationMessage financeOperationMessage)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(message.UserId);
+            var clientSecret = _userDataRepository.GetClientSecret(financeOperationMessage.UserId);
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                throw new NotFoundUserException();
+            }
 
-            var operation = message.Convert();
-            var objectList = operation.GetTranferObject();
+            var objectList = financeOperationMessage.GetTranferObject();
             var range = new StringBuilder(TRANSACTIONS_SHEET);
 
-            if (message.IsExpense())
+            if (financeOperationMessage.IsExpense())
             {
                 range.Append("!B:E");
             }
-            else if (message.IsIncome())
+            else if (financeOperationMessage.IsIncome())
             {
                 range.Append("!G:J");
             }
@@ -47,12 +49,18 @@ namespace Bot.Money.Impl
                 throw new UserChoiceException("Incorrect finance operation category");
             }
 
+            var userSheet = _userDataRepository.GetUserSheet(financeOperationMessage.UserId);
+            if (string.IsNullOrEmpty(userSheet))
+            {
+                throw new NotFoundUserException();
+            }
+
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var appendRequest = sheetsService.Spreadsheets.Values.Append(GetValueRange(objectList), _userDataRepository.GetUserSheet(operation.UserId), range.ToString());
+                var appendRequest = sheetsService.Spreadsheets.Values.Append(GetValueRange(objectList), userSheet, range.ToString());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }

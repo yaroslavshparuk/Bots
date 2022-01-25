@@ -1,12 +1,11 @@
-﻿using Bot.Money.Interfaces;
-using Bot.Money.Repositories;
+﻿using Bot.Money.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 
 namespace Bot.Money.Commands
 {
-    public class DownloadCommand : IMoneyCommand
+    public class DownloadCommand : IMoneyBotCommand
     {
         private const string NAME = "/download";
         private readonly IBudgetRepository _budgetRepository;

@@ -2,23 +2,23 @@
 {
     public class FinanceOperationMessage
     {
-        private readonly long _userId;
         private readonly ICollection<string> _messageParts;
+
         public FinanceOperationMessage(long userId, ICollection<string> messageParts)
         {
-            _userId = userId;
             _messageParts = messageParts;
+            UserId = userId;
         }
 
-        public long UserId { get { return _userId; } }
+        public long UserId { get; }
 
-        public FinanceOperation Convert()
+        public IList<object> GetTranferObject()
         {
             var amount = double.Parse(_messageParts.First().Replace(',', '.'));
             var description = _messageParts.Last();
             var category = _messageParts.ElementAt(2);
 
-            return new FinanceOperation(_userId, DateTime.UtcNow.AddHours(3), amount, description, category);
+            return new List<object>() { DateTime.UtcNow.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
         }
 
         public bool IsExpense()

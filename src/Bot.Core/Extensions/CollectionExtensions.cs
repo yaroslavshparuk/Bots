@@ -16,7 +16,7 @@ namespace Bot.Core.Extensions
             }
         }
 
-        public static ICommand GetAppropriateCommandOnMessage(this IEnumerable<ICommand> commands, Message message)
+        public static IBotCommand GetAppropriateCommandOnMessage(this IEnumerable<IBotCommand> commands, Message message)
         {
             foreach (var command in commands)
             {

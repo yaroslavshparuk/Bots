@@ -1,5 +1,5 @@
 ﻿using Bot.Core.Abstractions;
-using Bot.Money.Interfaces;
+using Bot.Money.Commands;
 using Google;
 using log4net;
 using System.Configuration;
@@ -9,14 +9,14 @@ using Telegram.Bot.Args;
 using Bot.Core.Exceptions;
 using Bot.Core.Extensions;
 
-namespace Bot.Money.Impl
+namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
-        private readonly IEnumerable<IMoneyCommand> _commands;
+        private readonly IEnumerable<IMoneyBotCommand> _commands;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
 
-        public MoneyBot(IEnumerable<IMoneyCommand> commands)
+        public MoneyBot(IEnumerable<IMoneyBotCommand> commands)
         {
             _commands = commands;
         }

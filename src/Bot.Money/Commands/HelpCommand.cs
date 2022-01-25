@@ -1,11 +1,10 @@
-﻿using Bot.Money.Interfaces;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace Bot.Money.Commands
 {
-    public class HelpCommand : IMoneyCommand
+    public class HelpCommand : IMoneyBotCommand
     {
         private const string helpResponse = "It's beta version. To get any info - write @shparuk";
 
