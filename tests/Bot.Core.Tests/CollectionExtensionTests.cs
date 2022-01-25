@@ -13,23 +13,21 @@ namespace Bot.Core.Tests
         [Fact]
         public void SplitTest()
         {
-            var arrayToDivide = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, };
-            var multiDimenArray = arrayToDivide.Split(2);
-            var expectedArray = new List<List<int>>() {
+            List<int> arrayToDivide = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, };
+            List<List<int>> expectedArray = new List<List<int>>() {
                 new List<int> { 1, 2 },
                 new List<int> { 3, 4 },
                 new List<int> { 5, 6 },
                 new List<int> { 7, 8 },
                 new List<int> { 9, 10 },};
-            Assert.Equal(expectedArray, multiDimenArray);
+            Assert.Equal(expectedArray, arrayToDivide.Split(2));
 
-            multiDimenArray = arrayToDivide.Split(3);
             expectedArray = new List<List<int>>() {
                 new List<int> { 1, 2, 3 },
                 new List<int> { 4, 5, 6},
                 new List<int> { 7, 8 , 9 },
                 new List<int> { 10 },};
-            Assert.Equal(expectedArray, multiDimenArray);
+            Assert.Equal(expectedArray, arrayToDivide.Split(3));
         }
 
         [Fact]
