@@ -23,7 +23,7 @@ namespace Bot.Core.Tests
                 new List<int> { 9, 10 },};
             Assert.Equal(expectedArray, multiDimenArray);
 
-            multiDimenArray = (List<List<int>>)arrayToDivide.Split(3);
+            multiDimenArray = arrayToDivide.Split(3);
             expectedArray = new List<List<int>>() {
                 new List<int> { 1, 2, 3 },
                 new List<int> { 4, 5, 6},
