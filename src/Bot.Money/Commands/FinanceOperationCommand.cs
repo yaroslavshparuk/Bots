@@ -62,6 +62,7 @@ namespace Bot.Money.Commands
                         var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _userCommandHistory.GetHistory(message.Chat.Id));
                         _budgetRepository.CreateRecord(financeOperationMessage);
                         await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Added", replyMarkup: new ReplyKeyboardRemove());
+                        _userCommandHistory.Clear(message.Chat.Id);
                         break;
                     default:
                         _userCommandHistory.Clear(message.Chat.Id);
