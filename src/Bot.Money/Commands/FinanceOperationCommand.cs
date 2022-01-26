@@ -31,6 +31,7 @@ namespace Bot.Money.Commands
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
+            if (!CanExecute(message)) { throw new NotFoundCommandException(); }
             if (message.Text is "Cancel")
             {
                 await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
