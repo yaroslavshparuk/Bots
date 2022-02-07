@@ -36,7 +36,7 @@ namespace Bot.Core.Tests
         public void GetAppropriateCommandOnMessageTest()
         {
             var budgetRepository = new Mock<IBudgetRepository>();
-            var operationCommandHistory = new Mock<IUserCommandHistory>();
+            var operationCommandHistory = new Mock<ICommandSteps>();
             var message = new Message();
             var commands = new List<IBotCommand>()
             {
@@ -59,7 +59,7 @@ namespace Bot.Core.Tests
             Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
 
             message.Text = "Income";
-            operationCommandHistory.Setup(x => x.HasHistory(10)).Returns(true);
+            operationCommandHistory.Setup(x => x.IsStarted(10)).Returns(true);
             expectedFinanceCommand = commands.FindExecutableCommandOnMessage(message);
             Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
         }

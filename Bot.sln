@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Youtube", "src\Bot.Yout
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Money.Tests", "tests\Bot.Money.Tests\Bot.Money.Tests.csproj", "{F6EEAC54-B4C1-4856-B334-EF204C64C7F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot.Core.Tests", "tests\Bot.Core.Tests\Bot.Core.Tests.csproj", "{5B40B686-4200-4392-B623-A47713F2E927}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot.Core.Tests", "tests\Bot.Core.Tests\Bot.Core.Tests.csproj", "{5B40B686-4200-4392-B623-A47713F2E927}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{921B20A9-1F9C-44AB-8768-3D6F57307DB7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bots", "Bots", "{3AB4EEC2-77F4-4595-9C08-6A6058CAD46E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +52,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{00D9933F-C528-43B2-849E-EEEBB46E7B4E} = {3AB4EEC2-77F4-4595-9C08-6A6058CAD46E}
+		{55A76D5E-FE38-445A-9425-2C9A32F78853} = {3AB4EEC2-77F4-4595-9C08-6A6058CAD46E}
+		{F6EEAC54-B4C1-4856-B334-EF204C64C7F9} = {921B20A9-1F9C-44AB-8768-3D6F57307DB7}
+		{5B40B686-4200-4392-B623-A47713F2E927} = {921B20A9-1F9C-44AB-8768-3D6F57307DB7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ABB0545E-B7F0-4096-834B-A534C0DFC771}

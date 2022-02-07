@@ -1,4 +1,5 @@
 ﻿using Bot.Core.Abstractions;
+using Bot.Core.Exceptions;
 using Bot.Money.Commands;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
@@ -16,9 +17,9 @@ namespace Bot.Money.Tests.Commands
         [Fact]
         public void CanExecuteTest()
         {
-            var userCommandHistory = new FinanceOperationCommandHistory();
+            var financeOperationCommandSteps = new FinanceOperationCommandSteps();
             var budgetRepository = new Mock<IBudgetRepository>();
-            var financeOperationCommand = new FinanceOperationCommand(userCommandHistory, budgetRepository.Object);
+            var financeOperationCommand = new FinanceOperationCommand(financeOperationCommandSteps, budgetRepository.Object);
             var testMessage = new Message { Text = "", Chat = new Chat { Id = 10 } };
 
             var canExecute = financeOperationCommand.CanExecute(testMessage);
@@ -32,7 +33,7 @@ namespace Bot.Money.Tests.Commands
             canExecute = financeOperationCommand.CanExecute(testMessage);
             Assert.True(canExecute);
 
-            userCommandHistory.StartNewHistory(testMessage);
+            financeOperationCommandSteps.Start(testMessage);
             testMessage.Text = "Income";
             canExecute = financeOperationCommand.CanExecute(testMessage);
             Assert.True(canExecute);
@@ -41,7 +42,7 @@ namespace Bot.Money.Tests.Commands
         [Fact]
         public async void ExecuteTest()
         {
-            var userCommandHistory = new FinanceOperationCommandHistory();
+            var financeOperationCommandSteps = new FinanceOperationCommandSteps();
             var budgetRepository = new Mock<IBudgetRepository>();
 
             var botClient = new Mock<ITelegramBotClient>();
@@ -50,12 +51,22 @@ namespace Bot.Money.Tests.Commands
                      .Returns(Task.FromResult(new Message()))
                      .Callback(() => hasBeenCalled = true);
 
-            var financeOperationCommand = new FinanceOperationCommand(userCommandHistory, budgetRepository.Object);
+            var financeOperationCommand = new FinanceOperationCommand(financeOperationCommandSteps, budgetRepository.Object);
             var testMessage = new Message { Text = "", Chat = new Chat { Id = 10 } };
             _ = Assert.ThrowsAsync<ArgumentException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
             Assert.False(hasBeenCalled);
 
             testMessage.Text = "100";
+            await financeOperationCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
+
+
+            hasBeenCalled = false;
+            testMessage.Text = "100";
+            _ = Assert.ThrowsAsync<UserChoiceException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
+            Assert.False(hasBeenCalled);
+
+            testMessage.Text = "Expense";
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
         }
