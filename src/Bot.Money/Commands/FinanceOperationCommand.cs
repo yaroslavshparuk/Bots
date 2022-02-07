@@ -13,6 +13,7 @@ namespace Bot.Money.Commands
     public class FinanceOperationCommand : IMoneyBotCommand
     {
         private const int _keyBoardMarkUpRowSize = 2;
+        private const string _floatNumberPattern = @"[\d]{1,9}([.,][\d]{1,6})?$";
         private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
         private readonly ReplyKeyboardMarkup _skipReply = new(new[] { new KeyboardButton[] { "Skip" } }) { ResizeKeyboard = true };
         private readonly IUserCommandHistory _userCommandHistory;
@@ -26,12 +27,12 @@ namespace Bot.Money.Commands
 
         public bool CanExecute(Message message)
         {
-            return Regex.IsMatch(message.Text, @"[\d]{1,9}([.,][\d]{1,6})?") || _userCommandHistory.HasHistory(message.Chat.Id);
+            return Regex.IsMatch(message.Text, _floatNumberPattern) || _userCommandHistory.HasHistory(message.Chat.Id);
         }
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            if (!CanExecute(message)) { throw new NotFoundCommandException(); }
+            if (!CanExecute(message)) { throw new ArgumentException(); }
             if (message.Text is "Cancel")
             {
                 await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());

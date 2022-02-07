@@ -1,5 +1,4 @@
-﻿using Bot.Core.Exceptions;
-using Bot.Money.Commands;
+﻿using Bot.Money.Commands;
 using Moq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -31,18 +30,21 @@ namespace Bot.Money.Tests.Commands
         }
 
         [Fact]
-        public async void ExecuteTest()
+        public async Task ExecuteTest()
         {
             var botClient = new Mock<ITelegramBotClient>();
-            botClient.Setup(x => x.SendDocumentAsync(It.IsAny<ChatId>(), It.IsAny<InputOnlineFile>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>(), It.IsAny<InputMedia>()))
-                     .Returns(Task.FromResult(new Message()));
+            var hasBeenCalled = false;
+            botClient.Setup(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()))
+                     .Returns(Task.FromResult(new Message()))
+                     .Callback(() => hasBeenCalled = true);
 
             var helpCommand = new HelpCommand();
             var testMessage = new Message { Chat = new Chat { Id = 123 }, Text = "123asd" };
-            _ = Assert.ThrowsAsync<NotFoundCommandException>(() => helpCommand.Execute(testMessage, botClient.Object));
+            _ = Assert.ThrowsAsync<ArgumentException>(() => helpCommand.Execute(testMessage, botClient.Object));
 
             testMessage.Text = "/help";
             await helpCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
         }
     }
 }

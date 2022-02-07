@@ -41,7 +41,7 @@ namespace Bot.Money
         {
             try
             {
-                await _commands.GetAppropriateCommandOnMessage(e.Message).Execute(e.Message, _botClient);
+                await _commands.FindExecutableCommandOnMessage(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

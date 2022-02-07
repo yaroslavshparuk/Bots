@@ -16,8 +16,7 @@ namespace Bot.Money.Commands
 
         public async Task Execute(Message message, ITelegramBotClient botClient)
         {
-            if (!CanExecute(message)) { throw new NotFoundCommandException(); }
-
+            if (!CanExecute(message)) { throw new ArgumentException(); }
             await botClient.SendTextMessageAsync(message.Chat, helpResponse, ParseMode.Default, false, false, 0);
         }
     }
