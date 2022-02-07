@@ -9,6 +9,6 @@ namespace Bot.Core.Abstractions
         int Passed(long userId);
         void Pass(Message message);
         void Finish(long userId);
-        public ICollection<string> PrintPassed(long userId);
+        public ICollection<string> CollectionOfPassed(long userId);
     }
 }

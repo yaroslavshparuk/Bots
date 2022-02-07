@@ -14,7 +14,8 @@ namespace Bot.Money.Commands
     {
         private const int _keyBoardMarkUpRowSize = 2;
         private const string _floatNumberPattern = @"[\d]{1,9}([.,][\d]{1,6})?$";
-        private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
+        private const string _nameOfCancelButton = "Cancel";
+        private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { _nameOfCancelButton }, }) { ResizeKeyboard = true };
         private readonly ReplyKeyboardMarkup _skipReply = new(new[] { new KeyboardButton[] { "Skip" } }) { ResizeKeyboard = true };
         private readonly ICommandSteps _commandSteps;
         private readonly IBudgetRepository _budgetRepository;
@@ -34,7 +35,7 @@ namespace Bot.Money.Commands
         {
             if (!CanExecute(message)) { throw new ArgumentException(); }
 
-            if (message.Text is "Cancel")
+            if (message.Text is _nameOfCancelButton)
             {
                 _commandSteps.Finish(message.Chat.Id);
                 await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
@@ -52,19 +53,19 @@ namespace Bot.Money.Commands
             {
                 case 1:
                     if (message.Text is not ("Income" or "Expense")) { throw new UserChoiceException("You should choose 'Expense' or 'Income'"); }
-                    var categories = await _budgetRepository.GetFinanceOperationCategories(message.Chat.Id, message.Text);
-                    var categoriesKeyboardMarkUp = new ReplyKeyboardMarkup(categories.Select(x => new KeyboardButton(x)).Split(_keyBoardMarkUpRowSize));
+                    var categories = await _budgetRepository.GetCategories(message.Chat.Id, message.Text);
+                    var categoriesKeyboardMarkUp = new ReplyKeyboardMarkup(categories.Select(x => new KeyboardButton(x)).Append(new KeyboardButton(_nameOfCancelButton)).Split(_keyBoardMarkUpRowSize));
                     _commandSteps.Pass(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "What category is it?", replyMarkup: categoriesKeyboardMarkUp);
                     break;
                 case 2:
-                    var expectedCategories = await _budgetRepository.GetFinanceOperationCategories(message.Chat.Id, _commandSteps.PrintPassed(message.Chat.Id).Last());
+                    var expectedCategories = await _budgetRepository.GetCategories(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id).Last());
                     if (!expectedCategories.Contains(message.Text)) { throw new UserChoiceException("You should choose correct category"); }
                     _commandSteps.Pass(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
                     break;
                 case 3:
-                    var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _commandSteps.PrintPassed(message.Chat.Id));
+                    var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id));
                     _budgetRepository.CreateRecord(financeOperationMessage);
                     _commandSteps.Pass(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Added", replyMarkup: new ReplyKeyboardRemove());

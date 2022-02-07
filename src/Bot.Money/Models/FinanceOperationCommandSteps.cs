@@ -35,7 +35,7 @@ namespace Bot.Money.Models
             _steps.TryRemove(userId, out var f);
         }
 
-        public ICollection<string> PrintPassed(long userId)
+        public ICollection<string> CollectionOfPassed(long userId)
         {
             _steps.TryGetValue(userId, out var steps);
             return steps;

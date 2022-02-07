@@ -40,7 +40,7 @@ namespace Bot.Youtube
         {
             try
             {
-                await _commands.FindExecutableCommandOnMessage(e.Message).Execute(e.Message, _botClient);
+                await _commands.FindExecutableCommand(e.Message).Execute(e.Message, _botClient);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)

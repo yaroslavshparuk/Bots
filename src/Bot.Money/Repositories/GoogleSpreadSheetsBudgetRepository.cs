@@ -1,6 +1,5 @@
 ﻿using System.Configuration;
 using System.Text;
-using Bot.Core;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
@@ -84,9 +83,9 @@ namespace Bot.Money.Repositories
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
 
-                var urlBuiler = new ExportUrlBuilder(ConfigurationManager.AppSettings["export_url"]);
+                var exportUrl = new ExportUrl(ConfigurationManager.AppSettings["export_url"]);
 
-                using (var responsePdf = await sheetsService.HttpClient.GetAsync(urlBuiler.Build(userSheet, ExportFileType.PDF)))
+                using (var responsePdf = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.PDF)))
                 {
                     if (!responsePdf.IsSuccessStatusCode)
                     {
@@ -96,7 +95,7 @@ namespace Bot.Money.Repositories
                     pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
                 }
 
-                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(urlBuiler.Build(userSheet, ExportFileType.XLSX)))
+                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.XLSX)))
                 {
                     if (!responseXlsx.IsSuccessStatusCode)
                     {
@@ -132,7 +131,7 @@ namespace Bot.Money.Repositories
             }
         }
 
-        public async Task<IEnumerable<string>> GetFinanceOperationCategories(long userId, string category)
+        public async Task<IEnumerable<string>> GetCategories(long userId, string category)
         {
             var clientSecret = _userDataRepository.GetClientSecret(userId);
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()

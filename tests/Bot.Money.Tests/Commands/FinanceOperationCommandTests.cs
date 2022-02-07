@@ -1,5 +1,4 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
+﻿using Bot.Core.Exceptions;
 using Bot.Money.Commands;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
@@ -67,7 +66,7 @@ namespace Bot.Money.Tests.Commands
 
             testMessage.Text = "Expense";
             var categories = new string[] { "Food", "Home", "Clothing" };
-            budgetRepository.Setup(x => x.GetFinanceOperationCategories(testMessage.Chat.Id, testMessage.Text)).Returns(Task.FromResult(categories.AsEnumerable()));
+            budgetRepository.Setup(x => x.GetCategories(testMessage.Chat.Id, testMessage.Text)).Returns(Task.FromResult(categories.AsEnumerable()));
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
 
@@ -81,7 +80,7 @@ namespace Bot.Money.Tests.Commands
             Assert.True(hasBeenCalled);
 
             hasBeenCalled = false;
-            testMessage.Text = "Whatever";
+            testMessage.Text = "Supermarket";
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
         }

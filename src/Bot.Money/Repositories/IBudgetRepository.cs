@@ -10,6 +10,6 @@ namespace Bot.Money.Repositories
 
         Task ResetMonth(long userId);
 
-        Task<IEnumerable<string>> GetFinanceOperationCategories(long userId, string category);
+        Task<IEnumerable<string>> GetCategories(long userId, string category);
     }
 }

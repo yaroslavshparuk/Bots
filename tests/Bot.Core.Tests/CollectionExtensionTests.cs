@@ -47,20 +47,20 @@ namespace Bot.Core.Tests
 
             message.Text = "/help";
             message.Chat = new Chat { Id = 10 };
-            var expectedHelpCommand = commands.FindExecutableCommandOnMessage(message);
+            var expectedHelpCommand = commands.FindExecutableCommand(message);
             Assert.IsType<HelpCommand>(expectedHelpCommand);
 
             message.Text = "/download";
-            var expectedDownloadCommand = commands.FindExecutableCommandOnMessage(message);
+            var expectedDownloadCommand = commands.FindExecutableCommand(message);
             Assert.IsType<DownloadCommand>(expectedDownloadCommand);
 
             message.Text = "100";
-            var expectedFinanceCommand = commands.FindExecutableCommandOnMessage(message);
+            var expectedFinanceCommand = commands.FindExecutableCommand(message);
             Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
 
             message.Text = "Income";
             operationCommandHistory.Setup(x => x.IsStarted(10)).Returns(true);
-            expectedFinanceCommand = commands.FindExecutableCommandOnMessage(message);
+            expectedFinanceCommand = commands.FindExecutableCommand(message);
             Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Bot.Core.Enums
 {
-    public enum ExportFileType
+    public enum FileType
     {
         PDF,
         XLSX
