@@ -21,7 +21,6 @@ namespace Bot
     {
         private readonly static ConnectionMultiplexer _redis = ConnectionMultiplexer.Connect(
                                               ConfigurationManager.ConnectionStrings["redis"].ConnectionString);
-
         private static async Task Main(string[] args)
         {
             XmlConfigurator.Configure(LogManager.GetRepository(Assembly.GetEntryAssembly()), new FileInfo("log4net.config"));

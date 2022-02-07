@@ -27,12 +27,12 @@ namespace Bot.Money
         {
             _botClient.OnMessage += OnMessage;
             _botClient.StartReceiving();
-
             _logger.Info("Money bot was started");
         }
 
         public void Stop()
         {
+            _botClient.OnMessage -= OnMessage;
             _botClient.StopReceiving();
             _logger.Info("Money bot was stoped");
         }

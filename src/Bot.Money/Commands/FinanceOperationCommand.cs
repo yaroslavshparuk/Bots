@@ -58,6 +58,8 @@ namespace Bot.Money.Commands
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "What category is it?", replyMarkup: categoriesKeyboardMarkUp);
                     break;
                 case 2:
+                    var expectedCategories = await _budgetRepository.GetFinanceOperationCategories(message.Chat.Id, _commandSteps.PrintPassed(message.Chat.Id).Last());
+                    if (!expectedCategories.Contains(message.Text)) { throw new UserChoiceException("You should choose correct category"); }
                     _commandSteps.Pass(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
                     break;

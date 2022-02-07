@@ -60,13 +60,28 @@ namespace Bot.Money.Tests.Commands
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
 
-
             hasBeenCalled = false;
-            testMessage.Text = "100";
+            testMessage.Text = "Whatever";
             _ = Assert.ThrowsAsync<UserChoiceException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
             Assert.False(hasBeenCalled);
 
             testMessage.Text = "Expense";
+            var categories = new string[] { "Food", "Home", "Clothing" };
+            budgetRepository.Setup(x => x.GetFinanceOperationCategories(testMessage.Chat.Id, testMessage.Text)).Returns(Task.FromResult(categories.AsEnumerable()));
+            await financeOperationCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
+
+            hasBeenCalled = false;
+            testMessage.Text = "Whatever";
+            _ = Assert.ThrowsAsync<UserChoiceException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
+            Assert.False(hasBeenCalled);
+
+            testMessage.Text = "Food";
+            await financeOperationCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
+
+            hasBeenCalled = false;
+            testMessage.Text = "Whatever";
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
         }
