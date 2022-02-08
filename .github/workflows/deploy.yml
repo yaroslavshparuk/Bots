@@ -56,5 +56,11 @@ jobs:
             cd publish
             tmux kill-ses -t Bot 2>/dev/null
             tmux new -d -s 'Bot' './Bot'
-    - name: Codecov
+    - name: Install Codecov
       uses: codecov/codecov-action@v2.1.0
+    - name: Codecov
+      run: |
+        curl -Os https://uploader.codecov.io/latest/linux/codecov
+        
+        chmod +x codecov 
+        ./codecov
