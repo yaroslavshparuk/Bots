@@ -27,7 +27,9 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    - name: Codecov
+      uses: codecov/codecov-action@v1
     - name: Publish
       run: |
         cd src/Bot
@@ -56,11 +58,3 @@ jobs:
             cd publish
             tmux kill-ses -t Bot 2>/dev/null
             tmux new -d -s 'Bot' './Bot'
-    - name: Install Codecov
-      uses: codecov/codecov-action@v2.1.0
-    - name: Codecov
-      run: |
-        curl -Os https://uploader.codecov.io/latest/linux/codecov
-        
-        chmod +x codecov 
-        ./codecov
