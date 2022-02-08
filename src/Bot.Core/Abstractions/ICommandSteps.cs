@@ -5,9 +5,9 @@ namespace Bot.Core.Abstractions
     public interface ICommandSteps
     {
         bool IsStarted(long userId);
-        void Start(Message message);
+        void StartWith(Message message);
         int Passed(long userId);
-        void Pass(Message message);
+        void PassWith(Message message);
         void Finish(long userId);
         public ICollection<string> CollectionOfPassed(long userId);
     }

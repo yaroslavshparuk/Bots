@@ -32,7 +32,7 @@ namespace Bot.Money.Tests.Commands
             canExecute = financeOperationCommand.CanExecute(testMessage);
             Assert.True(canExecute);
 
-            financeOperationCommandSteps.Start(testMessage);
+            financeOperationCommandSteps.StartWith(testMessage);
             testMessage.Text = "Income";
             canExecute = financeOperationCommand.CanExecute(testMessage);
             Assert.True(canExecute);

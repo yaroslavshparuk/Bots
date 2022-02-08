@@ -13,18 +13,18 @@ namespace Bot.Money.Models
             return _steps.TryGetValue(userId, out var steps) && steps.Count() > 0;
         }
 
-        public void Start(Message message)
+        public void StartWith(Message message)
         {
             _steps.TryAdd(message.Chat.Id, new List<string> { message.Text });
         }
 
         public int Passed(long userId)
         {
-            _steps.TryGetValue(userId, out var steps);
-            return steps.Count;
+            _steps.TryGetValue(userId, out ICollection<string> steps);
+            return steps == null ? 0 : steps.Count;
         }
 
-        public void Pass(Message message)
+        public void PassWith(Message message)
         {
             _steps.TryGetValue(message.Chat.Id, out var steps);
             steps.Add(message.Text);

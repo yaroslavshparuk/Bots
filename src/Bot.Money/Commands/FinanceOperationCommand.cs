@@ -42,32 +42,29 @@ namespace Bot.Money.Commands
                 return;
             }
 
-            if (!_commandSteps.IsStarted(message.Chat.Id))
-            {
-                _commandSteps.Start(message);
-                await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Is expense or income?", replyMarkup: _expOrIncReply);
-                return;
-            }
-
             switch (_commandSteps.Passed(message.Chat.Id))
             {
+                case 0:
+                    _commandSteps.StartWith(message);
+                    await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Is expense or income?", replyMarkup: _expOrIncReply);
+                    break;
                 case 1:
                     if (message.Text is not ("Income" or "Expense")) { throw new UserChoiceException("You should choose 'Expense' or 'Income'"); }
                     var categories = await _budgetRepository.GetCategories(message.Chat.Id, message.Text);
                     var categoriesKeyboardMarkUp = new ReplyKeyboardMarkup(categories.Select(x => new KeyboardButton(x)).Append(new KeyboardButton(_nameOfCancelButton)).Split(_keyBoardMarkUpRowSize));
-                    _commandSteps.Pass(message);
+                    _commandSteps.PassWith(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "What category is it?", replyMarkup: categoriesKeyboardMarkUp);
                     break;
                 case 2:
                     var expectedCategories = await _budgetRepository.GetCategories(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id).Last());
                     if (!expectedCategories.Contains(message.Text)) { throw new UserChoiceException("You should choose correct category"); }
-                    _commandSteps.Pass(message);
+                    _commandSteps.PassWith(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
                     break;
                 case 3:
                     var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id));
                     _budgetRepository.CreateRecord(financeOperationMessage);
-                    _commandSteps.Pass(message);
+                    _commandSteps.PassWith(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Added", replyMarkup: new ReplyKeyboardRemove());
                     _commandSteps.Finish(message.Chat.Id);
                     break;
