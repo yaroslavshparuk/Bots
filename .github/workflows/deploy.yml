@@ -22,8 +22,6 @@ jobs:
       uses: actions/setup-dotnet@v1.7.2
       with:
           dotnet-version: ${{ matrix.dotnet-version }}
-    - name: Install Codecov
-      uses: codecov/codecov-action@v2.1.0
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -59,7 +57,4 @@ jobs:
             tmux kill-ses -t Bot 2>/dev/null
             tmux new -d -s 'Bot' './Bot'
     - name: Codecov
-      run: |
-        curl -Os https://uploader.codecov.io/latest/linux/codecov 
-        chmod +x codecov 
-        ./codecov
+      uses: codecov/codecov-action@v2.1.0
