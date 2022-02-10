@@ -62,9 +62,9 @@ namespace Bot.Money.Commands
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
                     break;
                 case 3:
+                    _commandSteps.PassWith(message);
                     var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id));
                     _budgetRepository.CreateRecord(financeOperationMessage);
-                    _commandSteps.PassWith(message);
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Added", replyMarkup: new ReplyKeyboardRemove());
                     _commandSteps.Finish(message.Chat.Id);
                     break;
