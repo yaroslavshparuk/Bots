@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Bot.Money.Tests.Commands
 {
-    public class HelpCommandTests
+    public class HelpCommandTest
     {
         [Fact]
         public void CanExecuteTest()

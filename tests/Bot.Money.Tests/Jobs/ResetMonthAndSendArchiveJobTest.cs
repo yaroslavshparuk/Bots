@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Bot.Money.Tests.Jobs
 {
-    public class ResetMonthAndSendArchiveJobTests
+    public class ResetMonthAndSendArchiveJobTest
     {
         [Fact]
         public async void InvokeTest()

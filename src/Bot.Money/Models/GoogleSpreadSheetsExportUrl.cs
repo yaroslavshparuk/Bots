@@ -3,25 +3,22 @@ using System.Text;
 
 namespace Bot.Money.Models
 {
-    public class ExportUrl
+    public class GoogleSpreadSheetsExportUrl
     {
-        private readonly string _url;
-
-        public ExportUrl(string url)
-        {
-            _url = url;
-        }
+        private const string _url = "https://docs.google.com/spreadsheets/d/";
 
         public string BuildWith(string userSheet, FileType fileType)
         {
+            if (userSheet == null || fileType == FileType.None) throw new ArgumentNullException();
+
             var builder = new StringBuilder(_url);
             builder.Append($"{userSheet}/export?format=");
             switch (fileType)
             {
-                case FileType.PDF:
+                case FileType.Pdf:
                     builder.Append("pdf");
                     break;
-                case FileType.XLSX:
+                case FileType.Xlsx:
                     builder.Append("xlsx");
                     break;
             }

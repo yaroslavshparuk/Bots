@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Bot.Money.Tests.Commands
 {
-    public class DownloadCommandTests
+    public class DownloadCommandTest
     {
         [Fact]
         public void CanExecuteTest()

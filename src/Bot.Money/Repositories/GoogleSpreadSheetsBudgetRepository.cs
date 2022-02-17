@@ -15,8 +15,8 @@ namespace Bot.Money.Repositories
 {
     public class GoogleSpreadSheetsBudgetRepository : IBudgetRepository
     {
-        private const string SUMMARY_SHEET = "Summary";
-        private const string TRANSACTIONS_SHEET = "Transactions";
+        private const string _summarySheetName = "Summary";
+        private const string _transactionsSheetName = "Transactions";
         private readonly IUserDataRepository _userDataRepository;
 
         public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository)
@@ -33,7 +33,7 @@ namespace Bot.Money.Repositories
             }
 
             var objectList = financeOperationMessage.GetTranferObject();
-            var range = new StringBuilder(TRANSACTIONS_SHEET);
+            var range = new StringBuilder(_transactionsSheetName);
 
             if (financeOperationMessage.IsExpense())
             {
@@ -83,9 +83,9 @@ namespace Bot.Money.Repositories
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
 
-                var exportUrl = new ExportUrl(ConfigurationManager.AppSettings["export_url"]);
+                var exportUrl = new GoogleSpreadSheetsExportUrl();
 
-                using (var responsePdf = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.PDF)))
+                using (var responsePdf = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.Pdf)))
                 {
                     if (!responsePdf.IsSuccessStatusCode)
                     {
@@ -95,7 +95,7 @@ namespace Bot.Money.Repositories
                     pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
                 }
 
-                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.XLSX)))
+                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.Xlsx)))
                 {
                     if (!responseXlsx.IsSuccessStatusCode)
                     {
@@ -139,7 +139,7 @@ namespace Bot.Money.Repositories
                 HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var range = new StringBuilder(SUMMARY_SHEET);
+                var range = new StringBuilder(_summarySheetName);
                 if (category == "Expense")
                 {
                     range.Append("!B22:B");
@@ -172,23 +172,23 @@ namespace Bot.Money.Repositories
             {
                 var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });
                 var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
-                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!B2:E3");
+                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B2:E3");
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await resetMonthRequest.ExecuteAsync();
 
-                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!E11");
+                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!E11");
                 var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
 
                 var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });
                 var changeStartingBalanceRequest = sheetsService.Spreadsheets.Values.Update(
-                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{SUMMARY_SHEET}!L2");
+                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!L2");
                 changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await changeStartingBalanceRequest.ExecuteAsync();
 
-                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!B5:E");
+                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!B5:E");
                 await deleteExpensesRequest.ExecuteAsync();
 
-                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{TRANSACTIONS_SHEET}!G5:J");
+                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!G5:J");
                 await deleteIncomesRequest.ExecuteAsync();
             }
         }

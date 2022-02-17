@@ -2,7 +2,8 @@
 {
     public enum FileType
     {
-        PDF,
-        XLSX
+        None,
+        Pdf,
+        Xlsx
     }
 }

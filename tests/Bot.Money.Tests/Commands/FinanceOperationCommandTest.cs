@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Bot.Money.Tests.Commands
 {
-    public class FinanceOperationCommandTests
+    public class FinanceOperationCommandTest
     {
         [Fact]
         public void CanExecuteTest()
