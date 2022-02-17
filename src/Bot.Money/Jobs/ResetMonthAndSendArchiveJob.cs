@@ -9,14 +9,15 @@ namespace Bot.Money.Jobs
 {
     public class ResetMonthAndSendArchiveJob : IInvocable
     {
-        private readonly TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
         private readonly IUserDataRepository _userDataRepository;
         private readonly IBudgetRepository _budgetRepository;
+        private readonly ITelegramBotClient _botClient;
 
-        public ResetMonthAndSendArchiveJob(IUserDataRepository userDataRepository, IBudgetRepository budgetRepository)
+        public ResetMonthAndSendArchiveJob(IUserDataRepository userDataRepository, IBudgetRepository budgetRepository, ITelegramBotClient botClient)
         {
             _userDataRepository = userDataRepository;
             _budgetRepository = budgetRepository;
+            _botClient = botClient;
         }
 
         public async Task Invoke()

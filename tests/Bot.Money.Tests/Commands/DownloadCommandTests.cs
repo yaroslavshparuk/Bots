@@ -36,11 +36,11 @@ namespace Bot.Money.Tests.Commands
             var budgetRepository = new Mock<IBudgetRepository>();
             var botClient = new Mock<ITelegramBotClient>();
 
-            var hasBeenCalled = false;
+            var sendDocumentAsyncHasBeenCalled = false;
             budgetRepository.Setup(x => x.DownloadArchive(123)).ReturnsAsync(new MemoryStream(new byte[] { 1, 2, 3 }));
             botClient.Setup(x => x.SendDocumentAsync(It.IsAny<ChatId>(), It.IsAny<InputOnlineFile>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>(), It.IsAny<InputMedia>()))
                      .Returns(Task.FromResult(new Message()))
-                     .Callback(() => hasBeenCalled = true);
+                     .Callback(() => sendDocumentAsyncHasBeenCalled = true);
 
             var downloadCommand = new DownloadCommand(budgetRepository.Object);
             var testMessage = new Message { Chat = new Chat { Id = 123 }, Text = "123asd" };
@@ -48,7 +48,7 @@ namespace Bot.Money.Tests.Commands
 
             testMessage.Text = "/download";
             await downloadCommand.Execute(testMessage, botClient.Object);
-            Assert.True(hasBeenCalled);
+            Assert.True(sendDocumentAsyncHasBeenCalled);
         }
     }
 }

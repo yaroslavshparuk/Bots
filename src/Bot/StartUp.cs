@@ -14,6 +14,7 @@ using Bot.Money.Jobs;
 using Bot.Money.Models;
 using Bot.Money;
 using Bot.Youtube;
+using Telegram.Bot;
 
 namespace Bot
 {
@@ -29,7 +30,6 @@ namespace Bot
                  {
                      services.AddSingleton<IBot, MoneyBot>();
                      services.AddSingleton<IBot, YoutubeBot>();
-
                      services.AddTransient<IMoneyBotCommand, FinanceOperationCommand>();
                      services.AddTransient<IMoneyBotCommand, HelpCommand>();
                      services.AddTransient<IMoneyBotCommand, DownloadCommand>();
@@ -38,9 +38,11 @@ namespace Bot
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
                      services.AddHostedService<ConsoleHostedService>();
-
+                     services.AddScoped(x => new ResetMonthAndSendArchiveJob(
+                                            x.GetService<IUserDataRepository>(),
+                                            x.GetService<IBudgetRepository>(),
+                                            new TelegramBotClient(ConfigurationManager.AppSettings["money_bot_token"])));
                      services.AddScheduler();
-                     services.AddScoped<ResetMonthAndSendArchiveJob>();
                  }).Build();
 
             host.Services.UseScheduler(scheduler =>
