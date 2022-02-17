@@ -1,4 +1,5 @@
 ﻿using Bot.Core.Abstractions;
+using Bot.Core.Exceptions;
 using System.Collections.Concurrent;
 using Telegram.Bot.Types;
 
@@ -15,18 +16,25 @@ namespace Bot.Money.Models
 
         public void StartWith(Message message)
         {
+            if (_steps.TryGetValue(message.Chat.Id, out var value) && value.Count > 0) throw new CommandException("Command is already started");
+
             _steps.TryAdd(message.Chat.Id, new List<string> { message.Text });
         }
 
         public int Passed(long userId)
         {
             _steps.TryGetValue(userId, out ICollection<string> steps);
-            return steps == null ? 0 : steps.Count;
+            return steps is null ? 0 : steps.Count;
         }
 
         public void PassWith(Message message)
         {
+            if (message is null) throw new ArgumentNullException();
+
             _steps.TryGetValue(message.Chat.Id, out var steps);
+
+            if (steps?.Count is (0 or null)) throw new CommandException("Command isn't started");
+
             steps.Add(message.Text);
         }
 
