@@ -40,13 +40,15 @@ namespace Bot.Money.Models
 
         public void Finish(long userId)
         {
+            _steps.TryGetValue(userId, out var steps);
+            if (steps?.Count is (0 or null)) throw new CommandException("Command isn't started to be finished");
             _steps.TryRemove(userId, out var f);
         }
 
         public ICollection<string> CollectionOfPassed(long userId)
         {
             _steps.TryGetValue(userId, out var steps);
-            return steps;
+            return steps ?? new string[0];
         }
     }
 }

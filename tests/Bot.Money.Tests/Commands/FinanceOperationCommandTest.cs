@@ -49,12 +49,13 @@ namespace Bot.Money.Tests.Commands
             botClient.Setup(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()))
                      .Returns(Task.FromResult(new Message()))
                      .Callback(() => hasBeenCalled = true);
-
+            // 1
             var financeOperationCommand = new FinanceOperationCommand(financeOperationCommandSteps, budgetRepository.Object);
             var testMessage = new Message { Text = "", Chat = new Chat { Id = 10 } };
             _ = Assert.ThrowsAsync<ArgumentException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
             Assert.False(hasBeenCalled);
 
+            // 2
             testMessage.Text = "100";
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
@@ -64,6 +65,7 @@ namespace Bot.Money.Tests.Commands
             _ = Assert.ThrowsAsync<UserChoiceException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
             Assert.False(hasBeenCalled);
 
+            // 3
             testMessage.Text = "Expense";
             var categories = new string[] { "Food", "Home", "Clothing" };
             budgetRepository.Setup(x => x.GetCategories(testMessage.Chat.Id, testMessage.Text)).Returns(Task.FromResult(categories.AsEnumerable()));
@@ -83,6 +85,21 @@ namespace Bot.Money.Tests.Commands
             testMessage.Text = "Supermarket";
             await financeOperationCommand.Execute(testMessage, botClient.Object);
             Assert.True(hasBeenCalled);
+
+            // 4
+            hasBeenCalled = false;
+            testMessage.Text = "40";
+            await financeOperationCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
+
+            hasBeenCalled = false;
+            testMessage.Text = "Expense";
+            await financeOperationCommand.Execute(testMessage, botClient.Object);
+            Assert.True(hasBeenCalled);
+
+            hasBeenCalled = false;
+            _ = Assert.ThrowsAsync<UserChoiceException>(() => financeOperationCommand.Execute(testMessage, botClient.Object));
+            Assert.False(hasBeenCalled);
         }
     }
 }
