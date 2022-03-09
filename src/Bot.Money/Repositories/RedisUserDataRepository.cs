@@ -38,7 +38,12 @@ namespace Bot.Money.Repositories
 
         public string GetUserSheet(long id)
         {
-            return _db.StringGet(new RedisKey(id.ToString() + "_sheet"));
+            var userSheet = _db.StringGet(new RedisKey(id.ToString() + "_sheet"));
+            if (string.IsNullOrEmpty(userSheet))
+            {
+                throw new NotFoundUserException();
+            }
+            return userSheet;
         }
 
         private string GetUserId(string text)

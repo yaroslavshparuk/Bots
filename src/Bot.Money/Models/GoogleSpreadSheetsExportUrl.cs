@@ -1,9 +1,10 @@
-﻿using Bot.Core.Enums;
+﻿using Bot.Core.Abstractions;
+using Bot.Core.Enums;
 using System.Text;
 
 namespace Bot.Money.Models
 {
-    public class GoogleSpreadSheetsExportUrl
+    public class GoogleSpreadSheetsExportUrl : IExportUrl
     {
         private const string _url = "https://docs.google.com/spreadsheets/d/";
 

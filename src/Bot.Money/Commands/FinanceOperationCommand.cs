@@ -1,9 +1,9 @@
-﻿using Bot.Core.Abstractions;
+﻿using System.Text.RegularExpressions;
+using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
 using Bot.Core.Extensions;
 using Bot.Money.Models;
 using Bot.Money.Repositories;
-using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -63,8 +63,7 @@ namespace Bot.Money.Commands
                     break;
                 case 3:
                     _commandSteps.PassWith(message);
-                    var financeOperationMessage = new FinanceOperationMessage(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id));
-                    _budgetRepository.CreateRecord(financeOperationMessage);
+                    _budgetRepository.CreateRecord(new FinanceOperationMessage(message.Chat.Id, _commandSteps.CollectionOfPassed(message.Chat.Id)));
                     await botClient.SendTextMessageAsync(chatId: message.Chat, text: "Added", replyMarkup: new ReplyKeyboardRemove());
                     _commandSteps.Finish(message.Chat.Id);
                     break;

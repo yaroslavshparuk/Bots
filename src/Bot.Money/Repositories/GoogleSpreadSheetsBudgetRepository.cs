@@ -1,5 +1,5 @@
-﻿using System.Configuration;
-using System.Text;
+﻿using System.Text;
+using Bot.Core.Abstractions;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
@@ -18,48 +18,26 @@ namespace Bot.Money.Repositories
         private const string _summarySheetName = "Summary";
         private const string _transactionsSheetName = "Transactions";
         private readonly IUserDataRepository _userDataRepository;
+        private readonly IExportUrl _exportUrl;
 
-        public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository)
+        public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository, IExportUrl exportUrl)
         {
             _userDataRepository = userDataRepository;
+            _exportUrl = exportUrl;
         }
 
         public void CreateRecord(FinanceOperationMessage financeOperationMessage)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(financeOperationMessage.UserId);
-            if (string.IsNullOrEmpty(clientSecret))
-            {
-                throw new NotFoundUserException();
-            }
-
-            var objectList = financeOperationMessage.GetTranferObject();
-            var range = new StringBuilder(_transactionsSheetName);
-
-            if (financeOperationMessage.IsExpense())
-            {
-                range.Append("!B:E");
-            }
-            else if (financeOperationMessage.IsIncome())
-            {
-                range.Append("!G:J");
-            }
-            else
-            {
-                throw new UserChoiceException("Incorrect finance operation category");
-            }
-
-            var userSheet = _userDataRepository.GetUserSheet(financeOperationMessage.UserId);
-            if (string.IsNullOrEmpty(userSheet))
-            {
-                throw new NotFoundUserException();
-            }
-
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(financeOperationMessage.UserId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var appendRequest = sheetsService.Spreadsheets.Values.Append(GetValueRange(objectList), userSheet, range.ToString());
+                var appendRequest = sheetsService.Spreadsheets.Values.Append(
+                                        GetValueRange(
+                                            financeOperationMessage.BuildTranferObject()), 
+                                            _userDataRepository.GetUserSheet(financeOperationMessage.UserId),
+                                            financeOperationMessage.TransactionRange());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
                 appendRequest.Execute();
             }
@@ -67,25 +45,16 @@ namespace Bot.Money.Repositories
 
         public async Task<Stream> DownloadArchive(long userId)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(userId);
-            var userSheet = _userDataRepository.GetUserSheet(userId);
-
-            if (string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(userSheet))
-            {
-                throw new NotFoundUserException();
-            }
-
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets),
+                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets),
             }))
             {
+                var userSheet = _userDataRepository.GetUserSheet(userId);
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
 
-                var exportUrl = new GoogleSpreadSheetsExportUrl();
-
-                using (var responsePdf = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.Pdf)))
+                using (var responsePdf = await sheetsService.HttpClient.GetAsync(_exportUrl.BuildWith(userSheet, FileType.Pdf)))
                 {
                     if (!responsePdf.IsSuccessStatusCode)
                     {
@@ -95,7 +64,7 @@ namespace Bot.Money.Repositories
                     pdfBytes = await responsePdf.Content.ReadAsByteArrayAsync();
                 }
 
-                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(exportUrl.BuildWith(userSheet, FileType.Xlsx)))
+                using (var responseXlsx = await sheetsService.HttpClient.GetAsync(_exportUrl.BuildWith(userSheet, FileType.Xlsx)))
                 {
                     if (!responseXlsx.IsSuccessStatusCode)
                     {
@@ -133,10 +102,9 @@ namespace Bot.Money.Repositories
 
         public async Task<IEnumerable<string>> GetCategories(long userId, string category)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(userId);
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
                 var range = new StringBuilder(_summarySheetName);
@@ -159,15 +127,9 @@ namespace Bot.Money.Repositories
 
         public async Task ResetMonth(long userId)
         {
-            var clientSecret = _userDataRepository.GetClientSecret(userId);
-            if (string.IsNullOrEmpty(clientSecret))
-            {
-                throw new NotFoundUserException();
-            }
-
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(clientSecret).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
                 var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });

@@ -1,34 +1,48 @@
-﻿namespace Bot.Money.Models
+﻿using Bot.Core.Exceptions;
+using System.Text;
+
+namespace Bot.Money.Models
 {
     public class FinanceOperationMessage
     {
-        private readonly ICollection<string> _messageParts;
+        private readonly ICollection<string> _parts;
+        private const string _transactionsSheetName = "Transactions";
 
-        public FinanceOperationMessage(long userId, ICollection<string> messageParts)
+        public FinanceOperationMessage(long userId, ICollection<string> parts)
         {
-            _messageParts = messageParts;
+            _parts = parts;
             UserId = userId;
         }
 
         public long UserId { get; }
 
-        public IList<object> GetTranferObject()
+        public IList<object> BuildTranferObject()
         {
-            var amount = double.Parse(_messageParts.First().Replace(',', '.'));
-            var description = _messageParts.Last();
-            var category = _messageParts.ElementAt(2);
+            if (_parts.Count != 4) throw new BuildMethodException("Parts count should be equal 4");
+
+            var amount = double.Parse(_parts.First().Replace(',', '.'));
+            var category = _parts.ElementAt(2);
+            var description = _parts.Last();
 
             return new List<object>() { DateTime.UtcNow.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
         }
 
-        public bool IsExpense()
+        public string TransactionRange()
         {
-            return _messageParts.ElementAt(1) == "Expense";
-        }
+            if (_parts.Count != 4) throw new BuildMethodException("Parts count should be equal 4");
+            var range = new StringBuilder(_transactionsSheetName);
+            var financeType = _parts.ElementAt(1);
 
-        public bool IsIncome()
-        {
-            return _messageParts.ElementAt(1) == "Income";
+            if (financeType is "Expense")
+            {
+                range.Append("!B:E");
+            }
+            else if (financeType is "Income")
+            {
+                range.Append("!G:J");
+            }
+
+            return range.ToString(); 
         }
     }
 }
