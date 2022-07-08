@@ -110,11 +110,11 @@ namespace Bot.Money.Repositories
                 var range = new StringBuilder(_summarySheetName);
                 if (category == "Expense")
                 {
-                    range.Append("!B22:B");
+                    range.Append("!B23:B");
                 }
                 else if (category == "Income")
                 {
-                    range.Append("!H22:H");
+                    range.Append("!H23:H");
                 }
                 else
                 {
@@ -125,14 +125,14 @@ namespace Bot.Money.Repositories
             }
         }
 
-        public async Task ResetMonth(long userId)
+        public async Task ResetMonth(long userId)  // TODO: REVIEW ASAP with updated cells on spreadsheet
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
-                var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM") + " Monthly Budget" });
+                var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM yyyy") });
                 var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
                                         resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B2:E3");
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
