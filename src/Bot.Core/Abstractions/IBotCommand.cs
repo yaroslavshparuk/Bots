@@ -1,9 +1,9 @@
 ﻿namespace Bot.Core.Abstractions
 {
-    public interface IBotCommand
+    public interface IBotInputHandler
     {
-        public bool CanExecute(UserRequest request);
+        public bool CanHandle(UserRequest request);
 
-        public Task Execute(UserRequest request);
+        public Task Handle(UserRequest request);
     }
 }

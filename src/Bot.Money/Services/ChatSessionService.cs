@@ -3,18 +3,18 @@ using Bot.Money.Enums;
 
 namespace Bot.Money.Services
 {
-    internal class ChatSessionService : IChatSessionService
+    public class ChatSessionService : IChatSessionService
     {
-        private IList<ChatSession> _sessions;
+        private Dictionary<long, ChatSession> _sessions = new Dictionary<long, ChatSession>();
 
-        public void Save(ChatSession session)
+        public void Save(long id, ChatSession session)
         {
-            _sessions.Add(session);
+            _sessions.Add(id, session);
         }
 
-        public ChatSession Upload(long chatId)
+        public ChatSession Upload(long id)
         {
-            var session = _sessions.FirstOrDefault(x => x.ChatId == chatId);
+            _sessions.TryGetValue(id, out var session);
 
             if (session is null)
             {
@@ -22,7 +22,7 @@ namespace Bot.Money.Services
             }
             else
             {
-                _sessions.Remove(session);
+                _sessions.Remove(id);
             }
 
             return session;

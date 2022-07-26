@@ -1,6 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Extensions;
-using Bot.Money.Commands;
+using Bot.Money.Handlers;
 using Bot.Money.Repositories;
 using Moq;
 using Telegram.Bot.Types;
@@ -30,38 +30,6 @@ namespace Bot.Core.Tests
                 new List<int> { 7, 8 , 9 },
                 new List<int> { 10 },};
             Assert.Equal(expectedArray, multiDimenArray);
-        }
-
-        [Fact]
-        public void GetAppropriateCommandOnMessageTest()
-        {
-            var budgetRepository = new Mock<IBudgetRepository>();
-            var operationCommandHistory = new Mock<ICommandSteps>();
-            var message = new Message();
-            var commands = new List<IBotCommand>()
-            {
-                new DownloadCommand(budgetRepository.Object),
-                new FinanceOperationCommand(operationCommandHistory.Object, budgetRepository.Object),
-                new HelpCommand()
-            };            
-
-            message.Text = "/help";
-            message.Chat = new Chat { Id = 10 };
-            var expectedHelpCommand = commands.FindExecutableCommand(message);
-            Assert.IsType<HelpCommand>(expectedHelpCommand);
-
-            message.Text = "/download";
-            var expectedDownloadCommand = commands.FindExecutableCommand(message);
-            Assert.IsType<DownloadCommand>(expectedDownloadCommand);
-
-            message.Text = "100";
-            var expectedFinanceCommand = commands.FindExecutableCommand(message);
-            Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
-
-            message.Text = "Income";
-            operationCommandHistory.Setup(x => x.IsStarted(10)).Returns(true);
-            expectedFinanceCommand = commands.FindExecutableCommand(message);
-            Assert.IsType<FinanceOperationCommand>(expectedFinanceCommand);
         }
     }
 }

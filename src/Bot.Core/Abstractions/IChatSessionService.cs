@@ -2,8 +2,8 @@
 {
     public interface IChatSessionService
     {
-        void Save(ChatSession session);
+        void Save(long id, ChatSession session);
 
-        ChatSession Upload(long chatId);
+        ChatSession Upload(long id);
     }
 }

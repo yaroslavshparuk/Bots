@@ -1,7 +1,7 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
 using Bot.Core.Extensions;
-using Bot.Youtube.Commands;
+using Bot.Youtube.Handlers;
 using log4net;
 using System.Configuration;
 using System.Reflection;
@@ -13,11 +13,13 @@ namespace Bot.Youtube
 {
     public class YoutubeBot : IBot
     {
-        private readonly IEnumerable<IYoutubeBotCommand> _commands;
+        private readonly IEnumerable<IYoutubeBotInputHandler> _commands;
+        private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["youtube_bot_token"]);
-        public YoutubeBot(IEnumerable<IYoutubeBotCommand> commands)
+        public YoutubeBot(IEnumerable<IYoutubeBotInputHandler> commands, IChatSessionService chatSessionService)
         {
             _commands = commands;
+            _chatSessionService = chatSessionService;
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -40,7 +42,9 @@ namespace Bot.Youtube
         {
             try
             {
-                await _commands.FindExecutableCommand(e.Message).Execute(e.Message, _botClient);
+                var session = _chatSessionService.Upload(e.Message.Chat.Id);
+                await new Dispatcher(_commands, _chatSessionService).Dispatch(e.Message, _botClient);
+
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)

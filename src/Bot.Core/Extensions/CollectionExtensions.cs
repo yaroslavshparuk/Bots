@@ -1,8 +1,4 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
-using Telegram.Bot.Types;
-
-namespace Bot.Core.Extensions
+﻿namespace Bot.Core.Extensions
 {
     public static class CollectionExtensions
     {
@@ -14,19 +10,6 @@ namespace Bot.Core.Extensions
             {
                 yield return array.Skip(i * size).Take(size);
             }
-        }
-
-        public static IBotCommand FindExecutableCommand(this IEnumerable<IBotCommand> commands, Message message)
-        {
-            foreach (var command in commands)
-            {
-                if (command.CanExecute(message))
-                {
-                    return command;
-                }
-            }
-
-            throw new NotFoundCommandException();
         }
     }
 }

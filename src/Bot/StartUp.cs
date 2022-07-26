@@ -7,14 +7,15 @@ using log4net;
 using log4net.Config;
 using Coravel;
 using Bot.Core.Abstractions;
-using Bot.Youtube.Commands;
+using Bot.Youtube.Handlers;
 using Bot.Money.Repositories;
-using Bot.Money.Commands;
+using Bot.Money.Handlers;
 using Bot.Money.Jobs;
 using Bot.Money.Models;
 using Bot.Money;
 using Bot.Youtube;
 using Telegram.Bot;
+using Bot.Money.Services;
 
 namespace Bot
 {
@@ -29,13 +30,16 @@ namespace Bot
                  .ConfigureServices((hostContext, services) =>
                  {
                      services.AddSingleton<IBot, MoneyBot>();
-                     services.AddSingleton<IBot, YoutubeBot>();
-                     services.AddTransient<IMoneyBotCommand, FinanceOperationCommand>();
-                     services.AddTransient<IMoneyBotCommand, HelpCommand>();
-                     services.AddTransient<IMoneyBotCommand, DownloadCommand>();
-                     services.AddTransient<IYoutubeBotCommand, YoutubeVideoUrlToAudioCommand>();
+                     // services.AddSingleton<IBot, YoutubeBot>();
+                     services.AddTransient<IMoneyBotInputHandler, FinOpsAmountEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, FinOpsTypeEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, FinOpsCategoryEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, FinOpsDescriptionEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, HelpCommand>();
+                     services.AddTransient<IMoneyBotInputHandler, DownloadCommand>();
+                     services.AddSingleton<IChatSessionService, ChatSessionService>();
+                     services.AddTransient<IYoutubeBotInputHandler, YoutubeVideoUrlToAudioCommand>();
                      services.AddTransient<IExportUrl, GoogleSpreadSheetsExportUrl>();
-                     services.AddScoped<ICommandSteps, FinanceOperationCommandSteps>();
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
                      services.AddHostedService<ConsoleHostedService>();

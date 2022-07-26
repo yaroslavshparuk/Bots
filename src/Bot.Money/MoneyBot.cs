@@ -1,5 +1,5 @@
 ﻿using Bot.Core.Abstractions;
-using Bot.Money.Commands;
+using Bot.Money.Handlers;
 using Google;
 using log4net;
 using System.Configuration;
@@ -12,11 +12,11 @@ namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
-        private readonly IEnumerable<IMoneyBotCommand> _commands;
+        private readonly IEnumerable<IMoneyBotInputHandler> _commands;
         private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
 
-        public MoneyBot(IEnumerable<IMoneyBotCommand> commands, IChatSessionService chatSessionService)
+        public MoneyBot(IEnumerable<IMoneyBotInputHandler> commands, IChatSessionService chatSessionService)
         {
             _commands = commands;
             _chatSessionService = chatSessionService;
@@ -42,10 +42,7 @@ namespace Bot.Money
         {
             try
             {
-                var session = _chatSessionService.Upload(e.Message.Chat.Id);
-                await new Dispatcher(_commands).Dispatch(new UserRequest(session, e.Message, _botClient));
-                _chatSessionService.Save(session);
-
+                await new Dispatcher(_commands, _chatSessionService).Dispatch(e.Message, _botClient); // remove _chatSessionService, create separate dispatcher for every bot
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)
