@@ -26,6 +26,7 @@ namespace Bot.Core.Abstractions
             if (message.Text is "Cancel")
             {
                 await _client.SendTextMessageAsync(chatId: chatId, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
+                return;
             }
 
             var request = new UserRequest(session, message, _client);

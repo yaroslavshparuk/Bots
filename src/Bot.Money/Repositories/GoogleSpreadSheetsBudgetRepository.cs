@@ -143,7 +143,7 @@ namespace Bot.Money.Repositories
 
                 var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });
                 var changeStartingBalanceRequest = sheetsService.Spreadsheets.Values.Update(
-                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!L2");
+                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!L3");
                 changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await changeStartingBalanceRequest.ExecuteAsync();
 

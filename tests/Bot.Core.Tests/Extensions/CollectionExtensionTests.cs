@@ -1,12 +1,7 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Extensions;
-using Bot.Money.Handlers;
-using Bot.Money.Repositories;
-using Moq;
-using Telegram.Bot.Types;
+﻿using Bot.Core.Extensions;
 using Xunit;
 
-namespace Bot.Core.Tests
+namespace Bot.Core.Tests.Extensions
 {
     public class CollectionExtensionTests
     {
