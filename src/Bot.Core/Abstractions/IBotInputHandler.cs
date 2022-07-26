@@ -2,7 +2,7 @@
 {
     public interface IBotInputHandler
     {
-        public bool CanHandle(UserRequest request);
+        public bool IsSuitable(UserRequest request);
 
         public Task Handle(UserRequest request);
     }

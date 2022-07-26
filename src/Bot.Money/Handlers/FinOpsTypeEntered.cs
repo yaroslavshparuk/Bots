@@ -17,14 +17,14 @@ namespace Bot.Money.Handlers
             _budgetRepository = budgetRepository;
         }
 
-        public bool CanHandle(UserRequest request)
+        public bool IsSuitable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.WaitingForType;
         }
 
         public async Task Handle(UserRequest request)
         {
-            if (!CanHandle(request)) { throw new ArgumentException(); }
+            if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             if (request.Message.Text is not ("Income" or "Expense")) { throw new UserChoiceException("You should choose 'Expense' or 'Income'"); }
             

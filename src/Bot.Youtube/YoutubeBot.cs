@@ -42,9 +42,7 @@ namespace Bot.Youtube
         {
             try
             {
-                var session = _chatSessionService.Upload(e.Message.Chat.Id);
-                await new Dispatcher(_commands, _chatSessionService).Dispatch(e.Message, _botClient);
-
+                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(e.Message);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)

@@ -5,15 +5,15 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Core.Abstractions
 {
-    public class Dispatcher
+    public abstract class BotDispatcher
     {
-        private readonly IEnumerable<IBotInputHandler> _inputHandlers;
+        private readonly IEnumerable<IBotInputHandler> _commands;
         private readonly IChatSessionService _chatSessionService;
         private readonly ITelegramBotClient _client;
 
-        public Dispatcher(IEnumerable<IBotInputHandler> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
+        protected BotDispatcher(IEnumerable<IBotInputHandler> commands, IChatSessionService chatSessionService, ITelegramBotClient client)
         {
-            _inputHandlers = inputHandlers;
+            _commands = commands;
             _chatSessionService = chatSessionService;
             _client = client;
         }
@@ -30,16 +30,15 @@ namespace Bot.Core.Abstractions
 
             var request = new UserRequest(session, message, _client);
 
-            foreach (var inputHandler in _inputHandlers)
+            foreach (var command in _commands)
             {
-                if (inputHandler.IsSuitable(request))
+                if (command.IsSuitable(request))
                 {
-                    await inputHandler.Handle(request);
+                    await command.Handle(request);
                     _chatSessionService.Save(chatId, session);
                     return;
                 }
             }
-
 
             throw new NotFoundCommandException();
         }

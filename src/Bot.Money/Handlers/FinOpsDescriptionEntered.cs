@@ -16,14 +16,15 @@ namespace Bot.Money.Handlers
             _budgetRepository = budgetRepository;
         }
 
-        public bool CanHandle(UserRequest request)
+        public bool IsSuitable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.WaitingForDescription;
         }
 
         public async Task Handle(UserRequest request)
         {
-            if (!CanHandle(request)) { throw new ArgumentException(); }
+            await _budgetRepository.ResetMonth(request.Message.Chat.Id);
+            if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             request.Session.MoveNext(request.Message.Text);
 

@@ -8,7 +8,7 @@ namespace Bot.Money.Handlers
     public class FinOpsAmountEntered : IMoneyBotInputHandler
     {
         private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
-        public bool CanHandle(UserRequest request)
+        public bool IsSuitable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.Started && 
                 Regex.IsMatch(request.Message.Text, @"[\d]{1,9}([.,][\d]{1,6})?$");
@@ -16,7 +16,7 @@ namespace Bot.Money.Handlers
 
         public async Task Handle(UserRequest request)
         {
-            if (!CanHandle(request)) { throw new ArgumentException(); }
+            if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             request.Session.MoveNext(request.Message.Text);
 

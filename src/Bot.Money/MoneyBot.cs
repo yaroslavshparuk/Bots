@@ -42,7 +42,7 @@ namespace Bot.Money
         {
             try
             {
-                await new Dispatcher(_commands, _chatSessionService).Dispatch(e.Message, _botClient); // remove _chatSessionService, create separate dispatcher for every bot
+                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(e.Message);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

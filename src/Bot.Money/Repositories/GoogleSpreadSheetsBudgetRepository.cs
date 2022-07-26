@@ -134,11 +134,11 @@ namespace Bot.Money.Repositories
             {
                 var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM yyyy") });
                 var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
-                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B2:E3");
+                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B3:E4");
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await resetMonthRequest.ExecuteAsync();
 
-                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!E11");
+                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!C9");
                 var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
 
                 var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });

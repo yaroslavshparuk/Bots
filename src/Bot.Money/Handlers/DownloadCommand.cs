@@ -14,14 +14,14 @@ namespace Bot.Money.Handlers
             _budgetRepository = budgetRepository;
         }
 
-        public bool CanHandle(UserRequest request)
+        public bool IsSuitable(UserRequest request)
         {
             return request.Message.Text == NAME;
         }
 
         public async Task Handle(UserRequest request)
         {
-            if (!CanHandle(request)) { throw new ArgumentException(); }
+            if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             var chatId = request.Message.Chat.Id;
 

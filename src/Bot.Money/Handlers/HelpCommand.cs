@@ -7,14 +7,14 @@ namespace Bot.Money.Handlers
     {
         private const string helpResponse = "It's beta version. To get any info - write @shparuk";
 
-        public bool CanHandle(UserRequest request)
+        public bool IsSuitable(UserRequest request)
         {
             return request.Message.Text is "/help";
         }
 
-        public async Task Handle(UserRequest request)
+        public async Task Handle(UserRequest request) 
         {
-            if (!CanHandle(request)) { throw new ArgumentException(); }
+            if (!IsSuitable(request)) { throw new ArgumentException(); }
             await request.Client.SendTextMessageAsync(request.Message.Chat, helpResponse, ParseMode.Default, false, false, 0);
         }
     }

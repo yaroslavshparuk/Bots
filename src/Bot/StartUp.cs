@@ -30,7 +30,7 @@ namespace Bot
                  .ConfigureServices((hostContext, services) =>
                  {
                      services.AddSingleton<IBot, MoneyBot>();
-                     // services.AddSingleton<IBot, YoutubeBot>();
+                     services.AddSingleton<IBot, YoutubeBot>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsAmountEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsTypeEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsCategoryEntered>();
