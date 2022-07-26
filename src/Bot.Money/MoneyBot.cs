@@ -7,18 +7,19 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Bot.Core.Exceptions;
-using Bot.Core.Extensions;
 
 namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyBotCommand> _commands;
+        private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
 
-        public MoneyBot(IEnumerable<IMoneyBotCommand> commands)
+        public MoneyBot(IEnumerable<IMoneyBotCommand> commands, IChatSessionService chatSessionService)
         {
             _commands = commands;
+            _chatSessionService = chatSessionService;
         }
 
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -41,7 +42,10 @@ namespace Bot.Money
         {
             try
             {
-                await _commands.FindExecutableCommand(e.Message).Execute(e.Message, _botClient);
+                var session = _chatSessionService.Upload(e.Message.Chat.Id);
+                await new Dispatcher(_commands).Dispatch(new UserRequest(session, e.Message, _botClient));
+                _chatSessionService.Save(session);
+
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)
