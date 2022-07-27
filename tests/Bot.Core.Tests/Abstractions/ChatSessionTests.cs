@@ -1,5 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Money.Enums;
+using Bot.Money.Services;
 using Xunit;
 
 namespace Bot.Core.Tests.Abstractions
@@ -7,10 +8,17 @@ namespace Bot.Core.Tests.Abstractions
     public class ChatSessionTests
     {
         private readonly string[] _values = new string[] { "123", "Expense", "Food", "Apples" };
+        private readonly IChatSessionService _chatSessionService;
+
+        public ChatSessionTests()
+        {
+            _chatSessionService = new ChatSessionService();
+        }
+
         [Fact]
         public void MoveNextInput4MessagesThenCurrentStateIs5()
         {
-            var session = new ChatSession(new Queue<int>(Enum.GetValues(typeof(FinanceOperationState)).Cast<int>()));
+            var session = _chatSessionService.DownloadOrCreate(123);
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
 
             for (int i = 0; i < _values.Length; i++)
@@ -24,7 +32,7 @@ namespace Bot.Core.Tests.Abstractions
         [Fact]
         public void UploadValuesReturnsAllTheInputValuesViaMoveNextMethod()
         {
-            var session = new ChatSession(new Queue<int>(Enum.GetValues(typeof(FinanceOperationState)).Cast<int>()));
+            var session = _chatSessionService.DownloadOrCreate(123);
 
             for (int i = 0; i < _values.Length; i++)
             {

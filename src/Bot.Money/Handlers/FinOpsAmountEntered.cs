@@ -8,6 +8,7 @@ namespace Bot.Money.Handlers
     public class FinOpsAmountEntered : IMoneyBotInputHandler
     {
         private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
+
         public bool IsSuitable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.Started && 

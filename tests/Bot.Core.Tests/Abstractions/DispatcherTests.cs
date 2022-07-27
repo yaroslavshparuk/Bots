@@ -15,12 +15,12 @@ namespace Bot.Core.Tests.Abstractions
     public class DispatcherTests
     {
         private readonly IEnumerable<IBotInputHandler> _handlers;
-        private readonly ChatSessionService _chatSessionService;
+        private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
 
         public DispatcherTests()
         {
-            _handlers = new IBotInputHandler[] {new FinOpsAmountEntered()};
+            _handlers = new IBotInputHandler[] { new FinOpsAmountEntered() };
             _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
         }

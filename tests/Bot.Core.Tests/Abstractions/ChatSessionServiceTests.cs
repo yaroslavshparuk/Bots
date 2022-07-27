@@ -7,20 +7,26 @@ namespace Bot.Core.Tests.Abstractions
 {
     public class ChatSessionServiceTests
     {
+        private readonly IChatSessionService _chatSessionService;
+
+        public ChatSessionServiceTests()
+        {
+            _chatSessionService = new ChatSessionService();
+        }
+
         [Fact]
         public void UnloadNewSessionChangeItThenSaveAndUnloadToAssert()
         {
             var chatId = 12;
-            var service = new ChatSessionService();
-            var session = service.DownloadOrCreate(chatId);
+            var session = _chatSessionService.DownloadOrCreate(chatId);
 
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
             session.MoveNext("123");
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
 
-            service.Save(chatId, session);
+            _chatSessionService.Save(chatId, session);
 
-            session = service.DownloadOrCreate(chatId);
+            session = _chatSessionService.DownloadOrCreate(chatId);
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
         }
     }
