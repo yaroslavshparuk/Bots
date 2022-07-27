@@ -1,6 +1,6 @@
 ﻿namespace Bot.Money.Enums
 {
-    internal enum FinanceOperationState
+    public enum FinanceOperationState
     {
         Started = 1,
         WaitingForType = 2,

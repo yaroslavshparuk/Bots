@@ -12,13 +12,13 @@ namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
-        private readonly IEnumerable<IMoneyBotInputHandler> _commands;
+        private readonly IEnumerable<IMoneyBotInputHandler> _handlers;
         private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
 
-        public MoneyBot(IEnumerable<IMoneyBotInputHandler> commands, IChatSessionService chatSessionService)
+        public MoneyBot(IEnumerable<IMoneyBotInputHandler> handlers, IChatSessionService chatSessionService)
         {
-            _commands = commands;
+            _handlers = handlers;
             _chatSessionService = chatSessionService;
         }
 
@@ -42,7 +42,7 @@ namespace Bot.Money
         {
             try
             {
-                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(e.Message);
+                await new Dispatcher(_handlers, _chatSessionService, _botClient).Dispatch(e.Message);
                 _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
             }
             catch (NotFoundCommandException ex)

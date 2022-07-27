@@ -21,7 +21,7 @@ namespace Bot.Core.Abstractions
         public async Task Dispatch(Message message)
         {
             var chatId = message.Chat.Id;
-            var session = _chatSessionService.Upload(chatId);
+            var session = _chatSessionService.DownloadOrCreate(chatId);
 
             if (message.Text is "Cancel")
             {

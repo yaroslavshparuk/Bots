@@ -1,28 +1,32 @@
 ﻿using Bot.Core.Abstractions;
+using Bot.Money.Handlers;
+using Bot.Money.Services;
+using Bot.Money.Enums;
 using Moq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
+using Bot.Core.Exceptions;
 
 namespace Bot.Core.Tests.Abstractions
 {
     public class DispatcherTests
     {
-        private readonly Mock<IEnumerable<IBotInputHandler>> _inputHandlers;
-        private readonly Mock<IChatSessionService> _chatSessionService;
+        private readonly IEnumerable<IBotInputHandler> _handlers;
+        private readonly ChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
 
         public DispatcherTests()
         {
-            _inputHandlers = new Mock<IEnumerable<IBotInputHandler>>();
-            _chatSessionService = new Mock<IChatSessionService>();
+            _handlers = new IBotInputHandler[] {new FinOpsAmountEntered()};
+            _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
         }
 
         [Fact]
-        public async void Dispatch_InputIsCancel_ReturnCancellationMessage()
+        public async void DispatchInputIsCancelReturnCancellationMessage()
         {
             var hasBeenCalled = false;
 
@@ -30,10 +34,31 @@ namespace Bot.Core.Tests.Abstractions
                      .Returns(Task.FromResult(new Message()))
                      .Callback(() => hasBeenCalled = true);
 
-            var dispatcher = new Dispatcher(_inputHandlers.Object, _chatSessionService.Object, _botClient.Object);
+            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             await dispatcher.Dispatch(new Message { Text = "Cancel", Chat = new Chat { Id = 123 } });
 
             Assert.True(hasBeenCalled);
+        }
+
+        [Fact]
+        public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
+        {
+            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var message = new Message { Chat = new Chat { Id = 123 }, Text = "123" };
+
+            await dispatcher.Dispatch(message);
+            var session = _chatSessionService.DownloadOrCreate(message.Chat.Id);
+
+            Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
+            Assert.Equal(message.Text, session.LastMessageText);
+        }
+
+        [Fact]
+        public async void DispatchInputIsNotAmountThrowNotFoundCommandException()
+        {
+            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var message = new Message { Chat = new Chat { Id = 123 }, Text = "Not amount" };
+            await Assert.ThrowsAsync<NotFoundCommandException>(() => dispatcher.Dispatch(message));
         }
     }
 }

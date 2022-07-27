@@ -14,8 +14,6 @@
 
         public int CurrentState { get; private set; }
 
-        public long ChatId { get; private set; }
-
         public string LastMessageText { get; private set; }
 
         public void MoveNext(string text)

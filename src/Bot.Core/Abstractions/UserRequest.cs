@@ -14,8 +14,8 @@ namespace Bot.Core.Abstractions
 
         public ChatSession Session { get; }
 
-        public Message Message { get; set; }
+        public Message Message { get; }
 
-        public ITelegramBotClient Client { get; set; }
+        public ITelegramBotClient Client { get; }
     }
 }
