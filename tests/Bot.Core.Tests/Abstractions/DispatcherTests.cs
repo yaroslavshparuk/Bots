@@ -9,40 +9,38 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 using Bot.Core.Exceptions;
+using Bot.Money.Repositories;
+using Bot.Money.Models;
 
 namespace Bot.Core.Tests.Abstractions
 {
     public class DispatcherTests
     {
-        private readonly IEnumerable<IBotInputHandler> _handlers;
         private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
+        private readonly Mock<IBudgetRepository> _budgetRepository;
+        private IList<IMoneyBotInputHandler> _handlers;
 
         public DispatcherTests()
         {
-            _handlers = new IBotInputHandler[] { new FinOpsAmountEntered() };
             _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
+            _budgetRepository = new Mock<IBudgetRepository>();
+            _handlers = new List<IMoneyBotInputHandler>();
         }
 
         [Fact]
         public async void DispatchInputIsCancelReturnCancellationMessage()
         {
-            var hasBeenCalled = false;
-
-            _botClient.Setup(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()))
-                     .Returns(Task.FromResult(new Message()))
-                     .Callback(() => hasBeenCalled = true);
-
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             await dispatcher.Dispatch(new Message { Text = "Cancel", Chat = new Chat { Id = 123 } });
-
-            Assert.True(hasBeenCalled);
+            _botClient.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         [Fact]
         public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
         {
+            _handlers = new List<IMoneyBotInputHandler> { new FinOpsAmountEntered() };
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message { Chat = new Chat { Id = 123 }, Text = "123" };
 
@@ -59,6 +57,34 @@ namespace Bot.Core.Tests.Abstractions
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message { Chat = new Chat { Id = 123 }, Text = "Not amount" };
             await Assert.ThrowsAsync<NotFoundCommandException>(() => dispatcher.Dispatch(message));
+        }
+
+        [Fact]
+        public async Task FullFinanceOperationTest()
+        {
+            _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
+            _handlers = new List<IMoneyBotInputHandler>()
+            {
+                new FinOpsAmountEntered(),
+                new FinOpsTypeEntered(_budgetRepository.Object),
+                new FinOpsCategoryEntered(_budgetRepository.Object),
+                new FinOpsDescriptionEntered(_budgetRepository.Object),
+            };
+
+            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var testMessages = new Message[] {
+                new Message { Text = "123", Chat = new Chat { Id = 123 } },
+                new Message { Text = "Expense", Chat = new Chat { Id = 123 } },
+                new Message { Text = "Food", Chat = new Chat { Id = 123 } },
+                new Message { Text = "Banana", Chat = new Chat { Id = 123 } }
+                };
+
+            foreach (var m in testMessages)
+            {
+                await dispatcher.Dispatch(m);
+            }
+
+            _budgetRepository.Verify(x => x.CreateRecord(It.IsAny<FinanceOperationMessage>()), Times.Once());
         }
     }
 }

@@ -25,20 +25,16 @@ namespace Bot.Money.Handlers
         public async Task Handle(UserRequest request)
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
-
             if (request.Message.Text is not ("Income" or "Expense")) { throw new UserChoiceException("You should choose 'Expense' or 'Income'"); }
             
             var chatId = request.Message.Chat.Id;
-
             var replyMessage = (await _budgetRepository.GetCategories(chatId, request.Message.Text))
                 .Select(x => new KeyboardButton(x))
                 .Append(new KeyboardButton("Cancel"))
                 .Split(_keyBoardMarkUpRowSize);
 
             var categoriesKeyboardMarkUp = new ReplyKeyboardMarkup(replyMessage);
-
             request.Session.MoveNext(request.Message.Text);
-
             await request.Client.SendTextMessageAsync(chatId: chatId, text: "What category is it?", replyMarkup: categoriesKeyboardMarkUp);
         }
     }

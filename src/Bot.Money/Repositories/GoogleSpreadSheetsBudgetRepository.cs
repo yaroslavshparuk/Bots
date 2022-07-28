@@ -125,7 +125,7 @@ namespace Bot.Money.Repositories
             }
         }
 
-        public async Task ResetMonth(long userId)  // TODO: REVIEW ASAP with updated cells on spreadsheet
+        public async Task ResetMonth(long userId)
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {

@@ -20,7 +20,6 @@ namespace Bot.Money.Handlers
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             request.Session.MoveNext(request.Message.Text);
-
             await request.Client.SendTextMessageAsync(chatId: request.Message.Chat, text: "Is expense or income?", replyMarkup: _expOrIncReply);
         }
     }

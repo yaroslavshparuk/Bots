@@ -23,11 +23,9 @@ namespace Bot.Money.Handlers
 
         public async Task Handle(UserRequest request)
         {
-            await _budgetRepository.ResetMonth(request.Message.Chat.Id);
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             request.Session.MoveNext(request.Message.Text);
-
             var chatId = request.Message.Chat.Id;
             _budgetRepository.CreateRecord(new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList()));
             await request.Client.SendTextMessageAsync(chatId: chatId, text: "Added", replyMarkup: new ReplyKeyboardRemove());

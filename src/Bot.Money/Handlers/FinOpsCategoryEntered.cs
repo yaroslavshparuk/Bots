@@ -10,6 +10,7 @@ namespace Bot.Money.Handlers
     {
         private readonly ReplyKeyboardMarkup _skipReply = new(new[] { new KeyboardButton[] { "Skip" } }) { ResizeKeyboard = true };
         private readonly IBudgetRepository _budgetRepository;
+
         public FinOpsCategoryEntered(IBudgetRepository budgetRepository)
         {
             _budgetRepository = budgetRepository;
@@ -30,7 +31,6 @@ namespace Bot.Money.Handlers
             if (!expectedCategories.Contains(request.Message.Text)) { throw new UserChoiceException("You should choose correct category"); }
 
             request.Session.MoveNext(request.Message.Text);
-
             await request.Client.SendTextMessageAsync(chatId: chatId, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
         }
     }
