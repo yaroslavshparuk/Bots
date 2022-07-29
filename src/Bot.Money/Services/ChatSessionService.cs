@@ -16,14 +16,12 @@ namespace Bot.Money.Services
         {
             _sessions.TryGetValue(id, out var session);
 
-            if (session is null)
+            if (session is null || session.IsCompleted)
             {
                 session = new ChatSession(new Queue<int>(Enum.GetValues(typeof(FinanceOperationState)).Cast<int>()));
             }
-            else
-            {
-                _sessions.Remove(id);
-            }
+
+            _sessions.Remove(id);
 
             return session;
         }

@@ -16,18 +16,13 @@
 
         public string LastTextMessage { get; private set; }
 
+        public bool IsCompleted { get { return _states.Count == 0; } }
+
         public void MoveNext(string text)
         {
             _values.Enqueue(text);
             LastTextMessage = text;
-            if(_states.TryDequeue(out var state))
-            {
-                CurrentState = state;
-            }
-            else
-            {
-                CurrentState = 1;
-            }
+            CurrentState = _states.Dequeue();
         }
 
         public IEnumerable<string> UnloadValues()

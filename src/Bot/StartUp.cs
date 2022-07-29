@@ -29,20 +29,20 @@ namespace Bot
             var host = Host.CreateDefaultBuilder(args)
                  .ConfigureServices((hostContext, services) =>
                  {
+                     services.AddHostedService<ConsoleHostedService>();
                      services.AddSingleton<IBot, MoneyBot>();
-                     //services.AddSingleton<IBot, YoutubeBot>();
+                     services.AddSingleton<IBot, YoutubeBot>();
+                     services.AddSingleton<IChatSessionService, ChatSessionService>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsAmountEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsTypeEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsCategoryEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsDescriptionEntered>();
                      services.AddTransient<IMoneyBotInputHandler, HelpCommand>();
                      services.AddTransient<IMoneyBotInputHandler, DownloadCommand>();
-                     services.AddSingleton<IChatSessionService, ChatSessionService>();
                      services.AddTransient<IYoutubeBotInputHandler, YoutubeVideoUrlToAudioCommand>();
-                     services.AddScoped<GoogleSpreadSheetsExportUrl>();
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
-                     services.AddHostedService<ConsoleHostedService>();
+                     services.AddScoped<GoogleSpreadSheetsExportUrl>();
                      services.AddScoped(x => new ResetMonthAndSendArchiveJob(
                                             x.GetService<IUserDataRepository>(),
                                             x.GetService<IBudgetRepository>(),

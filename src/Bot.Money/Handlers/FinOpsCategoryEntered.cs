@@ -31,7 +31,7 @@ namespace Bot.Money.Handlers
             var chatId = request.Message.Chat.Id;
 
             var expectedCategories = _memoryCache.Get<IEnumerable<string>>(chatId);
-            if(expectedCategories is null)
+            if (expectedCategories is null)
             {
                 expectedCategories = await _budgetRepository.GetCategories(chatId, request.Session.LastTextMessage);
             }

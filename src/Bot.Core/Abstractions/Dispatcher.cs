@@ -35,12 +35,17 @@ namespace Bot.Core.Abstractions
             {
                 if (inputHandler.IsSuitable(request))
                 {
-                    await inputHandler.Handle(request);
-                    _chatSessionService.Save(chatId, session);
-                    return;
+                    try
+                    {
+                        await inputHandler.Handle(request);
+                        return;
+                    }
+                    finally
+                    {
+                        _chatSessionService.Save(chatId, session);
+                    }
                 }
             }
-
 
             throw new NotFoundCommandException();
         }

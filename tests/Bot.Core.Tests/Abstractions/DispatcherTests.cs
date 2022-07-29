@@ -11,6 +11,8 @@ using Xunit;
 using Bot.Core.Exceptions;
 using Bot.Money.Repositories;
 using Bot.Money.Models;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bot.Core.Tests.Abstractions
 {
@@ -19,6 +21,7 @@ namespace Bot.Core.Tests.Abstractions
         private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
+        private readonly IMemoryCache _memoryCache;
         private IList<IMoneyBotInputHandler> _handlers;
 
         public DispatcherTests()
@@ -27,6 +30,9 @@ namespace Bot.Core.Tests.Abstractions
             _botClient = new Mock<ITelegramBotClient>();
             _budgetRepository = new Mock<IBudgetRepository>();
             _handlers = new List<IMoneyBotInputHandler>();
+            var services = new ServiceCollection();
+            services.AddMemoryCache();
+            _memoryCache = services.BuildServiceProvider().GetService<IMemoryCache>();
         }
 
         [Fact]
@@ -66,8 +72,8 @@ namespace Bot.Core.Tests.Abstractions
             _handlers = new List<IMoneyBotInputHandler>()
             {
                 new FinOpsAmountEntered(),
-                new FinOpsTypeEntered(_budgetRepository.Object),
-                new FinOpsCategoryEntered(_budgetRepository.Object),
+                new FinOpsTypeEntered(_budgetRepository.Object, _memoryCache),
+                new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache),
                 new FinOpsDescriptionEntered(_budgetRepository.Object),
             };
 
