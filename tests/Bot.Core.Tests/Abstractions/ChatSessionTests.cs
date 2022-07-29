@@ -25,7 +25,7 @@ namespace Bot.Core.Tests.Abstractions
             {
                 session.MoveNext(_values[i]);
                 Assert.Equal(i + 2, session.CurrentState);
-                Assert.Equal(_values[i], session.LastMessageText);
+                Assert.Equal(_values[i], session.LastTextMessage);
             }
         }
 

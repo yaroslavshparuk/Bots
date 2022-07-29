@@ -6,6 +6,6 @@
         WaitingForType = 2,
         WaitingForCategory = 3,
         WaitingForDescription = 4,
-        End,
+        End = 5,
     }
 }

@@ -20,7 +20,7 @@ namespace Bot.Money.Tests.Jobs
             var botClient = new Mock<ITelegramBotClient>();
             var job = new ResetMonthAndSendArchiveJob(userDataRepository.Object, budgetRepository.Object, botClient.Object);
 
-            userDataRepository.Setup(x => x.GetAllUsers()).Returns(new List<long> { 10 });
+            userDataRepository.Setup(x => x.GetAllUsers()).Returns(new List<long> { 10 }.ToAsyncEnumerable());
             budgetRepository.Setup(x => x.DownloadArchive(10)).ReturnsAsync(new MemoryStream(new byte[] { 1, 2, 3 }));
 
             await job.Invoke();

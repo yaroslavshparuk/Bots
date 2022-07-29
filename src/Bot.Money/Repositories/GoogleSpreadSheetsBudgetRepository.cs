@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Bot.Core.Abstractions;
 using Bot.Core.Enums;
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
@@ -18,28 +17,28 @@ namespace Bot.Money.Repositories
         private const string _summarySheetName = "Summary";
         private const string _transactionsSheetName = "Transactions";
         private readonly IUserDataRepository _userDataRepository;
-        private readonly IExportUrl _exportUrl;
+        private readonly GoogleSpreadSheetsExportUrl _exportUrl;
 
-        public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository, IExportUrl exportUrl)
+        public GoogleSpreadSheetsBudgetRepository(IUserDataRepository userDataRepository, GoogleSpreadSheetsExportUrl exportUrl)
         {
             _userDataRepository = userDataRepository;
             _exportUrl = exportUrl;
         }
 
-        public void CreateRecord(FinanceOperationMessage financeOperationMessage)
+        public async Task CreateRecord(FinanceOperationMessage financeOperationMessage)
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(financeOperationMessage.UserId)).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(await _userDataRepository.GetClientSecret(financeOperationMessage.UserId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
                 var appendRequest = sheetsService.Spreadsheets.Values.Append(
                                         GetValueRange(
                                             financeOperationMessage.BuildTranferObject()), 
-                                            _userDataRepository.GetUserSheet(financeOperationMessage.UserId),
+                                            await _userDataRepository.GetUserSheet(financeOperationMessage.UserId),
                                             financeOperationMessage.TransactionRange());
                 appendRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-                appendRequest.Execute();
+                await appendRequest.ExecuteAsync();
             }
         }
 
@@ -47,10 +46,10 @@ namespace Bot.Money.Repositories
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets),
+                HttpClientInitializer = GoogleCredential.FromJson(await _userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets),
             }))
             {
-                var userSheet = _userDataRepository.GetUserSheet(userId);
+                var userSheet = await _userDataRepository.GetUserSheet(userId);
                 byte[] pdfBytes = null;
                 byte[] xlsxBytes = null;
 
@@ -78,7 +77,7 @@ namespace Bot.Money.Repositories
 
                 using (var zipStream = new ZipOutputStream(outputStream))
                 {
-                    zipStream.PutNextEntry(new ZipEntry($"budget.pdf"));
+                    zipStream.PutNextEntry(new ZipEntry($"Budget.pdf"));
 
                     var buffer = new byte[4096];
 
@@ -86,7 +85,7 @@ namespace Bot.Money.Repositories
                         StreamUtils.Copy(pdfStream, zipStream, buffer);
                     zipStream.CloseEntry();
 
-                    zipStream.PutNextEntry(new ZipEntry($"budget.xlsx"));
+                    zipStream.PutNextEntry(new ZipEntry($"Budget.xlsx"));
 
                     using (var xlsxStream = new MemoryStream(xlsxBytes))
                         StreamUtils.Copy(xlsxStream, zipStream, buffer);
@@ -104,7 +103,7 @@ namespace Bot.Money.Repositories
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(await _userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
                 var range = new StringBuilder(_summarySheetName);
@@ -120,7 +119,7 @@ namespace Bot.Money.Repositories
                 {
                     throw new UserChoiceException("Incorrect finance operation category");
                 }
-                var categories = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), range.ToString());
+                var categories = sheetsService.Spreadsheets.Values.Get(await _userDataRepository.GetUserSheet(userId), range.ToString());
                 return (await categories.ExecuteAsync()).Values.Select(x => x.FirstOrDefault().ToString());
             }
         }
@@ -129,28 +128,28 @@ namespace Bot.Money.Repositories
         {
             using (var sheetsService = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = GoogleCredential.FromJson(_userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
+                HttpClientInitializer = GoogleCredential.FromJson(await _userDataRepository.GetClientSecret(userId)).CreateScoped(SheetsService.Scope.Spreadsheets)
             }))
             {
                 var resetMonthValueRange = GetValueRange(new List<object>() { DateTime.Now.ToString("MMMM yyyy") });
                 var resetMonthRequest = sheetsService.Spreadsheets.Values.Update(
-                                        resetMonthValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B3:E4");
+                                        resetMonthValueRange, await _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!B3:E4");
                 resetMonthRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await resetMonthRequest.ExecuteAsync();
 
-                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(_userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!C9");
+                var getEndBalanceRequest = sheetsService.Spreadsheets.Values.Get(await _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!C9");
                 var endBalance = (await getEndBalanceRequest.ExecuteAsync()).Values.FirstOrDefault().FirstOrDefault().ToString().Replace("UAH", "");
 
                 var changeStartingBalanceValueRange = GetValueRange(new List<object>() { endBalance });
                 var changeStartingBalanceRequest = sheetsService.Spreadsheets.Values.Update(
-                                                   changeStartingBalanceValueRange, _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!L3");
+                                                   changeStartingBalanceValueRange, await _userDataRepository.GetUserSheet(userId), $"{_summarySheetName}!L3");
                 changeStartingBalanceRequest.ValueInputOption = ValueInputOptionEnum.USERENTERED;
                 await changeStartingBalanceRequest.ExecuteAsync();
 
-                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!B5:E");
+                var deleteExpensesRequest = sheetsService.Spreadsheets.Values.Clear(null, await _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!B5:E");
                 await deleteExpensesRequest.ExecuteAsync();
 
-                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!G5:J");
+                var deleteIncomesRequest = sheetsService.Spreadsheets.Values.Clear(null, await _userDataRepository.GetUserSheet(userId), $"{_transactionsSheetName}!G5:J");
                 await deleteIncomesRequest.ExecuteAsync();
             }
         }

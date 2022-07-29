@@ -2,6 +2,7 @@
 using Bot.Core.Exceptions;
 using Bot.Money.Enums;
 using Bot.Money.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
@@ -10,10 +11,12 @@ namespace Bot.Money.Handlers
     {
         private readonly ReplyKeyboardMarkup _skipReply = new(new[] { new KeyboardButton[] { "Skip" } }) { ResizeKeyboard = true };
         private readonly IBudgetRepository _budgetRepository;
+        private readonly IMemoryCache _memoryCache;
 
-        public FinOpsCategoryEntered(IBudgetRepository budgetRepository)
+        public FinOpsCategoryEntered(IBudgetRepository budgetRepository, IMemoryCache memoryCache)
         {
             _budgetRepository = budgetRepository;
+            _memoryCache = memoryCache;
         }
 
         public bool IsSuitable(UserRequest request)
@@ -27,7 +30,11 @@ namespace Bot.Money.Handlers
 
             var chatId = request.Message.Chat.Id;
 
-            var expectedCategories = await _budgetRepository.GetCategories(chatId, request.Session.LastMessageText);
+            var expectedCategories = _memoryCache.Get<IEnumerable<string>>(chatId);
+            if(expectedCategories is null)
+            {
+                expectedCategories = await _budgetRepository.GetCategories(chatId, request.Session.LastTextMessage);
+            }
             if (!expectedCategories.Contains(request.Message.Text)) { throw new UserChoiceException("You should choose correct category"); }
 
             request.Session.MoveNext(request.Message.Text);

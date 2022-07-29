@@ -48,7 +48,7 @@ namespace Bot.Core.Tests.Abstractions
             var session = _chatSessionService.DownloadOrCreate(message.Chat.Id);
 
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
-            Assert.Equal(message.Text, session.LastMessageText);
+            Assert.Equal(message.Text, session.LastTextMessage);
         }
 
         [Fact]

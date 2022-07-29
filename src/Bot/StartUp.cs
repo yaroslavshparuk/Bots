@@ -30,7 +30,7 @@ namespace Bot
                  .ConfigureServices((hostContext, services) =>
                  {
                      services.AddSingleton<IBot, MoneyBot>();
-                     services.AddSingleton<IBot, YoutubeBot>();
+                     //services.AddSingleton<IBot, YoutubeBot>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsAmountEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsTypeEntered>();
                      services.AddTransient<IMoneyBotInputHandler, FinOpsCategoryEntered>();
@@ -39,7 +39,7 @@ namespace Bot
                      services.AddTransient<IMoneyBotInputHandler, DownloadCommand>();
                      services.AddSingleton<IChatSessionService, ChatSessionService>();
                      services.AddTransient<IYoutubeBotInputHandler, YoutubeVideoUrlToAudioCommand>();
-                     services.AddTransient<IExportUrl, GoogleSpreadSheetsExportUrl>();
+                     services.AddScoped<GoogleSpreadSheetsExportUrl>();
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();
                      services.AddHostedService<ConsoleHostedService>();
@@ -48,6 +48,7 @@ namespace Bot
                                             x.GetService<IBudgetRepository>(),
                                             new TelegramBotClient(ConfigurationManager.AppSettings["money_bot_token"])));
                      services.AddScheduler();
+                     services.AddMemoryCache();
                  }).Build();
 
             host.Services.UseScheduler(scheduler =>

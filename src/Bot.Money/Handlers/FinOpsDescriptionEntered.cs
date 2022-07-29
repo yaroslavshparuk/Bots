@@ -8,7 +8,6 @@ namespace Bot.Money.Handlers
 {
     public class FinOpsDescriptionEntered : IMoneyBotInputHandler
     {
-        private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
         private readonly IBudgetRepository _budgetRepository;
 
         public FinOpsDescriptionEntered(IBudgetRepository budgetRepository)
@@ -27,7 +26,7 @@ namespace Bot.Money.Handlers
 
             request.Session.MoveNext(request.Message.Text);
             var chatId = request.Message.Chat.Id;
-            _budgetRepository.CreateRecord(new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList()));
+            await _budgetRepository.CreateRecord(new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList()));
             await request.Client.SendTextMessageAsync(chatId: chatId, text: "Added", replyMarkup: new ReplyKeyboardRemove());
         }
     }

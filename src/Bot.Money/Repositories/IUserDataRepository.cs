@@ -2,9 +2,8 @@
 {
     public interface IUserDataRepository
     {
-        string GetClientSecret(long id);
-        string GetUserSheet(long id);
-        IEnumerable<long> GetAllUsers();
-        bool IsOwner(long id);
+        IAsyncEnumerable<long> GetAllUsers();
+        Task<string> GetClientSecret(long id);
+        Task<string> GetUserSheet(long id);
     }
 }

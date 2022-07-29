@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Bot.Money.Models
 {
-    public class GoogleSpreadSheetsExportUrl : IExportUrl
+    public class GoogleSpreadSheetsExportUrl
     {
         private const string _url = "https://docs.google.com/spreadsheets/d/";
 

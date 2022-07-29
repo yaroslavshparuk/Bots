@@ -14,13 +14,20 @@
 
         public int CurrentState { get; private set; }
 
-        public string LastMessageText { get; private set; }
+        public string LastTextMessage { get; private set; }
 
         public void MoveNext(string text)
         {
             _values.Enqueue(text);
-            LastMessageText = text;
-            CurrentState = _states.Dequeue();
+            LastTextMessage = text;
+            if(_states.TryDequeue(out var state))
+            {
+                CurrentState = state;
+            }
+            else
+            {
+                CurrentState = 1;
+            }
         }
 
         public IEnumerable<string> UnloadValues()

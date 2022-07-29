@@ -13,17 +13,17 @@ namespace Bot.Money.Repositories
             _server = multiplexer.GetServer(multiplexer.GetEndPoints().FirstOrDefault());
         }
 
-        public IEnumerable<long> GetAllUsers()
+        public async IAsyncEnumerable<long> GetAllUsers()
         {
-            foreach (var k in _server.Keys(pattern: "*_sheet"))
+            await foreach (var k in _server.KeysAsync(pattern: "*_sheet"))
             {
                 yield return long.Parse(GetUserId(k.ToString()));
             }
         }
 
-        public string GetClientSecret(long id)
+        public async Task<string> GetClientSecret(long id)
         {
-            var clientSecret = _db.StringGet(new RedisKey(id.ToString() + "_secret"));
+            var clientSecret = await _db.StringGetAsync(new RedisKey(id.ToString() + "_secret"));
             if (string.IsNullOrEmpty(clientSecret))
             {
                 throw new NotFoundUserException();
@@ -31,14 +31,9 @@ namespace Bot.Money.Repositories
             return clientSecret;
         }
 
-        public bool IsOwner(long id)
+        public async Task<string> GetUserSheet(long id)
         {
-            return long.Parse(_db.StringGet(new RedisKey("owner_id"))) == id;
-        }
-
-        public string GetUserSheet(long id)
-        {
-            var userSheet = _db.StringGet(new RedisKey(id.ToString() + "_sheet"));
+            var userSheet = await _db.StringGetAsync(new RedisKey(id.ToString() + "_sheet"));
             if (string.IsNullOrEmpty(userSheet))
             {
                 throw new NotFoundUserException();

@@ -22,7 +22,7 @@ namespace Bot.Money.Jobs
 
         public async Task Invoke()
         {
-            foreach (var id in _userDataRepository.GetAllUsers())
+            await foreach (var id in _userDataRepository.GetAllUsers())
             {
                 using (var fileStream = await _budgetRepository.DownloadArchive(id))
                 {
