@@ -48,7 +48,6 @@ namespace Bot.Money.Tests.Handlers
             var textMessage = new Message { Text = "123", Chat = new Chat { Id = 123 } };
             var session = _chatSessionService.DownloadOrCreate(textMessage.Chat.Id);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
-            _botClient.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), Times.Once());
         }
     }
 }

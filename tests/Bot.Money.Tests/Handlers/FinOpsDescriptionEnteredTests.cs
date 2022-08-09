@@ -57,7 +57,6 @@ namespace Bot.Money.Tests.Handlers
             session.MoveNext("Expense");
             session.MoveNext("Food");
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
-            _botClient.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), Times.Once());
             _budgetRepository.Verify(x => x.CreateRecord(It.IsAny<FinanceOperationMessage>()), Times.Once());
         }
     }

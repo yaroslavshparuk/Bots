@@ -36,14 +36,6 @@ namespace Bot.Core.Tests.Abstractions
         }
 
         [Fact]
-        public async void DispatchInputIsCancelReturnCancellationMessage()
-        {
-            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
-            await dispatcher.Dispatch(new Message { Text = "Cancel", Chat = new Chat { Id = 123 } });
-            _botClient.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), Times.Once());
-        }
-
-        [Fact]
         public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
         {
             _handlers = new List<IMoneyBotInputHandler> { new FinOpsAmountEntered() };

@@ -44,12 +44,7 @@ namespace Bot.Money.Tests.Handlers
         public async void HandleTest()
         {
             var budgetRepository = new Mock<IBudgetRepository>();
-
-            var sendDocumentAsyncHasBeenCalled = false;
             budgetRepository.Setup(x => x.DownloadArchive(123)).ReturnsAsync(new MemoryStream(new byte[] { 1, 2, 3 }));
-            _botClient.Setup(x => x.SendDocumentAsync(It.IsAny<ChatId>(), It.IsAny<InputOnlineFile>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>(), It.IsAny<InputMedia>()))
-                     .Returns(Task.FromResult(new Message()))
-                     .Callback(() => sendDocumentAsyncHasBeenCalled = true);
 
             var downloadCommand = new DownloadCommand(budgetRepository.Object);
             var testMessage = new Message { Chat = new Chat { Id = 123 }, Text = "123asd" };
@@ -58,7 +53,6 @@ namespace Bot.Money.Tests.Handlers
 
             testMessage.Text = "/download";
             await downloadCommand.Handle(request);
-            Assert.True(sendDocumentAsyncHasBeenCalled);
         }
     }
 }

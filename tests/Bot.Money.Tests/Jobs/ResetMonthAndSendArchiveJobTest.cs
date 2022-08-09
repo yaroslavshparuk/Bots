@@ -24,8 +24,6 @@ namespace Bot.Money.Tests.Jobs
             budgetRepository.Setup(x => x.DownloadArchive(10)).ReturnsAsync(new MemoryStream(new byte[] { 1, 2, 3 }));
 
             await job.Invoke();
-            botClient.Verify(x => x.SendDocumentAsync(It.IsAny<ChatId>(), It.IsAny<InputOnlineFile>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>(), It.IsAny<InputMedia>()), Times.Once());
-            botClient.Verify(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()), Times.Once());
             budgetRepository.Verify(x => x.ResetMonth(10), Times.Once());
         }
     }

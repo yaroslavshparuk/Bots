@@ -1,4 +1,5 @@
 ﻿using Bot.Core.Abstractions;
+using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
 namespace Bot.Money.Handlers
@@ -15,7 +16,7 @@ namespace Bot.Money.Handlers
         public async Task Handle(UserRequest request) 
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
-            await request.Client.SendTextMessageAsync(request.Message.Chat, helpResponse, ParseMode.Default, false, false, 0);
+            await request.Client.SendTextMessageAsync(request.Message.Chat, helpResponse);
         }
     }
 }

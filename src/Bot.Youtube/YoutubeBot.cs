@@ -1,13 +1,12 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
-using Bot.Core.Extensions;
 using Bot.Youtube.Handlers;
 using log4net;
 using System.Configuration;
 using System.Reflection;
 using Telegram.Bot;
-using Telegram.Bot.Args;
-using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types;
 
 namespace Bot.Youtube
 {
@@ -15,50 +14,56 @@ namespace Bot.Youtube
     {
         private readonly IEnumerable<IYoutubeBotInputHandler> _commands;
         private readonly IChatSessionService _chatSessionService;
-        private TelegramBotClient _botClient = new (ConfigurationManager.AppSettings["youtube_bot_token"]);
+        private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["youtube_bot_token"]);
+        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public YoutubeBot(IEnumerable<IYoutubeBotInputHandler> commands, IChatSessionService chatSessionService)
         {
             _commands = commands;
             _chatSessionService = chatSessionService;
         }
 
-        private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public void Start()
         {
-            _botClient.OnMessage += OnMessage;
-            _botClient.StartReceiving();
-
+            _botClient.StartReceiving(HandleUpdateAsync, HandlePollingErrorAsync);
             _logger.Info("Youtube bot was started");
         }
 
-        public void Stop()
-        {
-            _botClient.StopReceiving();
-            _logger.Info("Youtube bot was stoped");
-        }
-
-        private async void OnMessage(object sender, MessageEventArgs e)
+        async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken = default)
         {
             try
             {
-                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(e.Message);
-                _logger.Debug($"Proccessed message from: User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
+                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(update.Message);
+                _logger.Debug($"Proccessed message from: User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)
             {
-                _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, "Seemds you send me incorrect URL", ParseMode.Default, false, false, 0);
+                _logger.Debug($"Message: '{update.Message.Text}' User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
+                await _botClient.SendTextMessageAsync(update.Message.Chat, "Seemds you send me incorrect URL");
             }
             catch (MaxUploadSizeExceededException ex)
             {
-                _logger.Debug($"Message: '{e.Message.Text}' User Id: {e.Message.Chat.Id} UserName: @{e.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(e.Message.Chat, ex.Message, ParseMode.Default, false, false, 0);
+                _logger.Debug($"Message: '{update.Message.Text}' User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
+                await _botClient.SendTextMessageAsync(update.Message.Chat, ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
             }
+        }
+
+        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken = default)
+        {
+            var errorMessage = exception switch
+            {
+                ApiRequestException apiRequestException
+                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+                _ => exception.ToString()
+            };
+
+            Console.WriteLine(errorMessage);
+            return Task.CompletedTask;
         }
     }
 }

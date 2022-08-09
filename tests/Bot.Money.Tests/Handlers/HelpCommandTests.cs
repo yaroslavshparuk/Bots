@@ -38,11 +38,6 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public async Task HandleTest()
         {
-            var hasBeenCalled = false;
-            _botClient.Setup(x => x.SendTextMessageAsync(It.IsAny<ChatId>(), It.IsAny<string>(), It.IsAny<ParseMode>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IReplyMarkup>(), It.IsAny<CancellationToken>()))
-                     .Returns(Task.FromResult(new Message()))
-                     .Callback(() => hasBeenCalled = true);
-
             var helpCommand = new HelpCommand();
             var testMessage = new Message { Chat = new Chat { Id = 123 }, Text = "123asd" };
 
@@ -51,7 +46,6 @@ namespace Bot.Money.Tests.Handlers
 
             testMessage.Text = "/help";
             await helpCommand.Handle(request);
-            Assert.True(hasBeenCalled);
         }
     }
 }

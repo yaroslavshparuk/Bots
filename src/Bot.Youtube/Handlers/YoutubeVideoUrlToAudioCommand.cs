@@ -1,5 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
+using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 using VideoLibrary;
 
