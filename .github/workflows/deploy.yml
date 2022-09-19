@@ -32,7 +32,6 @@ jobs:
       uses: codecov/codecov-action@v1
     - name: Publish
       run: |
-        cd src/Bot
         dotnet publish --no-restore -c release -o ./publish
         tar czf publish.gz publish
     - name: Deliver
@@ -43,7 +42,7 @@ jobs:
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
       with:
-          source: "src/Bot/publish.gz"
+          source: "publish.gz"
           target: "~/"
     - name: Deploy
       uses: appleboy/ssh-action@master
@@ -53,7 +52,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd ~/src/Bot
             tar xf publish.gz
             cd publish
             tmux kill-ses -t Bot 2>/dev/null
