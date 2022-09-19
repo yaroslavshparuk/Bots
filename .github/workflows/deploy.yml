@@ -43,7 +43,7 @@ jobs:
           PORT: 22
           KEY: ${{ secrets.SSH_KEY }}
       with:
-          source: "publish.gz"
+          source: "src/Bot/publish.gz"
           target: "~/"
     - name: Deploy
       uses: appleboy/ssh-action@master
