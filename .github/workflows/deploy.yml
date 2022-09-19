@@ -53,6 +53,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            cd ~/src/Bot
             tar xf publish.gz
             cd publish
             tmux kill-ses -t Bot 2>/dev/null
