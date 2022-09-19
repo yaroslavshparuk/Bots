@@ -32,6 +32,7 @@ jobs:
       uses: codecov/codecov-action@v1
     - name: Publish
       run: |
+        cd src/Bot
         dotnet publish --no-restore -c release -o ./publish
         tar czf publish.gz publish
     - name: Deliver
