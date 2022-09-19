@@ -41,7 +41,6 @@ jobs:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.KEY }}
-          PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
       with:
           source: "src/Bot/publish.gz"
           target: "~/"
