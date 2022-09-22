@@ -49,7 +49,7 @@ jobs:
       with:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
-          KEY: ${{ secrets.KEY }}
+          PASSWORD: ${{ secrets.PASSWORD }}
           script: |
             cd ~/src/Bot
             tar xf publish.gz
