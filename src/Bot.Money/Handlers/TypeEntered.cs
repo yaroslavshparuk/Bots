@@ -10,13 +10,13 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class FinOpsTypeEntered : IMoneyBotInputHandler
+    public class TypeEntered : IMoneyBotInputHandler
     {
         private const int _keyBoardMarkUpRowSize = 2;
         private readonly IBudgetRepository _budgetRepository;
         private readonly IMemoryCache _memoryCache;
 
-        public FinOpsTypeEntered(IBudgetRepository budgetRepository, IMemoryCache memoryCache)
+        public TypeEntered(IBudgetRepository budgetRepository, IMemoryCache memoryCache)
         {
             _budgetRepository = budgetRepository;
             _memoryCache = memoryCache;

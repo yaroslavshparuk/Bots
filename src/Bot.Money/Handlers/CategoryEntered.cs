@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class FinOpsCategoryEntered : IMoneyBotInputHandler
+    public class CategoryEntered : IMoneyBotInputHandler
     {
         private readonly InlineKeyboardMarkup _skipReply = new InlineKeyboardButton[][]
         {
@@ -18,7 +18,7 @@ namespace Bot.Money.Handlers
         private readonly IBudgetRepository _budgetRepository;
         private readonly IMemoryCache _memoryCache;
 
-        public FinOpsCategoryEntered(IBudgetRepository budgetRepository, IMemoryCache memoryCache)
+        public CategoryEntered(IBudgetRepository budgetRepository, IMemoryCache memoryCache)
         {
             _budgetRepository = budgetRepository;
             _memoryCache = memoryCache;

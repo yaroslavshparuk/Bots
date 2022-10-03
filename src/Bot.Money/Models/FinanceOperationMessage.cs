@@ -47,7 +47,14 @@ namespace Bot.Money.Models
 
         public override string ToString()
         {
-            return $"Amount: {_parts.ElementAt(0)}, Type: {_parts.ElementAt(1)}, Category: {_parts.ElementAt(2)}, Description: {_parts.ElementAt(3)}";
+            var result = new StringBuilder($"Amount: {_parts.ElementAt(0)}, Type: {_parts.ElementAt(1)}, Category: {_parts.ElementAt(2)}");
+            var description = _parts.ElementAt(3);
+            if (!string.IsNullOrEmpty(description))
+            {
+                result.Append(description);
+            }
+
+            return result.ToString();
         }
     }
 }

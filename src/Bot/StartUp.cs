@@ -33,10 +33,10 @@ namespace Bot
                      services.AddSingleton<IBot, MoneyBot>();
                      services.AddSingleton<IBot, YoutubeBot>();
                      services.AddSingleton<IChatSessionService, ChatSessionService>();
-                     services.AddTransient<IMoneyBotInputHandler, FinOpsAmountEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, FinOpsTypeEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, FinOpsCategoryEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, FinOpsDescriptionEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, AmountEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, TypeEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, CategoryEntered>();
+                     services.AddTransient<IMoneyBotInputHandler, DescriptionEntered>();
                      services.AddTransient<IMoneyBotInputHandler, HelpCommand>();
                      services.AddTransient<IMoneyBotInputHandler, DownloadCommand>();
                      services.AddTransient<IYoutubeBotInputHandler, YoutubeVideoUrlToAudioCommand>();

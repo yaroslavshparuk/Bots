@@ -1,6 +1,5 @@
 ﻿using Bot.Core.Exceptions;
 using Telegram.Bot;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Core.Abstractions
 {

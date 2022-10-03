@@ -43,7 +43,7 @@ namespace Bot.Core.Tests.Abstractions
         public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
-            _handlers = new List<IMoneyBotInputHandler> { new FinOpsAmountEntered() };
+            _handlers = new List<IMoneyBotInputHandler> { new AmountEntered() };
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message(123, "test", "123");
 
@@ -69,10 +69,10 @@ namespace Bot.Core.Tests.Abstractions
             _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             _handlers = new List<IMoneyBotInputHandler>()
             {
-                new FinOpsAmountEntered(),
-                new FinOpsTypeEntered(_budgetRepository.Object, _memoryCache),
-                new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache),
-                new FinOpsDescriptionEntered(_budgetRepository.Object),
+                new AmountEntered(),
+                new TypeEntered(_budgetRepository.Object, _memoryCache),
+                new CategoryEntered(_budgetRepository.Object, _memoryCache),
+                new DescriptionEntered(_budgetRepository.Object),
             };
 
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);

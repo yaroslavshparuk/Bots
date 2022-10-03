@@ -7,11 +7,11 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class FinOpsDescriptionEntered : IMoneyBotInputHandler
+    public class DescriptionEntered : IMoneyBotInputHandler
     {
         private readonly IBudgetRepository _budgetRepository;
 
-        public FinOpsDescriptionEntered(IBudgetRepository budgetRepository)
+        public DescriptionEntered(IBudgetRepository budgetRepository)
         {
             _budgetRepository = budgetRepository;
         }
@@ -26,7 +26,8 @@ namespace Bot.Money.Handlers
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
-            request.Session.MoveNext(request.Message.Text, 0);
+            var description = request.Message.Text is "Skip" ? string.Empty : request.Message.Text;
+            request.Session.MoveNext(description, 0);
             var chatId = request.Message.ChatId;
             var finOpsMessage = new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList());
             await _budgetRepository.CreateRecord(finOpsMessage);

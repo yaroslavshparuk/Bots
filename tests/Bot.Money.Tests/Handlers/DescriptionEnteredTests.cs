@@ -10,13 +10,13 @@ using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Money.Tests.Handlers
 {
-    public class FinOpsDescriptionEnteredTests
+    public class DescriptionEnteredTests
     {
         private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
 
-        public FinOpsDescriptionEnteredTests()
+        public DescriptionEnteredTests()
         {
             _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
@@ -26,7 +26,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public void IsSuitableInputIsStartedStateSessionReturnsFalse()
         {
-            var handler = new FinOpsDescriptionEntered(_budgetRepository.Object);
+            var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Expense");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
@@ -35,7 +35,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public void IsSuitableInputIsWaitingForDescriptionStateSessionReturnsTrue()
         {
-            var handler = new FinOpsDescriptionEntered(_budgetRepository.Object);
+            var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage =  new Message(123, "test", "Apples");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
@@ -47,7 +47,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public async Task HandleInputIsStringThenVerifySendTextMessageAsyncAndCreateRecordWereCalled()
         {
-            var handler = new FinOpsDescriptionEntered(_budgetRepository.Object);
+            var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Apples");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);

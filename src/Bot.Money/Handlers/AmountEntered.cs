@@ -6,7 +6,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class FinOpsAmountEntered : IMoneyBotInputHandler
+    public class AmountEntered : IMoneyBotInputHandler
     {
         private readonly InlineKeyboardMarkup _expOrIncReply = new InlineKeyboardButton[][]
         {

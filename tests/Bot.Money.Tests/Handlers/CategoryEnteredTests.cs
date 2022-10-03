@@ -13,14 +13,14 @@ using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Money.Tests.Handlers
 {
-    public class FinOpsCategoryEnteredTests
+    public class CategoryEnteredTests
     {
         private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;
 
-        public FinOpsCategoryEnteredTests()
+        public CategoryEnteredTests()
         {
             _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
@@ -33,7 +33,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public void IsSuitableInputIsStartedStateSessionReturnsFalse()
         {
-            var handler = new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache);
+            var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Expense");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
@@ -42,7 +42,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public void IsSuitableInputIsWaitingForCategoryStateSessionReturnsTrue()
         {
-            var handler = new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache);
+            var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "123");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
@@ -53,7 +53,7 @@ namespace Bot.Money.Tests.Handlers
         [Fact]
         public async Task HandleInputNotMatchExistingCategoriesThrowsUserChoiceException()
         {
-            var handler = new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache);
+            var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Home");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
@@ -66,7 +66,7 @@ namespace Bot.Money.Tests.Handlers
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
-            var handler = new FinOpsCategoryEntered(_budgetRepository.Object, _memoryCache);
+            var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Food");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
