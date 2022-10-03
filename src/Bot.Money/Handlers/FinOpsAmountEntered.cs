@@ -8,11 +8,15 @@ namespace Bot.Money.Handlers
 {
     public class FinOpsAmountEntered : IMoneyBotInputHandler
     {
-        private readonly ReplyKeyboardMarkup _expOrIncReply = new(new[] { new KeyboardButton[] { "Expense", "Income" }, new KeyboardButton[] { "Cancel" }, }) { ResizeKeyboard = true };
+        private readonly InlineKeyboardMarkup _expOrIncReply = new InlineKeyboardButton[][]
+        {
+            new [] { new InlineKeyboardButton("Expense") { CallbackData = "Expense" }, new InlineKeyboardButton("Income") { CallbackData = "Income" } }, 
+            new [] { new InlineKeyboardButton("Cancel") { CallbackData = "Cancel" } }, 
+        };
 
         public bool IsSuitable(UserRequest request)
         {
-            return request.Session.CurrentState == (int)FinanceOperationState.Started && 
+            return request.Session.CurrentState == (int)FinanceOperationState.Started &&
                 Regex.IsMatch(request.Message.Text, @"[\d]{1,9}([.,][\d]{1,6})?$");
         }
 
@@ -20,8 +24,8 @@ namespace Bot.Money.Handlers
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
-            request.Session.MoveNext(request.Message.Text);
-            await request.Client.SendTextMessageAsync(chatId: request.Message.Chat, text: "Is expense or income?", replyMarkup: _expOrIncReply);
+            var reply = await request.Client.SendTextMessageAsync(chatId: request.Message.ChatId, text: "Select the type of operation", replyMarkup: _expOrIncReply);
+            request.Session.MoveNext(request.Message.Text, reply.MessageId);
         }
     }
 }

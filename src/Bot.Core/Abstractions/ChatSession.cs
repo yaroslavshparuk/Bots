@@ -14,14 +14,17 @@
 
         public int CurrentState { get; private set; }
 
+        public int LastReplyId { get; private set; }
+
         public string LastTextMessage { get; private set; }
 
         public bool IsCompleted { get { return _states.Count == 0; } }
 
-        public void MoveNext(string text)
+        public void MoveNext(string text, int id)
         {
             _values.Enqueue(text);
             LastTextMessage = text;
+            LastReplyId = id;
             CurrentState = _states.Dequeue();
         }
 

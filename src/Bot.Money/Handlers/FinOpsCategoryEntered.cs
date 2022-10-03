@@ -10,7 +10,11 @@ namespace Bot.Money.Handlers
 {
     public class FinOpsCategoryEntered : IMoneyBotInputHandler
     {
-        private readonly ReplyKeyboardMarkup _skipReply = new(new[] { new KeyboardButton[] { "Skip" } }) { ResizeKeyboard = true };
+        private readonly InlineKeyboardMarkup _skipReply = new InlineKeyboardButton[][]
+        {
+            new [] { new InlineKeyboardButton("Skip") { CallbackData = "Skip" } },
+            new [] { new InlineKeyboardButton("Cancel") { CallbackData = "Cancel" } },
+        };
         private readonly IBudgetRepository _budgetRepository;
         private readonly IMemoryCache _memoryCache;
 
@@ -29,7 +33,7 @@ namespace Bot.Money.Handlers
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
-            var chatId = request.Message.Chat.Id;
+            var chatId = request.Message.ChatId;
 
             var expectedCategories = _memoryCache.Get<IEnumerable<string>>(chatId);
             if (expectedCategories is null)
@@ -38,8 +42,9 @@ namespace Bot.Money.Handlers
             }
             if (!expectedCategories.Contains(request.Message.Text)) { throw new UserChoiceException("You should choose correct category"); }
 
-            request.Session.MoveNext(request.Message.Text);
-            await request.Client.SendTextMessageAsync(chatId: chatId, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
+            var reply = await request.Client.SendTextMessageAsync(chatId: chatId, text: "Send me a description of it (optional) ", replyMarkup: _skipReply);
+            await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
+            request.Session.MoveNext(request.Message.Text, reply.MessageId);
         }
     }
 }

@@ -18,15 +18,15 @@ namespace Bot.Core.Tests.Abstractions
         public void UnloadNewSessionChangeItThenSaveAndUnloadToAssert()
         {
             var chatId = 12;
-            var session = _chatSessionService.DownloadOrCreate(chatId);
+            var session = _chatSessionService.GetOrCreate(chatId);
 
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
-            session.MoveNext("123");
+            session.MoveNext("123", 0);
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
 
             _chatSessionService.Save(chatId, session);
 
-            session = _chatSessionService.DownloadOrCreate(chatId);
+            session = _chatSessionService.GetOrCreate(chatId);
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
         }
     }

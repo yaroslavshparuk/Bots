@@ -1,6 +1,7 @@
 ﻿using Bot.Core.Exceptions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Core.Abstractions
@@ -19,13 +20,12 @@ namespace Bot.Core.Abstractions
         }
 
         public async Task Dispatch(Message message)
-        {
-            var chatId = message.Chat.Id;
-            var session = _chatSessionService.DownloadOrCreate(chatId);
-
+        {            
+            var session = _chatSessionService.GetOrCreate(message.ChatId);
+            
             if (message.Text is "Cancel")
             {
-                await _client.SendTextMessageAsync(chatId: chatId, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
+                await _client.SendTextMessageAsync(chatId: message.ChatId, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace Bot.Core.Abstractions
                     }
                     finally
                     {
-                        _chatSessionService.Save(chatId, session);
+                        _chatSessionService.Save(message.ChatId, session);
                     }
                 }
             }

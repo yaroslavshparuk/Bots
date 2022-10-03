@@ -8,6 +8,8 @@ using Telegram.Bot;
 using Bot.Core.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Exceptions;
+using Telegram.Bot.Types.Enums;
+using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Money
 {
@@ -33,35 +35,45 @@ namespace Bot.Money
 
         private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken = default)
         {
+            Message message = null;
             try
             {
-                await new Dispatcher(_handlers, _chatSessionService, _botClient).Dispatch(update.Message);
-                _logger.Debug($"Proccessed update.Message from: User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
+                if (update.Type == UpdateType.CallbackQuery)
+                {
+                    message = new Message(update.CallbackQuery.Message.Chat.Id, update.CallbackQuery.From.Username, update.CallbackQuery.Data);
+                }
+                else if (update.Type == UpdateType.Message)
+                {
+                    message = new Message(update.Message.Chat.Id, update.Message.Chat.Username, update.Message.Text);
+                    await _botClient.DeleteMessageAsync(update.Message.Chat.Id, update.Message.MessageId);
+                }
+                await new Dispatcher(_handlers, _chatSessionService, _botClient).Dispatch(message);
+                _logger.Debug($"Proccessed Message from: User Id: {message.ChatId} UserName: @{message.UserName}");
             }
             catch (NotFoundCommandException ex)
             {
-                _logger.Debug($"update.Message: '{update.Message.Text}' User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(update.Message.Chat, ex.Message);
+                _logger.Debug($"Message: '{message.Text}' User Id: {message.ChatId} UserName: @{message.UserName}");
+                await _botClient.SendTextMessageAsync(message.ChatId, ex.Message);
             }
             catch (UserChoiceException ex)
             {
-                _logger.Debug($"update.Message: '{update.Message.Text}' User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(update.Message.Chat, ex.Message);
+                _logger.Debug($"Message: '{message.Text}' User Id: {message.ChatId} UserName: @{message.UserName}");
+                await _botClient.SendTextMessageAsync(message.ChatId, ex.Message);
             }
             catch (NotFoundUserException)
             {
-                _logger.Warn(update.Message + $"\nupdate.Message: '{update.Message.Text}' User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
-                await _botClient.SendTextMessageAsync(update.Message.Chat, "I don't know you, if you want to use me - contact @shparuk please");
+                _logger.Warn(message.Text + $"\nMessage: '{message.Text}' User Id: {message.ChatId} UserName: @{message.UserName}");
+                await _botClient.SendTextMessageAsync(message.ChatId, "I don't know you, if you want to use me - contact @shparuk please");
             }
             catch (GoogleApiException ex)
             {
                 _logger.Error(ex.Message);
-                await _botClient.SendTextMessageAsync(update.Message.Chat, "Seems you provided a wrong spread sheet");
+                await _botClient.SendTextMessageAsync(message.ChatId, "Seems you provided a wrong spread sheet");
             }
             catch (DownloadException ex)
             {
                 _logger.Error(ex.Message);
-                await _botClient.SendTextMessageAsync(update.Message.Chat, ex.Message);
+                await _botClient.SendTextMessageAsync(message.ChatId, ex.Message);
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace Bot.Money.Handlers
         public async Task Handle(UserRequest request) 
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
-            await request.Client.SendTextMessageAsync(request.Message.Chat, helpResponse);
+            await request.Client.SendTextMessageAsync(request.Message.ChatId, helpResponse);
         }
     }
 }

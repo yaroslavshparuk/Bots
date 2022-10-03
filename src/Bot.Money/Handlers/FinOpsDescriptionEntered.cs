@@ -25,10 +25,12 @@ namespace Bot.Money.Handlers
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
-            request.Session.MoveNext(request.Message.Text);
-            var chatId = request.Message.Chat.Id;
-            await _budgetRepository.CreateRecord(new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList()));
-            await request.Client.SendTextMessageAsync(chatId: chatId, text: "Added", replyMarkup: new ReplyKeyboardRemove());
+            await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
+            request.Session.MoveNext(request.Message.Text, 0);
+            var chatId = request.Message.ChatId;
+            var finOpsMessage = new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList());
+            await _budgetRepository.CreateRecord(finOpsMessage);
+            await request.Client.SendTextMessageAsync(chatId: chatId, text: "Added: " + finOpsMessage.ToString(), replyMarkup: new ReplyKeyboardRemove());
         }
     }
 }

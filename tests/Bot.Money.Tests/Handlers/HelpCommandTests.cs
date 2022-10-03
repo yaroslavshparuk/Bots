@@ -3,10 +3,8 @@ using Bot.Money.Handlers;
 using Bot.Money.Services;
 using Moq;
 using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
+using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Money.Tests.Handlers
 {
@@ -24,14 +22,16 @@ namespace Bot.Money.Tests.Handlers
         public void IsSuitableTest()
         {
             var helpCommand = new HelpCommand();
-            var testMessage = new Message { Text = "", Chat = new Chat { Id = 123 } };
-            var request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.Chat.Id), testMessage, _botClient.Object);
+            var testMessage = new Message(123, "test", "");
+            var request = new UserRequest(_chatSessionService.GetOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.False(helpCommand.IsSuitable(request));
 
-            testMessage.Text = "123asd";
+            testMessage = new Message(123, "test", "123asd");
+            request = new UserRequest(_chatSessionService.GetOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.False(helpCommand.IsSuitable(request));
 
-            testMessage.Text = "/help";
+            testMessage = new Message(123, "test", "/help");
+            request = new UserRequest(_chatSessionService.GetOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.True(helpCommand.IsSuitable(request));
         }
 
@@ -39,12 +39,12 @@ namespace Bot.Money.Tests.Handlers
         public async Task HandleTest()
         {
             var helpCommand = new HelpCommand();
-            var testMessage = new Message { Chat = new Chat { Id = 123 }, Text = "123asd" };
-
-            var request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.Chat.Id), testMessage, _botClient.Object);
+            var testMessage = new Message(123, "test", "123asd");
+            var request = new UserRequest(_chatSessionService.GetOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             await Assert.ThrowsAsync<ArgumentException>(() => helpCommand.Handle(request));
 
-            testMessage.Text = "/help";
+            testMessage = new Message(123, "test", "/help");
+            request = new UserRequest(_chatSessionService.GetOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             await helpCommand.Handle(request);
         }
     }

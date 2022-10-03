@@ -5,14 +5,18 @@ using Bot.Money.Enums;
 using Moq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using Xunit;
 using Bot.Core.Exceptions;
 using Bot.Money.Repositories;
 using Bot.Money.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Message = Bot.Core.Abstractions.Message;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
+using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
+using Telegram.Bot.Requests;
 
 namespace Bot.Core.Tests.Abstractions
 {
@@ -38,12 +42,13 @@ namespace Bot.Core.Tests.Abstractions
         [Fact]
         public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
         {
+            _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             _handlers = new List<IMoneyBotInputHandler> { new FinOpsAmountEntered() };
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
-            var message = new Message { Chat = new Chat { Id = 123 }, Text = "123" };
+            var message = new Message(123, "test", "123");
 
             await dispatcher.Dispatch(message);
-            var session = _chatSessionService.DownloadOrCreate(message.Chat.Id);
+            var session = _chatSessionService.GetOrCreate(message.ChatId);
 
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
             Assert.Equal(message.Text, session.LastTextMessage);
@@ -53,13 +58,14 @@ namespace Bot.Core.Tests.Abstractions
         public async void DispatchInputIsNotAmountThrowNotFoundCommandException()
         {
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
-            var message = new Message { Chat = new Chat { Id = 123 }, Text = "Not amount" };
+            var message = new Message(123, "test", "Not amount");
             await Assert.ThrowsAsync<NotFoundCommandException>(() => dispatcher.Dispatch(message));
         }
 
         [Fact]
         public async Task FullFinanceOperationTest()
         {
+            _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             _handlers = new List<IMoneyBotInputHandler>()
             {
@@ -71,11 +77,11 @@ namespace Bot.Core.Tests.Abstractions
 
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var testMessages = new Message[] {
-                new Message { Text = "123", Chat = new Chat { Id = 123 } },
-                new Message { Text = "Expense", Chat = new Chat { Id = 123 } },
-                new Message { Text = "Food", Chat = new Chat { Id = 123 } },
-                new Message { Text = "Banana", Chat = new Chat { Id = 123 } }
-                };
+                new Message(123, "test", "123"),
+                new Message(123, "test", "Expense"),
+                new Message(123, "test", "Food"),
+                new Message(123, "test", "Banana"),
+            };
 
             foreach (var m in testMessages)
             {

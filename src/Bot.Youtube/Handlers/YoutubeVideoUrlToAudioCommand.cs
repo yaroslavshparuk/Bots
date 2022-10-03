@@ -23,7 +23,7 @@ namespace Bot.Youtube.Handlers
             using (var memoryStream = new MemoryStream(video.GetBytes()))
             {
                 if (memoryStream.Capacity > 5e+7) { throw new MaxUploadSizeExceededException("File should not exceed 50 MB"); }
-                await request.Client.SendAudioAsync(request.Message.Chat, new InputOnlineFile(memoryStream, video.FullName.Replace(".mp4", "")));
+                await request.Client.SendAudioAsync(request.Message.ChatId, new InputOnlineFile(memoryStream, video.FullName.Replace(".mp4", "")));
             }
         }
     }

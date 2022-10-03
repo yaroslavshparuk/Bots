@@ -5,7 +5,7 @@ namespace Bot.Money.Models
 {
     public class FinanceOperationMessage
     {
-        private readonly ICollection<string> _parts;
+        private readonly ICollection<string> _parts; // refactor
         private const string _transactionsSheetName = "Transactions";
 
         public FinanceOperationMessage(long userId, ICollection<string> parts)
@@ -43,6 +43,11 @@ namespace Bot.Money.Models
             }
 
             return range.ToString(); 
+        }
+
+        public override string ToString()
+        {
+            return $"Amount: {_parts.ElementAt(0)}, Type: {_parts.ElementAt(1)}, Category: {_parts.ElementAt(2)}, Description: {_parts.ElementAt(3)}";
         }
     }
 }
