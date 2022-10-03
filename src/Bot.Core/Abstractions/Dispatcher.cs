@@ -1,7 +1,5 @@
 ﻿using Bot.Core.Exceptions;
 using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Core.Abstractions
@@ -25,7 +23,7 @@ namespace Bot.Core.Abstractions
             
             if (message.Text is "Cancel")
             {
-                await _client.SendTextMessageAsync(chatId: message.ChatId, text: "Canceled", replyMarkup: new ReplyKeyboardRemove());
+                await _client.DeleteMessageAsync(message.ChatId, session.LastReplyId);
                 return;
             }
 

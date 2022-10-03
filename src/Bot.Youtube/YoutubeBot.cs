@@ -7,6 +7,7 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
+using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Youtube
 {
@@ -34,7 +35,7 @@ namespace Bot.Youtube
         {
             try
             {
-                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(null);
+                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(new Message(update.Message.Chat.Id, update.Message.Chat.Username, update.Message.Text));
                 _logger.Debug($"Proccessed message from: User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)
