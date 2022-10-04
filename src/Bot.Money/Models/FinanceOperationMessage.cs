@@ -24,7 +24,7 @@ namespace Bot.Money.Models
             var category = _parts.ElementAt(2);
             var description = _parts.Last();
 
-            return new List<object>() { DateTime.UtcNow.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
+            return new List<object>() { DateTime.Now.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
         }
 
         public string TransactionRange()
@@ -33,11 +33,11 @@ namespace Bot.Money.Models
             var range = new StringBuilder(_transactionsSheetName);
             var financeType = _parts.ElementAt(1);
 
-            if (financeType is "Expense")
+            if (financeType is "Витрата")
             {
                 range.Append("!B:E");
             }
-            else if (financeType is "Income")
+            else if (financeType is "Дохід")
             {
                 range.Append("!G:J");
             }
@@ -47,11 +47,11 @@ namespace Bot.Money.Models
 
         public override string ToString()
         {
-            var result = new StringBuilder($"Amount: {_parts.ElementAt(0)}, Type: {_parts.ElementAt(1)}, Category: {_parts.ElementAt(2)}");
+            var result = new StringBuilder($"Сума: {_parts.ElementAt(0)}, Тип операції: {_parts.ElementAt(1)}, Категорія: {_parts.ElementAt(2)}");
             var description = _parts.ElementAt(3);
             if (!string.IsNullOrEmpty(description))
             {
-                result.Append(description);
+                result.Append($", Опис: {description}");
             }
 
             return result.ToString();

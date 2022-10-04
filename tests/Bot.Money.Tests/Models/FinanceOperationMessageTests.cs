@@ -10,7 +10,7 @@ namespace Bot.Money.Tests.Models
 {
     public class FinanceOperationMessageTests
     {
-        private readonly string[] _values = new string[] { "123", "Expense", "Food", "Banan" };
+        private readonly string[] _values = new string[] { "123", "Витрата", "Food", "Banan" };
         private readonly IChatSessionService _chatSessionService;
 
         public FinanceOperationMessageTests()
@@ -63,7 +63,7 @@ namespace Bot.Money.Tests.Models
 
             Assert.Equal("Transactions!B:E", financeOperationMessage.TransactionRange());
 
-            values[1] = "Income";
+            values[1] = "Дохід";
 
             financeOperationMessage = new FinanceOperationMessage(testMessage.ChatId, values);
 

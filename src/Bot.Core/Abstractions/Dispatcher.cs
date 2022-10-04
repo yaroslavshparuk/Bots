@@ -20,7 +20,7 @@ namespace Bot.Core.Abstractions
         {            
             var session = _chatSessionService.GetOrCreate(message.ChatId);
             
-            if (message.Text is "Cancel")
+            if (message.Text is "Відмінити")
             {
                 await _client.DeleteMessageAsync(message.ChatId, session.LastReplyId);
                 return;

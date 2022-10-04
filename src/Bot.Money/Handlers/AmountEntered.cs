@@ -10,8 +10,8 @@ namespace Bot.Money.Handlers
     {
         private readonly InlineKeyboardMarkup _expOrIncReply = new InlineKeyboardButton[][]
         {
-            new [] { new InlineKeyboardButton("Expense") { CallbackData = "Expense" }, new InlineKeyboardButton("Income") { CallbackData = "Income" } }, 
-            new [] { new InlineKeyboardButton("Cancel") { CallbackData = "Cancel" } }, 
+            new [] { new InlineKeyboardButton("Витрата💸") { CallbackData = "Витрата" }, new InlineKeyboardButton("Дохід 🤑") { CallbackData = "Дохід" } }, 
+            new [] { new InlineKeyboardButton("❌ Відмінити ❌") { CallbackData = "Відмінити" } }
         };
 
         public bool IsSuitable(UserRequest request)
@@ -24,7 +24,7 @@ namespace Bot.Money.Handlers
         {
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
-            var reply = await request.Client.SendTextMessageAsync(chatId: request.Message.ChatId, text: "Select the type of operation", replyMarkup: _expOrIncReply);
+            var reply = await request.Client.SendTextMessageAsync(chatId: request.Message.ChatId, text: "Тип операції ⤵️", replyMarkup: _expOrIncReply);
             request.Session.MoveNext(request.Message.Text, reply.MessageId);
         }
     }

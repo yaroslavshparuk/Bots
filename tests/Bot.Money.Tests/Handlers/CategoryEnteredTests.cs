@@ -34,7 +34,7 @@ namespace Bot.Money.Tests.Handlers
         public void IsSuitableInputIsStartedStateSessionReturnsFalse()
         {
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
-            var textMessage = new Message(123, "test", "Expense");
+            var textMessage = new Message(123, "test", "Витрата");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
         }
@@ -46,7 +46,7 @@ namespace Bot.Money.Tests.Handlers
             var textMessage = new Message(123, "test", "123");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
-            session.MoveNext("Expense", 0);
+            session.MoveNext("Витрата", 0);
             Assert.True(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -57,7 +57,7 @@ namespace Bot.Money.Tests.Handlers
             var textMessage = new Message(123, "test", "Home");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
-            session.MoveNext("Expense", 0);
+            session.MoveNext("Витрата", 0);
             await Assert.ThrowsAsync<UserChoiceException>(() => handler.Handle(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -65,12 +65,12 @@ namespace Bot.Money.Tests.Handlers
         public async Task HandleInputMatchExistingCategoriesThenVerifySendTextMessageAsyncWasCalled()
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
-            _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
+            _budgetRepository.Setup(x => x.GetCategories(123, "Витрата")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Food");
             var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
             session.MoveNext("123", 0);
-            session.MoveNext("Expense", 0);
+            session.MoveNext("Витрата", 0);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
         }
     }

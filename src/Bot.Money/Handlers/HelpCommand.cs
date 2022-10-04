@@ -1,12 +1,11 @@
 ﻿using Bot.Core.Abstractions;
 using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
 
 namespace Bot.Money.Handlers
 {
     public class HelpCommand : IMoneyBotInputHandler
     {
-        private const string helpResponse = "It's beta version. To get any info - write @shparuk";
+        private const string helpResponse = "Всі питання до @shparuk";
 
         public bool IsSuitable(UserRequest request)
         {

@@ -107,17 +107,17 @@ namespace Bot.Money.Repositories
             }))
             {
                 var range = new StringBuilder(_summarySheetName);
-                if (category == "Expense")
+                if (category == "Витрата")
                 {
                     range.Append("!B23:B");
                 }
-                else if (category == "Income")
+                else if (category == "Дохід")
                 {
                     range.Append("!H23:H");
                 }
                 else
                 {
-                    throw new UserChoiceException("Incorrect finance operation category");
+                    throw new UserChoiceException("Такої категорії немає у списку ⛔️");
                 }
                 var categories = sheetsService.Spreadsheets.Values.Get(await _userDataRepository.GetUserSheet(userId), range.ToString());
                 return (await categories.ExecuteAsync()).Values.Select(x => x.FirstOrDefault().ToString());

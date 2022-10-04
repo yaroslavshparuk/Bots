@@ -7,7 +7,7 @@ namespace Bot.Core.Tests.Abstractions
 {
     public class ChatSessionTests
     {
-        private readonly string[] _values = new string[] { "123", "Expense", "Food", "Apples" };
+        private readonly string[] _values = new string[] { "123", "Витрата", "Food", "Apples" };
         private readonly IChatSessionService _chatSessionService;
 
         public ChatSessionTests()

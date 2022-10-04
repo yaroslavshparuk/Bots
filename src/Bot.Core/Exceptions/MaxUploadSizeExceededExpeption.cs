@@ -2,7 +2,7 @@
 {
     public class MaxUploadSizeExceededException : Exception
     {
-        public MaxUploadSizeExceededException(string message = "Max upload size exceeded")
+        public MaxUploadSizeExceededException(string message = "Ліміт розміру в 50 МБ перевищено")
             : base(message) { }
     }
 }

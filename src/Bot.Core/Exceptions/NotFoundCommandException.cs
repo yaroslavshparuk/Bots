@@ -2,7 +2,7 @@
 {
     public class NotFoundCommandException : Exception
     {
-        public NotFoundCommandException(string message = "Command not found")
+        public NotFoundCommandException(string message = "Я такої команди не розумію 👽")
             : base(message) { }
     }
 }

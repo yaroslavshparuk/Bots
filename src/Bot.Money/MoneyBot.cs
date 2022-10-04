@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
 using Message = Bot.Core.Abstractions.Message;
+using Bot.Core.Extensions;
 
 namespace Bot.Money
 {
@@ -53,12 +54,12 @@ namespace Bot.Money
             catch (NotFoundCommandException ex)
             {
                 _logger.Debug($"Message: '{message.Text}' User Id: {message.ChatId} UserName: @{message.UserName}");
-                await _botClient.SendTextMessageAsync(message.ChatId, ex.Message);
+                await _botClient.SendAndDeleteTextMessageAfterDelay(message.ChatId, ex.Message, TimeSpan.FromSeconds(15));
             }
             catch (UserChoiceException ex)
             {
                 _logger.Debug($"Message: '{message.Text}' User Id: {message.ChatId} UserName: @{message.UserName}");
-                await _botClient.SendTextMessageAsync(message.ChatId, ex.Message);
+                await _botClient.SendAndDeleteTextMessageAfterDelay(message.ChatId, ex.Message, TimeSpan.FromSeconds(15));
             }
             catch (NotFoundUserException)
             {

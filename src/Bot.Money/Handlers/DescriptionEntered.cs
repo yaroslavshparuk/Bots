@@ -26,12 +26,12 @@ namespace Bot.Money.Handlers
             if (!IsSuitable(request)) { throw new ArgumentException(); }
 
             await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
-            var description = request.Message.Text is "Skip" ? string.Empty : request.Message.Text;
+            var description = request.Message.Text is "Пропустити" ? string.Empty : request.Message.Text;
             request.Session.MoveNext(description, 0);
             var chatId = request.Message.ChatId;
             var finOpsMessage = new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList());
             await _budgetRepository.CreateRecord(finOpsMessage);
-            await request.Client.SendTextMessageAsync(chatId: chatId, text: "Added: " + finOpsMessage.ToString(), replyMarkup: new ReplyKeyboardRemove());
+            await request.Client.SendTextMessageAsync(chatId: chatId, text: "✅ Додано: " + finOpsMessage.ToString(), replyMarkup: new ReplyKeyboardRemove());
         }
     }
 }

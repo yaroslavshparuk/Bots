@@ -66,7 +66,7 @@ namespace Bot.Core.Tests.Abstractions
         public async Task FullFinanceOperationTest()
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
-            _budgetRepository.Setup(x => x.GetCategories(123, "Expense")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
+            _budgetRepository.Setup(x => x.GetCategories(123, "Витрата")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             _handlers = new List<IMoneyBotInputHandler>()
             {
                 new AmountEntered(),
@@ -78,7 +78,7 @@ namespace Bot.Core.Tests.Abstractions
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var testMessages = new Message[] {
                 new Message(123, "test", "123"),
-                new Message(123, "test", "Expense"),
+                new Message(123, "test", "Витрата"),
                 new Message(123, "test", "Food"),
                 new Message(123, "test", "Banana"),
             };

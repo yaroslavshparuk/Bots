@@ -2,7 +2,7 @@
 {
     public class DownloadException : Exception
     {
-        public DownloadException(string message = "There was an error downloading, please try again later or contact @shparuk")
+        public DownloadException(string message = "Тут немає, що завантажити, пишіть @shparuk")
             : base(message) { }
     }
 }
