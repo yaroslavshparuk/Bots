@@ -9,8 +9,8 @@ using Bot.Core.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
-using Message = Bot.Core.Abstractions.Message;
 using Bot.Core.Extensions;
+using Message = Bot.Core.Abstractions.Message;
 
 namespace Bot.Money
 {

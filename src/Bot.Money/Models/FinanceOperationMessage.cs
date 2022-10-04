@@ -23,8 +23,7 @@ namespace Bot.Money.Models
             var amount = double.Parse(_parts.First().Replace(',', '.'));
             var category = _parts.ElementAt(2);
             var description = _parts.Last();
-
-            return new List<object>() { DateTime.Now.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
+            return new List<object>() { DateTime.UtcNow.ToString("MM/dd/yyyy h:mm tt"), amount, description, category };
         }
 
         public string TransactionRange()
