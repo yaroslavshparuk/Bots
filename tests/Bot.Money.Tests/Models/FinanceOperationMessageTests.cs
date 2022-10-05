@@ -26,7 +26,7 @@ namespace Bot.Money.Tests.Models
 
             Assert.Throws<BuildMethodException>(() => financeOperationMessage.BuildTranferObject());
 
-            var session = _chatSessionService.GetOrCreate(testMessage.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(testMessage.ChatId);
 
             for (int i = 0; i < _values.Length; i++)
             {
@@ -50,7 +50,7 @@ namespace Bot.Money.Tests.Models
             var financeOperationMessage = new FinanceOperationMessage(testMessage.ChatId, new string[] { "something wrong" });
 
             Assert.Throws<BuildMethodException>(() => financeOperationMessage.TransactionRange());
-            var session = _chatSessionService.GetOrCreate(testMessage.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(testMessage.ChatId);
 
             for (int i = 0; i < _values.Length; i++)
             {

@@ -18,7 +18,7 @@ namespace Bot.Core.Tests.Abstractions
         public void UnloadNewSessionChangeItThenSaveAndUnloadToAssert()
         {
             var chatId = 12;
-            var session = _chatSessionService.GetOrCreate(chatId);
+            var session = _chatSessionService.DownloadOrCreate(chatId);
 
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
             session.MoveNext("123", 0);
@@ -26,7 +26,7 @@ namespace Bot.Core.Tests.Abstractions
 
             _chatSessionService.Save(chatId, session);
 
-            session = _chatSessionService.GetOrCreate(chatId);
+            session = _chatSessionService.DownloadOrCreate(chatId);
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
         }
     }

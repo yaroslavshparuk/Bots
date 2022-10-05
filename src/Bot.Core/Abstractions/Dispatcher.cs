@@ -18,7 +18,7 @@ namespace Bot.Core.Abstractions
 
         public async Task Dispatch(Message message)
         {            
-            var session = _chatSessionService.GetOrCreate(message.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(message.ChatId);
             
             if (message.Text is "Відмінити")
             {

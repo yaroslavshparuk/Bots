@@ -4,6 +4,6 @@
     {
         void Save(long id, ChatSession session);
 
-        ChatSession GetOrCreate(long id);
+        ChatSession DownloadOrCreate(long id);
     }
 }

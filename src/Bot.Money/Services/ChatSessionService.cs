@@ -12,7 +12,7 @@ namespace Bot.Money.Services
             _sessions.Add(id, session);
         }
 
-        public ChatSession GetOrCreate(long id)
+        public ChatSession DownloadOrCreate(long id)
         {
             _sessions.TryGetValue(id, out var session);
 

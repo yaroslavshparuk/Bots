@@ -18,7 +18,7 @@ namespace Bot.Core.Tests.Abstractions
         [Fact]
         public void MoveNextInput4MessagesThenCurrentStateIs5()
         {
-            var session = _chatSessionService.GetOrCreate(123);
+            var session = _chatSessionService.DownloadOrCreate(123);
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
 
             for (int i = 0; i < _values.Length; i++)
@@ -32,7 +32,7 @@ namespace Bot.Core.Tests.Abstractions
         [Fact]
         public void UploadValuesReturnsAllTheInputValuesViaMoveNextMethod()
         {
-            var session = _chatSessionService.GetOrCreate(123);
+            var session = _chatSessionService.DownloadOrCreate(123);
 
             for (int i = 0; i < _values.Length; i++)
             {

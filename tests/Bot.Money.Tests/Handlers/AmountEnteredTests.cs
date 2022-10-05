@@ -25,7 +25,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new AmountEntered();
             var textMessage = new Message(123, "test", "123");
-            var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
             session.MoveNext("", 0);
             Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
         }
@@ -35,7 +35,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new AmountEntered();
             var textMessage = new Message(123, "test", "123");
-            var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
             Assert.True(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -45,7 +45,7 @@ namespace Bot.Money.Tests.Handlers
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             var handler = new AmountEntered();
             var textMessage = new Message(123, "test", "123");
-            var session = _chatSessionService.GetOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
         }
     }
