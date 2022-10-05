@@ -10,7 +10,7 @@ namespace Bot.Money.Handlers
     {
         private readonly InlineKeyboardMarkup _expOrIncReply = new InlineKeyboardButton[][]
         {
-            new [] { new InlineKeyboardButton("Витрата💸") { CallbackData = "Витрата" }, new InlineKeyboardButton("Дохід 🤑") { CallbackData = "Дохід" } }, 
+            new [] { new InlineKeyboardButton("Витрата") { CallbackData = "Витрата" }, new InlineKeyboardButton("Дохід") { CallbackData = "Дохід" } }, 
             new [] { new InlineKeyboardButton("❌ Відмінити ❌") { CallbackData = "Відмінити" } }
         };
 

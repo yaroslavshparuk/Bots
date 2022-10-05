@@ -42,7 +42,7 @@ namespace Bot.Money.Handlers
             }
             if (!expectedCategories.Contains(request.Message.Text)) { throw new UserChoiceException("Потрібно вибрати категорію зі списку"); }
 
-            var reply = await request.Client.SendTextMessageAsync(chatId: chatId, text: "✍️ Опис (не обов'язково) ⤵️", replyMarkup: _skipReply);
+            var reply = await request.Client.SendTextMessageAsync(chatId: chatId, text: "Опис (не обов'язково) ⤵️", replyMarkup: _skipReply);
             await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
             request.Session.MoveNext(request.Message.Text, reply.MessageId);
         }
