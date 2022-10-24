@@ -31,7 +31,7 @@ namespace Bot.Money.Handlers
             var chatId = request.Message.ChatId;
             var finOpsMessage = new FinanceOperationMessage(chatId, request.Session.UnloadValues().ToList());
             await _budgetRepository.CreateRecord(finOpsMessage);
-            await request.Client.SendTextMessageAsync(chatId: chatId, text: "Додано: " + finOpsMessage.ToString(), replyMarkup: new ReplyKeyboardRemove());
+            await request.Client.SendTextMessageAsync(chatId: chatId, text: "✅ Додано: " + finOpsMessage.ToString(), replyMarkup: new ReplyKeyboardRemove());
         }
     }
 }
