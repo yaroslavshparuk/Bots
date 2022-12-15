@@ -5,11 +5,11 @@ namespace Bot.Core.Abstractions
 {
     public class Dispatcher
     {
-        private readonly IEnumerable<IBotInputHandler> _inputHandlers;
+        private readonly IEnumerable<IBotInput> _inputHandlers;
         private readonly IChatSessionService _chatSessionService;
         private readonly ITelegramBotClient _client;
 
-        public Dispatcher(IEnumerable<IBotInputHandler> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
+        public Dispatcher(IEnumerable<IBotInput> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
         {
             _inputHandlers = inputHandlers;
             _chatSessionService = chatSessionService;
@@ -30,7 +30,7 @@ namespace Bot.Core.Abstractions
 
             foreach (var inputHandler in _inputHandlers)
             {
-                if (inputHandler.IsSuitable(request))
+                if (inputHandler.IsExecutable(request))
                 {
                     try
                     {

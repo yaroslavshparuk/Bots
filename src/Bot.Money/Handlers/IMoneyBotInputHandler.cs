@@ -2,5 +2,5 @@
 
 namespace Bot.Money.Handlers
 {
-    public interface IMoneyBotInputHandler : IBotInputHandler { }
+    public interface IMoneyBotInput : IBotInput { }
 }

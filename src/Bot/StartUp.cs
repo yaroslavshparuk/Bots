@@ -33,12 +33,12 @@ namespace Bot
                      services.AddSingleton<IBot, MoneyBot>();
                      services.AddSingleton<IBot, YoutubeBot>();
                      services.AddSingleton<IChatSessionService, ChatSessionService>();
-                     services.AddTransient<IMoneyBotInputHandler, AmountEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, TypeEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, CategoryEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, DescriptionEntered>();
-                     services.AddTransient<IMoneyBotInputHandler, HelpCommand>();
-                     services.AddTransient<IMoneyBotInputHandler, DownloadCommand>();
+                     services.AddTransient<IMoneyBotInput, AmountEntered>();
+                     services.AddTransient<IMoneyBotInput, TypeEntered>();
+                     services.AddTransient<IMoneyBotInput, CategoryEntered>();
+                     services.AddTransient<IMoneyBotInput, DescriptionEntered>();
+                     services.AddTransient<IMoneyBotInput, HelpCommand>();
+                     services.AddTransient<IMoneyBotInput, DownloadCommand>();
                      services.AddTransient<IYoutubeBotInputHandler, YoutubeVideoUrlToAudioCommand>();
                      services.AddScoped<IUserDataRepository>(x => new RedisUserDataRepository(_redis));
                      services.AddScoped<IBudgetRepository, GoogleSpreadSheetsBudgetRepository>();

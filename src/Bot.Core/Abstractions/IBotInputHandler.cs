@@ -1,8 +1,8 @@
 ﻿namespace Bot.Core.Abstractions
 {
-    public interface IBotInputHandler
+    public interface IBotInput
     {
-        public bool IsSuitable(UserRequest request);
+        public bool IsExecutable(UserRequest request);
 
         public Task Handle(UserRequest request);
     }

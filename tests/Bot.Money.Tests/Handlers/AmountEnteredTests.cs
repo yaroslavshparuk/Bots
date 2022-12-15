@@ -26,8 +26,8 @@ namespace Bot.Money.Tests.Handlers
             var handler = new AmountEntered();
             var textMessage = new Message(123, "test", "123");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("", 0);
-            Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            session.MoveNextState("", 0);
+            Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Bot.Money.Tests.Handlers
             var handler = new AmountEntered();
             var textMessage = new Message(123, "test", "123");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            Assert.True(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            Assert.True(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]

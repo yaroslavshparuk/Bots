@@ -2,7 +2,6 @@
 using Bot.Core.Exceptions;
 using Bot.Money.Models;
 using Bot.Money.Services;
-using Telegram.Bot.Types;
 using Xunit;
 using Message = Bot.Core.Abstractions.Message;
 
@@ -30,7 +29,7 @@ namespace Bot.Money.Tests.Models
 
             for (int i = 0; i < _values.Length; i++)
             {
-                session.MoveNext(_values[i], 0);
+                session.MoveNextState(_values[i], 0);
             }
 
             financeOperationMessage = new FinanceOperationMessage(testMessage.ChatId, session.UnloadValues().ToList());
@@ -54,7 +53,7 @@ namespace Bot.Money.Tests.Models
 
             for (int i = 0; i < _values.Length; i++)
             {
-                session.MoveNext(_values[i], 0);
+                session.MoveNextState(_values[i], 0);
             }
 
             var values = session.UnloadValues().ToList();

@@ -29,7 +29,7 @@ namespace Bot.Money.Tests.Handlers
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Витрата");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]
@@ -38,10 +38,10 @@ namespace Bot.Money.Tests.Handlers
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage =  new Message(123, "test", "Apples");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("123", 0);
-            session.MoveNext("Витрата", 0);
-            session.MoveNext("Food", 0);
-            Assert.True(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            session.MoveNextState("123", 0);
+            session.MoveNextState("Витрата", 0);
+            session.MoveNextState("Food", 0);
+            Assert.True(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]
@@ -50,9 +50,9 @@ namespace Bot.Money.Tests.Handlers
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Apples");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("123", 0);
-            session.MoveNext("Витрата", 0);
-            session.MoveNext("Food", 0);
+            session.MoveNextState("123", 0);
+            session.MoveNextState("Витрата", 0);
+            session.MoveNextState("Food", 0);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
             _budgetRepository.Verify(x => x.CreateRecord(It.IsAny<FinanceOperationMessage>()), Times.Once());
         }

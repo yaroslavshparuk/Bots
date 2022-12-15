@@ -5,7 +5,7 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace Bot.Money.Handlers
 {
-    public class DownloadCommand : IMoneyBotInputHandler
+    public class DownloadCommand : IMoneyBotInput
     {
         private const string NAME = "/download";
         private readonly IBudgetRepository _budgetRepository;
@@ -15,14 +15,14 @@ namespace Bot.Money.Handlers
             _budgetRepository = budgetRepository;
         }
 
-        public bool IsSuitable(UserRequest request)
+        public bool IsExecutable(UserRequest request)
         {
             return request.Message.Text == NAME;
         }
 
         public async Task Handle(UserRequest request)
         {
-            if (!IsSuitable(request)) { throw new ArgumentException(); }
+            if (!IsExecutable(request)) { throw new ArgumentException(); }
 
             var chatId = request.Message.ChatId;
             using (var stream = await _budgetRepository.DownloadArchive(chatId))

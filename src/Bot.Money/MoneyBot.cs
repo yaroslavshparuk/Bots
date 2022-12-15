@@ -16,12 +16,12 @@ namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
-        private readonly IEnumerable<IMoneyBotInputHandler> _handlers;
+        private readonly IEnumerable<IMoneyBotInput> _handlers;
         private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MoneyBot(IEnumerable<IMoneyBotInputHandler> handlers, IChatSessionService chatSessionService)
+        public MoneyBot(IEnumerable<IMoneyBotInput> handlers, IChatSessionService chatSessionService)
         {
             _handlers = handlers;
             _chatSessionService = chatSessionService;

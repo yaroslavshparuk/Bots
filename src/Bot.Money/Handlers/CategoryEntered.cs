@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class CategoryEntered : IMoneyBotInputHandler
+    public class CategoryEntered : IMoneyBotInput
     {
         private readonly InlineKeyboardMarkup _skipReply = new InlineKeyboardButton[][]
         {
@@ -24,14 +24,14 @@ namespace Bot.Money.Handlers
             _memoryCache = memoryCache;
         }
 
-        public bool IsSuitable(UserRequest request)
+        public bool IsExecutable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.WaitingForCategory;
         }
 
         public async Task Handle(UserRequest request)
         {
-            if (!IsSuitable(request)) { throw new ArgumentException(); }
+            if (!IsExecutable(request)) { throw new ArgumentException(); }
 
             var chatId = request.Message.ChatId;
 
@@ -44,7 +44,7 @@ namespace Bot.Money.Handlers
 
             var reply = await request.Client.SendTextMessageAsync(chatId: chatId, text: "Опис ⤵️", replyMarkup: _skipReply);
             await request.Client.DeleteMessageAsync(request.Message.ChatId, request.Session.LastReplyId);
-            request.Session.MoveNext(request.Message.Text, reply.MessageId);
+            request.Session.MoveNextState(request.Message.Text, reply.MessageId);
         }
     }
 }

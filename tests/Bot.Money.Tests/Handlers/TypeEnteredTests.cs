@@ -36,7 +36,7 @@ namespace Bot.Money.Tests.Handlers
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            Assert.False(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]
@@ -45,8 +45,8 @@ namespace Bot.Money.Tests.Handlers
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("123", 0);
-            Assert.True(handler.IsSuitable(new UserRequest(session, textMessage, _botClient.Object)));
+            session.MoveNextState("123", 0);
+            Assert.True(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Bot.Money.Tests.Handlers
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Bla bla");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("123", 0);
+            session.MoveNextState("123", 0);
             await Assert.ThrowsAsync<UserChoiceException>(() => handler.Handle(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -67,7 +67,7 @@ namespace Bot.Money.Tests.Handlers
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
             var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
-            session.MoveNext("123", 0);
+            session.MoveNextState("123", 0);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
         }
     }

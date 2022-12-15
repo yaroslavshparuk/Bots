@@ -23,7 +23,7 @@ namespace Bot.Core.Tests.Abstractions
 
             for (int i = 0; i < _values.Length; i++)
             {
-                session.MoveNext(_values[i], 0);
+                session.MoveNextState(_values[i], 0);
                 Assert.Equal(i + 2, session.CurrentState);
                 Assert.Equal(_values[i], session.LastTextMessage);
             }
@@ -36,7 +36,7 @@ namespace Bot.Core.Tests.Abstractions
 
             for (int i = 0; i < _values.Length; i++)
             {
-                session.MoveNext(_values[i], 0);
+                session.MoveNextState(_values[i], 0);
             }
 
             Assert.Equal(_values, session.UnloadValues());

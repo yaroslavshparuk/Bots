@@ -9,7 +9,7 @@ namespace Bot.Youtube.Handlers
     public class YoutubeVideoUrlToAudioCommand : IYoutubeBotInputHandler
     {
         private static Uri _uriResult;
-        public bool IsSuitable(UserRequest request)
+        public bool IsExecutable(UserRequest request)
         {
             return Uri.TryCreate(request.Message.Text, UriKind.Absolute, out _uriResult) &&
                                 (_uriResult.Scheme == Uri.UriSchemeHttp || _uriResult.Scheme == Uri.UriSchemeHttps);
@@ -17,7 +17,7 @@ namespace Bot.Youtube.Handlers
 
         public async Task Handle(UserRequest request)
         {
-            if (!IsSuitable(request)) { throw new ArgumentException(); }
+            if (!IsExecutable(request)) { throw new ArgumentException(); }
 
             var video = YouTube.Default.GetVideo(request.Message.Text);
             using (var memoryStream = new MemoryStream(video.GetBytes()))

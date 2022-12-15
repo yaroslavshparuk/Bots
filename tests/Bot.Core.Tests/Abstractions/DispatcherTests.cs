@@ -26,14 +26,14 @@ namespace Bot.Core.Tests.Abstractions
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;
-        private IList<IMoneyBotInputHandler> _handlers;
+        private IList<IMoneyBotInput> _handlers;
 
         public DispatcherTests()
         {
             _chatSessionService = new ChatSessionService();
             _botClient = new Mock<ITelegramBotClient>();
             _budgetRepository = new Mock<IBudgetRepository>();
-            _handlers = new List<IMoneyBotInputHandler>();
+            _handlers = new List<IMoneyBotInput>();
             var services = new ServiceCollection();
             services.AddMemoryCache();
             _memoryCache = services.BuildServiceProvider().GetService<IMemoryCache>();
@@ -43,7 +43,7 @@ namespace Bot.Core.Tests.Abstractions
         public async void DispatchInputIsAmountReturnWaitingForTypeMessage()
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
-            _handlers = new List<IMoneyBotInputHandler> { new AmountEntered() };
+            _handlers = new List<IMoneyBotInput> { new AmountEntered() };
             var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message(123, "test", "123");
 
@@ -67,7 +67,7 @@ namespace Bot.Core.Tests.Abstractions
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             _budgetRepository.Setup(x => x.GetCategories(123, "Витрата")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
-            _handlers = new List<IMoneyBotInputHandler>()
+            _handlers = new List<IMoneyBotInput>()
             {
                 new AmountEntered(),
                 new TypeEntered(_budgetRepository.Object, _memoryCache),

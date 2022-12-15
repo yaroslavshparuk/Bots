@@ -2,14 +2,12 @@
 {
     public class ChatSession
     {
-        private readonly Queue<int> _states;
-        private readonly Queue<string> _values;
+        private readonly Queue<(string, int)> _valueStates;
 
-        public ChatSession(Queue<int> states)
+        public ChatSession(Queue<(string, int)> valueStates)
         {
-            _states = states;
-            CurrentState = _states.Dequeue();
-            _values = new Queue<string>();
+            _valueStates = valueStates;
+            CurrentState = _valueStates.Dequeue().Item2;
         }
 
         public int CurrentState { get; private set; }
@@ -18,21 +16,21 @@
 
         public string LastTextMessage { get; private set; }
 
-        public bool IsCompleted { get { return _states.Count == 0; } }
+        public bool IsCompleted { get { return _valueStates.Count == 0; } }
 
-        public void MoveNext(string text, int id)
+        public void MoveNextState(string text, int id)
         {
-            _values.Enqueue(text);
+            _valueStates.Enqueue((text, id));
             LastTextMessage = text;
             LastReplyId = id;
-            CurrentState = _states.Dequeue();
+            CurrentState = _valueStates.Dequeue().Item2;
         }
 
         public IEnumerable<string> UnloadValues()
         {
-            while(_values.Count > 0)
+            while(_valueStates.Count > 0)
             {
-                yield return _values.Dequeue();
+                yield return _valueStates.Dequeue().Item1;
             }
         }
     }

@@ -3,18 +3,18 @@ using Telegram.Bot;
 
 namespace Bot.Money.Handlers
 {
-    public class HelpCommand : IMoneyBotInputHandler
+    public class HelpCommand : IMoneyBotInput
     {
         private const string helpResponse = "Всі питання до @shparuk";
 
-        public bool IsSuitable(UserRequest request)
+        public bool IsExecutable(UserRequest request)
         {
             return request.Message.Text is "/help";
         }
 
         public async Task Handle(UserRequest request) 
         {
-            if (!IsSuitable(request)) { throw new ArgumentException(); }
+            if (!IsExecutable(request)) { throw new ArgumentException(); }
             await request.Client.SendTextMessageAsync(request.Message.ChatId, helpResponse);
         }
     }

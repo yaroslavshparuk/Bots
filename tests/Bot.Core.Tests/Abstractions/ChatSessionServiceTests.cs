@@ -21,7 +21,7 @@ namespace Bot.Core.Tests.Abstractions
             var session = _chatSessionService.DownloadOrCreate(chatId);
 
             Assert.Equal((int)FinanceOperationState.Started, session.CurrentState);
-            session.MoveNext("123", 0);
+            session.MoveNextState("123", 0);
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
 
             _chatSessionService.Save(chatId, session);

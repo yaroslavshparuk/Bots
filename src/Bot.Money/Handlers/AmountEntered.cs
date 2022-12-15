@@ -6,7 +6,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.Money.Handlers
 {
-    public class AmountEntered : IMoneyBotInputHandler
+    public class AmountEntered : IMoneyBotInput
     {
         private readonly InlineKeyboardMarkup _expOrIncReply = new InlineKeyboardButton[][]
         {
@@ -14,7 +14,7 @@ namespace Bot.Money.Handlers
             new [] { new InlineKeyboardButton("❌ Відмінити ❌") { CallbackData = "Відмінити" } }
         };
 
-        public bool IsSuitable(UserRequest request)
+        public bool IsExecutable(UserRequest request)
         {
             return request.Session.CurrentState == (int)FinanceOperationState.Started &&
                 Regex.IsMatch(request.Message.Text, @"[\d]{1,9}([.,][\d]{1,6})?$");
@@ -22,10 +22,10 @@ namespace Bot.Money.Handlers
 
         public async Task Handle(UserRequest request)
         {
-            if (!IsSuitable(request)) { throw new ArgumentException(); }
+            if (!IsExecutable(request)) { throw new ArgumentException(); }
 
             var reply = await request.Client.SendTextMessageAsync(chatId: request.Message.ChatId, text: "Тип операції ⤵️", replyMarkup: _expOrIncReply);
-            request.Session.MoveNext(request.Message.Text, reply.MessageId);
+            request.Session.MoveNextState(request.Message.Text, reply.MessageId);
         }
     }
 }

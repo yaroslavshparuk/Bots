@@ -24,15 +24,15 @@ namespace Bot.Money.Tests.Handlers
             var helpCommand = new HelpCommand();
             var testMessage = new Message(123, "test", "");
             var request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
-            Assert.False(helpCommand.IsSuitable(request));
+            Assert.False(helpCommand.IsExecutable(request));
 
             testMessage = new Message(123, "test", "123asd");
             request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
-            Assert.False(helpCommand.IsSuitable(request));
+            Assert.False(helpCommand.IsExecutable(request));
 
             testMessage = new Message(123, "test", "/help");
             request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
-            Assert.True(helpCommand.IsSuitable(request));
+            Assert.True(helpCommand.IsExecutable(request));
         }
 
         [Fact]
