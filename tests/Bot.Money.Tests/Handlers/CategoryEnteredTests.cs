@@ -16,7 +16,7 @@ namespace Bot.Money.Tests.Handlers
 {
     public class CategoryEnteredTests
     {
-        private readonly ChatSessionService _chatSessionService;
+        private readonly IChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;
@@ -36,7 +36,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -45,7 +45,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "123");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             session.MoveNextState("Витрата", 0);
             Assert.True(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
@@ -56,7 +56,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Home");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             session.MoveNextState("Витрата", 0);
             await Assert.ThrowsAsync<UserChoiceException>(() => handler.Handle(new UserRequest(session, textMessage, _botClient.Object)));
@@ -69,7 +69,7 @@ namespace Bot.Money.Tests.Handlers
             _budgetRepository.Setup(x => x.GetCategories(123, "Витрата")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             var handler = new CategoryEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Food");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             session.MoveNextState("Витрата", 0);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));

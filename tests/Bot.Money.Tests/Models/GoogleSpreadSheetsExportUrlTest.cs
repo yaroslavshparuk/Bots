@@ -1,4 +1,4 @@
-﻿using Bot.Core.Enums;
+﻿using Bot.Money.Enums;
 using Bot.Money.Models;
 using Xunit;
 

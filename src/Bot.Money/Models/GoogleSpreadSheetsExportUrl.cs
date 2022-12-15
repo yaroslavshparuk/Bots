@@ -1,5 +1,4 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Enums;
+﻿using Bot.Money.Enums;
 using System.Text;
 
 namespace Bot.Money.Models

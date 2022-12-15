@@ -28,7 +28,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Витрата");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -37,7 +37,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage =  new Message(123, "test", "Apples");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             session.MoveNextState("Витрата", 0);
             session.MoveNextState("Food", 0);
@@ -49,7 +49,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new DescriptionEntered(_budgetRepository.Object);
             var textMessage = new Message(123, "test", "Apples");
-            var session = _chatSessionService.DownloadOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             session.MoveNextState("Витрата", 0);
             session.MoveNextState("Food", 0);

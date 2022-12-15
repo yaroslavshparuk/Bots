@@ -36,7 +36,7 @@ namespace Bot.Youtube
         {
             try
             {
-                await new Dispatcher(_commands, _chatSessionService, _botClient).Dispatch(new Message(update.Message.Chat.Id, update.Message.Chat.Username, update.Message.Text));
+                await new UserInputCenter(_commands, _chatSessionService, _botClient).ProcessFor(new Message(update.Message.Chat.Id, update.Message.Chat.Username, update.Message.Text));
                 _logger.Debug($"Proccessed message from: User Id: {update.Message.Chat.Id} UserName: @{update.Message.Chat.Username}");
             }
             catch (NotFoundCommandException)

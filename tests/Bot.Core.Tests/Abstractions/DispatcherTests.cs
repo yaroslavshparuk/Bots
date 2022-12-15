@@ -44,11 +44,11 @@ namespace Bot.Core.Tests.Abstractions
         {
             _botClient.Setup(x => x.MakeRequestAsync(It.IsAny<SendMessageRequest>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(new Telegram.Bot.Types.Message()));
             _handlers = new List<IMoneyBotInput> { new AmountEntered() };
-            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var userInputCenter = new UserInputCenter(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message(123, "test", "123");
 
-            await dispatcher.Dispatch(message);
-            var session = _chatSessionService.DownloadOrCreate(message.ChatId);
+            await userInputCenter.ProcessFor(message);
+            var session = _chatSessionService.TakeOrCreate(message.ChatId);
 
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
             Assert.Equal(message.Text, session.LastTextMessage);
@@ -57,9 +57,9 @@ namespace Bot.Core.Tests.Abstractions
         [Fact]
         public async void DispatchInputIsNotAmountThrowNotFoundCommandException()
         {
-            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var userInputCenter = new UserInputCenter(_handlers, _chatSessionService, _botClient.Object);
             var message = new Message(123, "test", "Not amount");
-            await Assert.ThrowsAsync<NotFoundCommandException>(() => dispatcher.Dispatch(message));
+            await Assert.ThrowsAsync<NotFoundCommandException>(() => userInputCenter.ProcessFor(message));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Bot.Core.Tests.Abstractions
                 new DescriptionEntered(_budgetRepository.Object),
             };
 
-            var dispatcher = new Dispatcher(_handlers, _chatSessionService, _botClient.Object);
+            var userInputCenter = new UserInputCenter(_handlers, _chatSessionService, _botClient.Object);
             var testMessages = new Message[] {
                 new Message(123, "test", "123"),
                 new Message(123, "test", "Витрата"),
@@ -85,7 +85,7 @@ namespace Bot.Core.Tests.Abstractions
 
             foreach (var m in testMessages)
             {
-                await dispatcher.Dispatch(m);
+                await userInputCenter.ProcessFor(m);
             }
 
             _budgetRepository.Verify(x => x.CreateRecord(It.IsAny<FinanceOperationMessage>()), Times.Once());

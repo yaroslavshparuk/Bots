@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Enums
+﻿namespace Bot.Money.Enums
 {
     public enum FileType
     {

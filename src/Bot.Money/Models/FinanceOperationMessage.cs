@@ -1,5 +1,4 @@
-﻿using Bot.Core.Exceptions;
-using Bot.Money.Exceptions;
+﻿using Bot.Money.Exceptions;
 using System.Text;
 
 namespace Bot.Money.Models

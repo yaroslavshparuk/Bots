@@ -19,11 +19,11 @@ namespace Bot.Money
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyBotInput> _handlers;
-        private readonly ChatSessionService _chatSessionService;
+        private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MoneyBot(IEnumerable<IMoneyBotInput> handlers, ChatSessionService chatSessionService)
+        public MoneyBot(IEnumerable<IMoneyBotInput> handlers, IChatSessionService chatSessionService)
         {
             _handlers = handlers;
             _chatSessionService = chatSessionService;
@@ -49,7 +49,7 @@ namespace Bot.Money
                     message = new Message(update.Message.Chat.Id, update.Message.Chat.Username, update.Message.Text);
                     await _botClient.DeleteMessageAsync(update.Message.Chat.Id, update.Message.MessageId);
                 }
-                await new Dispatcher(_handlers, _chatSessionService, _botClient).Dispatch(message);
+                await new UserInputCenter(_handlers, _chatSessionService, _botClient).ProcessFor(message);
                 _logger.Debug($"Proccessed Message from: User Id: {message.ChatId} UserName: @{message.UserName}");
             }
             catch (NotFoundCommandException ex)

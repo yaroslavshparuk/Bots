@@ -26,15 +26,15 @@ namespace Bot.Money.Tests.Handlers
             var budgetRepository = new Mock<IBudgetRepository>();
             var downloadCommand = new DownloadCommand(budgetRepository.Object);
             var testMessage = new Message(123, "test", "");
-            var request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
+            var request = new UserRequest(_chatSessionService.TakeOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.False(downloadCommand.IsExecutable(request));
 
             testMessage = new Message(123, "test", "123asd");
-            request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
+            request = new UserRequest(_chatSessionService.TakeOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.False(downloadCommand.IsExecutable(request));
 
             testMessage = new Message(123, "test", "/download");
-            request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
+            request = new UserRequest(_chatSessionService.TakeOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             Assert.True(downloadCommand.IsExecutable(request));
         }
 
@@ -46,11 +46,11 @@ namespace Bot.Money.Tests.Handlers
 
             var downloadCommand = new DownloadCommand(budgetRepository.Object);
             var testMessage = new Message(123, "test", "123asd");
-            var request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
+            var request = new UserRequest(_chatSessionService.TakeOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             await Assert.ThrowsAsync<ArgumentException>(() => downloadCommand.Handle(request));
 
             testMessage = new Message(123, "test", "/download");
-            request = new UserRequest(_chatSessionService.DownloadOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
+            request = new UserRequest(_chatSessionService.TakeOrCreate(testMessage.ChatId), testMessage, _botClient.Object);
             await downloadCommand.Handle(request);
         }
     }

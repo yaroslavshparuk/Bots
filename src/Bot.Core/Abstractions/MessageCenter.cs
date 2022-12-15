@@ -3,22 +3,22 @@ using Telegram.Bot;
 
 namespace Bot.Core.Abstractions
 {
-    public class Dispatcher
+    public class UserInputCenter
     {
         private readonly IEnumerable<IBotInput> _inputHandlers;
         private readonly IChatSessionService _chatSessionService;
         private readonly ITelegramBotClient _client;
 
-        public Dispatcher(IEnumerable<IBotInput> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
+        public UserInputCenter(IEnumerable<IBotInput> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
         {
             _inputHandlers = inputHandlers;
             _chatSessionService = chatSessionService;
             _client = client;
         }
 
-        public async Task Dispatch(Message message)
+        public async Task ProcessFor(Message message)
         {
-            var session = _chatSessionService.DownloadOrCreate(message.ChatId);
+            var session = _chatSessionService.TakeOrCreate(message.ChatId);
 
             if (message.Text is "Відмінити")
             {
