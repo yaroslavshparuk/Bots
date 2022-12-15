@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Exceptions
+﻿namespace Bot.Youtube.Exceptions
 {
     public class MaxUploadSizeExceededException : Exception
     {

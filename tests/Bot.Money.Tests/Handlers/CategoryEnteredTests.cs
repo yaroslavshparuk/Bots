@@ -1,5 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
+using Bot.Money.Exceptions;
 using Bot.Money.Handlers;
 using Bot.Money.Repositories;
 using Bot.Money.Services;
@@ -15,7 +16,7 @@ namespace Bot.Money.Tests.Handlers
 {
     public class CategoryEnteredTests
     {
-        private readonly IChatSessionService _chatSessionService;
+        private readonly ChatSessionService _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;

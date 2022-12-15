@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Exceptions
+﻿namespace Bot.Money.Exceptions
 {
     public class DownloadException : Exception
     {

@@ -2,5 +2,5 @@
 
 namespace Bot.Youtube.Handlers
 {
-    public interface IYoutubeBotInputHandler : IBotInput { }
+    public interface IYoutubeBotInput : IBotInput { }
 }

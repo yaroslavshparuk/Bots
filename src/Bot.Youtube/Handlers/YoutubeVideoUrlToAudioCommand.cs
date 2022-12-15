@@ -1,12 +1,13 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
+using Bot.Youtube.Exceptions;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;
 using VideoLibrary;
 
 namespace Bot.Youtube.Handlers
 {
-    public class YoutubeVideoUrlToAudioCommand : IYoutubeBotInputHandler
+    public class YoutubeVideoUrlToAudioCommand : IYoutubeBotInput
     {
         private static Uri _uriResult;
         public bool IsExecutable(UserRequest request)

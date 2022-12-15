@@ -1,5 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
+using Bot.Money.Exceptions;
 using Bot.Money.Handlers;
 using Bot.Money.Repositories;
 using Bot.Money.Services;

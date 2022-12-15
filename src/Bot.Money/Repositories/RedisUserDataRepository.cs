@@ -1,4 +1,5 @@
 ﻿using Bot.Core.Exceptions;
+using Bot.Money.Exceptions;
 using StackExchange.Redis;
 
 namespace Bot.Money.Repositories

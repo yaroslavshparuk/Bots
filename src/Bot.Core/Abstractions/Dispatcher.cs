@@ -17,9 +17,9 @@ namespace Bot.Core.Abstractions
         }
 
         public async Task Dispatch(Message message)
-        {            
+        {
             var session = _chatSessionService.DownloadOrCreate(message.ChatId);
-            
+
             if (message.Text is "Відмінити")
             {
                 await _client.DeleteMessageAsync(message.ChatId, session.LastReplyId);

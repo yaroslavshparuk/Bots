@@ -1,7 +1,7 @@
 ﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
 using Bot.Core.Extensions;
 using Bot.Money.Enums;
+using Bot.Money.Exceptions;
 using Bot.Money.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using Telegram.Bot;

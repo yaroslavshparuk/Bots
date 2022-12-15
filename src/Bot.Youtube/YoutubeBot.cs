@@ -1,5 +1,6 @@
 ﻿using Bot.Core.Abstractions;
 using Bot.Core.Exceptions;
+using Bot.Youtube.Exceptions;
 using Bot.Youtube.Handlers;
 using log4net;
 using System.Configuration;
@@ -13,12 +14,12 @@ namespace Bot.Youtube
 {
     public class YoutubeBot : IBot
     {
-        private readonly IEnumerable<IYoutubeBotInputHandler> _commands;
+        private readonly IEnumerable<IYoutubeBotInput> _commands;
         private readonly IChatSessionService _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["youtube_bot_token"]);
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public YoutubeBot(IEnumerable<IYoutubeBotInputHandler> commands, IChatSessionService chatSessionService)
+        public YoutubeBot(IEnumerable<IYoutubeBotInput> commands, IChatSessionService chatSessionService)
         {
             _commands = commands;
             _chatSessionService = chatSessionService;
