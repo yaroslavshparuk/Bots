@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Bot.Core.Exceptions;
+using Bot.Abstractions.Exceptions;
 using Bot.Money.Enums;
 using Bot.Money.Exceptions;
 using Bot.Money.Models;

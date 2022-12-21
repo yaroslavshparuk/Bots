@@ -1,4 +1,4 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Enums;
 using Bot.Money.Models;
 using Bot.Money.Repositories;

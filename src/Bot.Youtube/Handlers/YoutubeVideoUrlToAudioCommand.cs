@@ -1,5 +1,4 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Models;
 using Bot.Youtube.Exceptions;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;

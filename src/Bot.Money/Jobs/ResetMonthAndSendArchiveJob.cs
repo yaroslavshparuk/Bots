@@ -1,8 +1,6 @@
 ﻿using Bot.Money.Repositories;
 using Coravel.Invocable;
-using System.Configuration;
 using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
 
 namespace Bot.Money.Jobs

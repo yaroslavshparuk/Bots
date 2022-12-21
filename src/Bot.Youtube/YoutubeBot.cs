@@ -1,5 +1,5 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Exceptions;
+using Bot.Abstractions.Models;
 using Bot.Youtube.Exceptions;
 using Bot.Youtube.Handlers;
 using log4net;
@@ -8,18 +8,18 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Message = Bot.Core.Abstractions.Message;
+using Message = Bot.Abstractions.Models.Message;
 
 namespace Bot.Youtube
 {
     public class YoutubeBot : IBot
     {
         private readonly IEnumerable<IYoutubeBotInput> _commands;
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["youtube_bot_token"]);
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public YoutubeBot(IEnumerable<IYoutubeBotInput> commands, IChatSessionService chatSessionService)
+        public YoutubeBot(IEnumerable<IYoutubeBotInput> commands, IChatSessionStorage chatSessionService)
         {
             _commands = commands;
             _chatSessionService = chatSessionService;

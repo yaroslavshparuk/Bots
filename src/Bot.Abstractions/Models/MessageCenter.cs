@@ -1,15 +1,15 @@
-﻿using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Exceptions;
 using Telegram.Bot;
 
-namespace Bot.Core.Abstractions
+namespace Bot.Abstractions.Models
 {
     public class UserInputCenter
     {
         private readonly IEnumerable<IBotInput> _inputHandlers;
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
         private readonly ITelegramBotClient _client;
 
-        public UserInputCenter(IEnumerable<IBotInput> inputHandlers, IChatSessionService chatSessionService, ITelegramBotClient client)
+        public UserInputCenter(IEnumerable<IBotInput> inputHandlers, IChatSessionStorage chatSessionService, ITelegramBotClient client)
         {
             _inputHandlers = inputHandlers;
             _chatSessionService = chatSessionService;
@@ -18,7 +18,7 @@ namespace Bot.Core.Abstractions
 
         public async Task ProcessFor(Message message)
         {
-            var session = _chatSessionService.TakeOrCreate(message.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(message.ChatId);
 
             if (message.Text is "Відмінити")
             {
@@ -39,7 +39,7 @@ namespace Bot.Core.Abstractions
                     }
                     finally
                     {
-                        _chatSessionService.Save(message.ChatId, session);
+                        _chatSessionService.Load(message.ChatId, session);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-﻿using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Exceptions;
 using Bot.Money.Exceptions;
 using StackExchange.Redis;
 

@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot;
 
-namespace Bot.Core.Abstractions
+namespace Bot.Abstractions.Models
 {
     public class UserRequest
     {

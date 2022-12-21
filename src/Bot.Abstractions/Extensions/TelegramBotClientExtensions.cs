@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot;
 
-namespace Bot.Core.Extensions
+namespace Bot.Abstractions.Extensions
 {
     public static class TelegramBotClientExtensions
     {

@@ -1,25 +1,25 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Enums;
 
-namespace Bot.Money.Services
+namespace Bot.Money.Models
 {
-    public class ChatSessionService : IChatSessionService
+    public class ChatSessionStorage : IChatSessionStorage
     {
         private Dictionary<long, ChatSession> _chatSessions;
         private readonly IEnumerable<(string, int)> _valueStates;
 
-        public ChatSessionService()
+        public ChatSessionStorage()
         {
             _chatSessions = new Dictionary<long, ChatSession>();
             _valueStates = Enum.GetValues(typeof(FinanceOperationState)).Cast<int>().Select(x => (string.Empty, x));
         }
 
-        public void Save(long id, ChatSession session)
+        public void Load(long id, ChatSession session)
         {
             _chatSessions.Add(id, session);
         }
 
-        public ChatSession TakeOrCreate(long id)
+        public ChatSession UnloadOrCreate(long id)
         {
             _chatSessions.TryGetValue(id, out var session);
 

@@ -1,4 +1,4 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 using Telegram.Bot;
 
 namespace Bot.Money.Handlers

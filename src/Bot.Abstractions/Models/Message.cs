@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Abstractions
+﻿namespace Bot.Abstractions.Models
 {
     public class Message
     {
@@ -9,10 +9,10 @@
             Text = text;
         }
 
-        public long ChatId { get; private set; }
+        public long ChatId { get; }
 
-        public string UserName { get; private set; }
+        public string UserName { get; }
 
-        public string Text { get; private set; }
+        public string Text { get; }
     }
 }

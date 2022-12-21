@@ -1,5 +1,4 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Money.Handlers;
+﻿using Bot.Money.Handlers;
 using Google;
 using log4net;
 using System.Configuration;
@@ -8,22 +7,22 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
-using Bot.Core.Extensions;
-using Message = Bot.Core.Abstractions.Message;
-using Bot.Money.Services;
+using Bot.Abstractions.Extensions;
+using Message = Bot.Abstractions.Models.Message;
 using Bot.Money.Exceptions;
-using Bot.Core.Exceptions;
+using Bot.Abstractions.Exceptions;
+using Bot.Abstractions.Models;
 
 namespace Bot.Money
 {
     public class MoneyBot : IBot
     {
         private readonly IEnumerable<IMoneyBotInput> _handlers;
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
         private TelegramBotClient _botClient = new(ConfigurationManager.AppSettings["money_bot_token"]);
         private static readonly ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MoneyBot(IEnumerable<IMoneyBotInput> handlers, IChatSessionService chatSessionService)
+        public MoneyBot(IEnumerable<IMoneyBotInput> handlers, IChatSessionStorage chatSessionService)
         {
             _handlers = handlers;
             _chatSessionService = chatSessionService;

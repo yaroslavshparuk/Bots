@@ -1,28 +1,22 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Handlers;
-using Bot.Money.Services;
+using Bot.Money.Models;
 using Bot.Money.Enums;
 using Moq;
 using Telegram.Bot;
-using Telegram.Bot.Types;
 using Xunit;
-using Bot.Core.Exceptions;
+using Bot.Abstractions.Exceptions;
 using Bot.Money.Repositories;
-using Bot.Money.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Message = Bot.Core.Abstractions.Message;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-using static System.Net.Mime.MediaTypeNames;
-using System.Threading;
+using Message = Bot.Abstractions.Models.Message;
 using Telegram.Bot.Requests;
 
-namespace Bot.Core.Tests.Abstractions
+namespace Bot.Abstractions.Tests.Models
 {
     public class DispatcherTests
     {
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;
@@ -30,7 +24,7 @@ namespace Bot.Core.Tests.Abstractions
 
         public DispatcherTests()
         {
-            _chatSessionService = new ChatSessionService();
+            _chatSessionService = new ChatSessionStorage();
             _botClient = new Mock<ITelegramBotClient>();
             _budgetRepository = new Mock<IBudgetRepository>();
             _handlers = new List<IMoneyBotInput>();
@@ -48,7 +42,7 @@ namespace Bot.Core.Tests.Abstractions
             var message = new Message(123, "test", "123");
 
             await userInputCenter.ProcessFor(message);
-            var session = _chatSessionService.TakeOrCreate(message.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(message.ChatId);
 
             Assert.Equal((int)FinanceOperationState.WaitingForType, session.CurrentState);
             Assert.Equal(message.Text, session.LastTextMessage);

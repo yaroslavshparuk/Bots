@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Extensions
+﻿namespace Bot.Abstractions.Extensions
 {
     public static class CollectionExtensions
     {

@@ -1,7 +1,7 @@
-﻿using Bot.Core.Extensions;
+﻿using Bot.Abstractions.Extensions;
 using Xunit;
 
-namespace Bot.Core.Tests.Extensions
+namespace Bot.Abstractions.Tests.Extensions
 {
     public class CollectionExtensionTests
     {

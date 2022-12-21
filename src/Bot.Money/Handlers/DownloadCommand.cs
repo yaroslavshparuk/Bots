@@ -1,4 +1,4 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types.InputFiles;

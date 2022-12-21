@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Exceptions
+﻿namespace Bot.Abstractions.Exceptions
 {
     public class NotFoundCommandException : Exception
     {

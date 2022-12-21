@@ -1,4 +1,4 @@
-﻿namespace Bot.Core.Abstractions
+﻿namespace Bot.Abstractions.Models
 {
     public class ChatSession
     {

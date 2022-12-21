@@ -1,5 +1,5 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Extensions;
+﻿using Bot.Abstractions.Models;
+using Bot.Abstractions.Extensions;
 using Bot.Money.Enums;
 using Bot.Money.Exceptions;
 using Bot.Money.Repositories;

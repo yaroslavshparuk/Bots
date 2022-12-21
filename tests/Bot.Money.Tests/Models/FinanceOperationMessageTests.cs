@@ -1,21 +1,19 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Exceptions;
 using Bot.Money.Models;
-using Bot.Money.Services;
 using Xunit;
-using Message = Bot.Core.Abstractions.Message;
+using Message = Bot.Abstractions.Models.Message;
 
 namespace Bot.Money.Tests.Models
 {
     public class FinanceOperationMessageTests
     {
         private readonly string[] _values = new string[] { "123", "Витрата", "Food", "Banan" };
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
 
         public FinanceOperationMessageTests()
         {
-            _chatSessionService = new ChatSessionService();
+            _chatSessionService = new ChatSessionStorage();
         }
 
         [Fact]
@@ -26,7 +24,7 @@ namespace Bot.Money.Tests.Models
 
             Assert.Throws<BuildMethodException>(() => financeOperationMessage.BuildTranferObject());
 
-            var session = _chatSessionService.TakeOrCreate(testMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(testMessage.ChatId);
 
             for (int i = 0; i < _values.Length; i++)
             {
@@ -50,7 +48,7 @@ namespace Bot.Money.Tests.Models
             var financeOperationMessage = new FinanceOperationMessage(testMessage.ChatId, new string[] { "something wrong" });
 
             Assert.Throws<BuildMethodException>(() => financeOperationMessage.TransactionRange());
-            var session = _chatSessionService.TakeOrCreate(testMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(testMessage.ChatId);
 
             for (int i = 0; i < _values.Length; i++)
             {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Bot.Core.Abstractions;
+using Bot.Abstractions.Models;
 
 namespace Bot
 {

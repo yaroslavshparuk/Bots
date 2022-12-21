@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using log4net;
 using log4net.Config;
 using Coravel;
-using Bot.Core.Abstractions;
+using Bot.Abstractions.Models;
 using Bot.Youtube.Handlers;
 using Bot.Money.Repositories;
 using Bot.Money.Handlers;
@@ -15,7 +15,6 @@ using Bot.Money.Models;
 using Bot.Money;
 using Bot.Youtube;
 using Telegram.Bot;
-using Bot.Money.Services;
 
 namespace Bot
 {
@@ -32,7 +31,7 @@ namespace Bot
                      services.AddHostedService<ConsoleHostedService>();
                      services.AddSingleton<IBot, MoneyBot>();
                      services.AddSingleton<IBot, YoutubeBot>();
-                     services.AddSingleton<IChatSessionService, ChatSessionService>();
+                     services.AddSingleton<IChatSessionStorage, ChatSessionStorage>();
                      services.AddTransient<IMoneyBotInput, AmountEntered>();
                      services.AddTransient<IMoneyBotInput, TypeEntered>();
                      services.AddTransient<IMoneyBotInput, CategoryEntered>();

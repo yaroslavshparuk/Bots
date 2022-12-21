@@ -1,4 +1,4 @@
-﻿using Bot.Core.Abstractions;
+﻿using Bot.Abstractions.Models;
 
 namespace Bot.Money.Handlers
 {

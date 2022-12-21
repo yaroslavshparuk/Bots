@@ -1,29 +1,28 @@
-﻿using Bot.Core.Abstractions;
-using Bot.Core.Exceptions;
+﻿using Bot.Abstractions.Models;
 using Bot.Money.Exceptions;
 using Bot.Money.Handlers;
+using Bot.Money.Models;
 using Bot.Money.Repositories;
-using Bot.Money.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Telegram.Bot;
 using Telegram.Bot.Requests;
 using Xunit;
-using Message = Bot.Core.Abstractions.Message;
+using Message = Bot.Abstractions.Models.Message;
 
 namespace Bot.Money.Tests.Handlers
 {
     public class TypeEnteredTests
     {
-        private readonly IChatSessionService _chatSessionService;
+        private readonly IChatSessionStorage _chatSessionService;
         private readonly Mock<ITelegramBotClient> _botClient;
         private readonly Mock<IBudgetRepository> _budgetRepository;
         private readonly IMemoryCache _memoryCache;
 
         public TypeEnteredTests()
         {
-            _chatSessionService = new ChatSessionService();
+            _chatSessionService = new ChatSessionStorage();
             _botClient = new Mock<ITelegramBotClient>();
             _budgetRepository = new Mock<IBudgetRepository>();
             var services = new ServiceCollection();
@@ -36,7 +35,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
-            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(textMessage.ChatId);
             Assert.False(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
 
@@ -45,7 +44,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
-            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             Assert.True(handler.IsExecutable(new UserRequest(session, textMessage, _botClient.Object)));
         }
@@ -55,7 +54,7 @@ namespace Bot.Money.Tests.Handlers
         {
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Bla bla");
-            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             await Assert.ThrowsAsync<UserChoiceException>(() => handler.Handle(new UserRequest(session, textMessage, _botClient.Object)));
         }
@@ -67,7 +66,7 @@ namespace Bot.Money.Tests.Handlers
             _budgetRepository.Setup(x => x.GetCategories(123, "Витрата")).Returns(Task.FromResult(new string[] { "Food" }.AsEnumerable()));
             var handler = new TypeEntered(_budgetRepository.Object, _memoryCache);
             var textMessage = new Message(123, "test", "Витрата");
-            var session = _chatSessionService.TakeOrCreate(textMessage.ChatId);
+            var session = _chatSessionService.UnloadOrCreate(textMessage.ChatId);
             session.MoveNextState("123", 0);
             await handler.Handle(new UserRequest(session, textMessage, _botClient.Object));
         }
